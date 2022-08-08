@@ -55,10 +55,7 @@ const html = `
 
 </main>`
 
-
 ;
-
-
 
 export default class BodyPage extends React.Component {
     

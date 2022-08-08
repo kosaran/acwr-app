@@ -116,86 +116,85 @@ function homeNav() {
   }
 
   return (
-        <Stack.Navigator
-          /*</NavigationContainer>screenOptions={{
-            //title: 'LiNK',
-            headerStyle: {
-              //backgroundColor: '#f4511e',
-            },
-            headerTintColor: 'slateblue',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-              fontFamily: 'Cochin',
-            },
-          }}*/
-          activeColor="white"
-          //barStyle={{ backgroundColor: 'slateblue' }}
-          initialRouteName="LiNK"
-          shifting={true}
-        >
-          
-          <Stack.Screen 
-            name="Schedule" 
-            component={Home} 
-            options={{
-              unmountOnBlur: true,
-              tabBarColor:'royalblue',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name='format-list-bulleted' size={24} color={color}></MaterialIcons>
-              ),
-            }}
-            listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
-          />
-          <Stack.Screen 
-            name="Calendar" 
-            component={Calendar} 
-            options={{
-              unmountOnBlur: true,
-              tabBarLabel: 'Calendar',
-              tabBarColor:'coral',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name='calendar-today' size={24} color={color}></MaterialIcons>
-              ),
-            }}
-            listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
-          />
-          <Stack.Screen 
-            name="Share" 
-            component={share} 
-            options={{
-              unmountOnBlur: true,
-              tabBarLabel: 'Share',
-              tabBarColor:'orange',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name='people' size={24} color={color}></MaterialIcons>
-              ),
-            }}
-            listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
-          />
-          {/*<Stack.Screen 
-            name="Settings" 
-            component={settings} 
-            options={{
-              tabBarLabel: 'SETTINGS',
-              tabBarColor:'orange',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name='apps' size={24} color={color}></MaterialIcons>
-              ),
-            }}
-          />*/}
-        </Stack.Navigator>
-   
-    );
-  }
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
+    <Stack.Navigator
+      /*</NavigationContainer>screenOptions={{
+        //title: 'LiNK',
+        headerStyle: {
+          //backgroundColor: '#f4511e',
+        },
+        headerTintColor: 'slateblue',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+          fontFamily: 'Cochin',
+        },
+      }}*/
+      activeColor="black"
+      barStyle={{ backgroundColor: 'white' }}
+    >
+      
+      <Stack.Screen 
+        name="Home" 
+        component={Home} 
+        options={{
+          // unmountOnBlur: true,
+          tabBarColor:'white',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name='home' size={24} color={"black"}></MaterialIcons>
+          ),
+        }}
+        listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
+      />
+      <Stack.Screen 
+        name="Calendar" 
+        component={Calendar} 
+        options={{
+          // unmountOnBlur: true,
+          tabBarLabel: 'Calendar',
+          tabBarColor:'white',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name='calendar-today' size={24} color={"black"}></MaterialIcons>
+          ),
+        }}
+        listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
+      />
+      <Stack.Screen 
+        name="Share" 
+        component={share} 
+        options={{
+          // unmountOnBlur: true,
+          tabBarLabel: 'Share',
+          tabBarColor:'white',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name='people' size={24} color={"black"}></MaterialIcons>
+          ),
+        }}
+        listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
+      />
+     
+      {/*<Stack.Screen 
+        name="Settings" 
+        component={settings} 
+        options={{
+          tabBarLabel: 'SETTINGS',
+          tabBarColor:'orange',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name='apps' size={24} color={color}></MaterialIcons>
+          ),
+        }}
+      />*/}
+    </Stack.Navigator>
 
-  export {athletes, thisUser}
-  export default homeNav
+);
+}
+
+const styles = StyleSheet.create({
+container: {
+  flex: 1,
+  backgroundColor: '#fff',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+});
+
+export {athletes, thisUser}
+export default homeNav

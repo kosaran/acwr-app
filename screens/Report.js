@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import CircleSlider from "react-native-circle-slider";
 //import DatePicker from 'react-native-date-picker'
+import CustomButton from '../components/CustomButton';
 
 import {db} from "./Firebase";
 import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore"; 
@@ -467,6 +468,15 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 10,
         //alignItems: 'center',
         //justifyContent: 'center',
+    },
+    button: {
+        backgroundColor: "#000",
+    },
+    buttonClose: {
+        backgroundColor: "deeppink",
+        margin: 5,
+        padding:5,
+        alignSelf: 'stretch'
     },
     buttonText:{
         color:'white',

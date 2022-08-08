@@ -24,11 +24,11 @@ function Home({navigation, route}) {
     const { width, height } = Dimensions.get('window');
 
     const goals = 
-            [
-                {key: 'Improve tendon strength/elasticity'},
-                {key: 'Relaxed upper body and arm swing'},
-                {key: 'Increase stride length'},
-            ]   
+        [
+            {key: 'Improve tendon strength/elasticity'},
+            {key: 'Relaxed upper body and arm swing'},
+            {key: 'Increase stride length'},
+        ]   
     
     
     const tableHead = ['Day/Workout', 'Monday', 'Wednesday', 'Friday']
@@ -61,15 +61,25 @@ function Home({navigation, route}) {
                     text: "Text 5",
                 },
               ]
-    /*const pastMonths = () => {
-        const week = data.daily.pop()
-        console.log(week.length)
-        const values = []
-        for (let i = 0; i < week.length; i++) {
-            values.push(week[i].value)
+
+    const chartLabels = () => {
+        if ( global.data.date.length < 7){
+            const days = global.data.date
+            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            for (let i = 0; i < global.data.date.length; i++) {
+                days[i] = weekday[new Date(days[i]).getDay()]
+            }
+            return days
+        }else{
+            const days = global.data.date.slice(-7)
+            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            for (let i = 0; i < 7; i++) {
+                days[i] = weekday[new Date(days[i]).getDay()]
+            }
+            return days
         }
-        return values
-    }*/
+    }
+
     const renderItem = ({ item, index}) => (
 
           <View style={{
@@ -106,11 +116,11 @@ function Home({navigation, route}) {
 
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
-            <View style={{ flex: 1, justifyContent:'center'}}>
+            
                 {/*<Text style = {[styles.text, {color:'orange'}]}>
                     Current Health Status / Workload or reports / goals
                 </Text>*/}
-                <View style={{ flexDirection:'row', justifyContent:'space-evenly', backgroundColor: pickCol(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)}}>
+            <View style={{ flex: 1, borderBottomColor: 'black', borderBottomWidth: 3, flexDirection:'row', padding:5 , justifyContent:'space-evenly', backgroundColor: pickCol(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)}}>
                 {/*<Carousel
                   layout={"default"}
                   //ref={ref => carousel = ref}
@@ -119,49 +129,49 @@ function Home({navigation, route}) {
                   itemWidth={300}
                   renderItem={renderItem}
                   //onSnapToItem = { index => this.setState({activeIndex:index}) } 
-            />*/}
+                />*/}
                 <View>
-                        <TouchableOpacity
-                            style={[styles.roundButton1,
+                    <TouchableOpacity
+                        style={[styles.roundButton1,
+                        {
+                            backgroundColor:'white', 
+                            borderColor:'white'
+                        }]}
+                        onPress = {() => navigation.navigate('Report')}
+                    >
+                        <Text>
                             {
-                                backgroundColor:'white', 
-                                borderColor:'white'
-                            }]}
-                            onPress = {() => navigation.navigate('Report')}
-                        >
-                            <Text>
-                                {
-                                    //Math.round(data.acwr[data.acwr.length - 1] * 100) / 100
-                                    Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100
-                                }
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <Text>Goals</Text>
-                        <FlatList
-                            data={goals}
-                            renderItem={({item}) => <Text>{'\u2B24' + ' '}{item.key}</Text>}
-                        />
-                    </View>
+                                //Math.round(data.acwr[data.acwr.length - 1] * 100) / 100
+                                Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100
+                            }
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <Text>Goals</Text>
+                    <FlatList
+                        data={goals}
+                        renderItem={({item}) => <Text>{'\u2B24' + ' '}{item.key}</Text>}
+                    />
                 </View>
             </View>
             <View style={{ 
                 flex: 3, 
-                padding: 10,
-                justifyContent:'center'
+                marginHorizontal: 10,
+                justifyContent:'center',
                 //backgroundColor: "darkorange"
-                }}>
-                    <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-                        <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-                        <Rows data={tableData} textStyle={styles.text}/>
-                    </Table>
+            }}>
+                <Table borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
+                    <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
+                    <Rows data={tableData} textStyle={styles.text}/>
+                </Table>
             </View>
-            <View style={{ flex: 3, justifyContent: 'center', alignSelf:'center'}}>
+            <View style={{ flex: 3, justifyContent: 'center', alignSelf:'center', }}>
+                <Text style={{alignSelf:'center'}}>ACWR by day</Text>
                     <LineChart
                         data={{
-                        //labels: ["January", "February", "March", "April", "May", "June"],
-                        labels: global.data.date.slice(-7),
+                        //labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                        labels: chartLabels(),
                         datasets: [
                             {
                             /*data: [
@@ -182,6 +192,7 @@ function Home({navigation, route}) {
                         //yAxisLabel="$"
                         //yAxisSuffix="k"
                         yAxisInterval={1} // optional, defaults to 1
+                        //renderDotContent = {{x, y, index, indexData}}
                         chartConfig={{
                         backgroundColor: "#e26a00",
                         backgroundGradientFrom: "#fb8c00",
@@ -282,7 +293,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f1f8ff'
      },
     text: { 
-        margin: 5 
+        margin: 2 
     }
 });
 

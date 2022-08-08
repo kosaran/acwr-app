@@ -2,7 +2,8 @@ import React, { useLayoutEffect, useState, useRef, Component} from 'react';
 import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, Modal,Animated, PanResponder, Button} from 'react-native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
-import RNPickerSelect from 'react-native-picker-select';
+import {Picker} from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { getAuth, signOut } from "firebase/auth";
 //import { auth } from './Firebase';
 //import { thisUser } from './login';
@@ -10,7 +11,8 @@ import {thisUser} from './homeNav'
 
 
 const settings = ({navigation}) => {
-    
+    const [selectedLanguage, setSelectedLanguage] = useState();
+
     const [properties, setProperty] = useState([
         { name: 'Name', id: '1'},
         { name: 'Email', id: '2'},
@@ -46,6 +48,35 @@ const settings = ({navigation}) => {
         }, function(error) {
           // An error happened.
         });
+    }
+
+    const clearData = () => {
+        global.data = {
+            date: [],
+            fullDate: [],
+            time: [],
+            percieved: [],
+            acute: [],
+            chronic: [],
+            acwr: [],
+            desc: [],
+            com: [],
+            goals: [],
+        }
+        storeData(global.data)
+    }
+
+    const storeData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('@storage_Key', jsonValue)
+          console.log('delete')
+          //console.log(jsonValue)
+        } catch (e) {
+          // saving error
+          console.log(e)
+        }
+        //console.log(global.data)
     }
 
     const alert = (s) => {
@@ -86,16 +117,20 @@ const settings = ({navigation}) => {
                     <Text>
                         Team
                     </Text>
-                    <RNPickerSelect
-                        style={styles.picker}
-                        onValueChange={(value) => console.log(value)}
-                        items={[
-                            { label: 'Varisty Blues', value: 'football' },
-                            { label: 'Toronto Racers', value: 'baseball' },
-                        ]}
-                    />
+                    <Picker
+                        style={[{backgroundColor:'white'}]}
+                        selectedValue={selectedLanguage}
+                        onValueChange={(itemValue, itemIndex) =>
+                            setSelectedLanguage(itemValue)
+                        }>
+                        <Picker.Item label="Java" value="java" />
+                        <Picker.Item label="JavaScript" value="js" />
+                    </Picker>
                 </View>
-                <Button title = 'Sign Out' style = {styles.button} onPress = {signOut}/>
+                <View style={[{padding:30}]}>
+                    <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {clearData}/>
+                    <Button title = 'Sign Out' style = {styles.button} onPress = {signOut}/>
+                </View>
             </View>
             <Modal
                 animationType="slide"

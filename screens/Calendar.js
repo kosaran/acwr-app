@@ -61,7 +61,7 @@ export default class Calendar extends Component {
     //console.log(today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate())
     //console.log(new Date(date) < new Date(test))
     const test = today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate()
-    return new Date(date) < new Date(test);
+    return new Date(date) <= new Date(test);
   }
   
 
@@ -91,12 +91,12 @@ export default class Calendar extends Component {
         />
         <View style={styles.dateInfo}>
           <View>
-            <Text style ={{color:'white'}}>SELECTED DATE: { startDate }</Text>
-            <Text>Time: { global.data.time[global.data.date.indexOf(startDate)] }</Text>
-            <Text>Percieved: { global.data.percieved[global.data.date.indexOf(startDate)]}</Text>
-            <Text>ACWR: { global.data.acwr[global.data.date.indexOf(startDate)] }</Text>
-            <Text>Goals: { global.data.goals[global.data.date.indexOf(startDate)] }</Text>
-            <Text>Info: { info }</Text>
+            <Text style={styles.boxText}>Date: { startDate }</Text>
+            <Text style={styles.boxText}>Time: { global.data.time[global.data.date.indexOf(startDate)] }</Text>
+            <Text style={styles.boxText}>Percieved: { global.data.percieved[global.data.date.indexOf(startDate)]}</Text>
+            <Text style={styles.boxText}>ACWR: { global.data.acwr[global.data.date.indexOf(startDate)] }</Text>
+            <Text style={styles.boxText}>Goals: { global.data.goals[global.data.date.indexOf(startDate)] }</Text>
+            <Text style={styles.boxText}>Info: { info }</Text>
           </View>
           <EditButton showButton={this.isInThePast(startDate)} />
         </View>
@@ -125,6 +125,11 @@ const styles = StyleSheet.create({
     //flexDirection:'column',
     justifyContent: 'flex-end',
     alignSelf:'flex-end'
+  },
+  boxText:{
+    color: 'white',
+    margin: 3,
+    fontSize: 15
   }
 });
 

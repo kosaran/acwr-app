@@ -39,7 +39,7 @@ function homeNav() {
       // https://firebase.google.com/docs/reference/js/firebase.User
       const uid = user.uid;
       setEmail(user.email)
-      console.log(user.email)
+      //console.log(user.email)
       getUser()
       getData()
       // ...
@@ -112,6 +112,7 @@ function homeNav() {
     } catch(e) {
       // error reading value
     }
+    console.log(global.data)
   }
 
   return (

@@ -13,6 +13,7 @@ import login from './screens/login';
 import Register from './screens/RegisterScreen.js';
 import Settings from './screens/settings.js';
 import Report from './screens/Report';
+import ReportTwo from './screens/BodyPage'
 
 const Stack = createNativeStackNavigator();
 
@@ -65,7 +66,7 @@ const App = ({navigation}) => {
           component={homeNav} 
           //options={{ 
           options={({ navigation }) => ({
-
+            gestureEnabled: false,
             headerTitle: 'ACWR',
             headerStyle: {
               //backgroundColor: '#f4511e',
@@ -106,6 +107,10 @@ const App = ({navigation}) => {
         <Stack.Screen 
           name="Settings" 
           component={Settings} 
+        />
+        <Stack.Screen 
+          name="ReportTwo" 
+          component={ReportTwo} 
         />
         <Stack.Screen 
             name="Report" 

@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState, useRef} from 'react';
 import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView} from 'react-native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useHeaderHeight } from "@react-navigation/elements";
+//import TimeRangeSlider from 'react-time-range-slider';
 import Slider from '@react-native-community/slider';
 import CircleSlider from "react-native-circle-slider";
 //import DatePicker from 'react-native-date-picker'
@@ -13,21 +13,10 @@ import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from
 
 function report({navigation, route}) {
     var goalVar = ''
-    const [slide, onSlide] = React.useState(5);
-    const [time, onChangeTime] = React.useState(0);
-    const [displayACWR, onChangeACWR] = React.useState(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100);
-    
-    //const [date, setDate] = useState(new Date())
-    //const [open, setOpen] = useState(false)
-
-    useLayoutEffect(() => {
-       navigation.setOptions({
-           headerRight:()=> (
-               <AntDesign name = "logout" size = {24}
-                color = 'black'/>
-           )
-       })
-    })
+    var commVar = ''
+    var descVar = ''
+    var slideVar = 5
+    var wheelVar = 0
 
     const showDate = () =>{
         if (route.params == null){
@@ -40,6 +29,47 @@ function report({navigation, route}) {
         
         return day
     }
+
+    const editData = () =>{
+        /*if (global.data.date.indexOf(showDate()) == -1){
+            updateData()
+        } else {
+
+        }*/
+        console.log(global.data.date.indexOf(showDate()))
+        if (global.data.date.indexOf(showDate()) == -1){
+            goalVar = 'I hope to...'
+            commVar = 'What did I notice...'
+            descVar = 'What did I do today...'
+        } else{
+            goalVar = global.data.goals[global.data.date.indexOf(showDate())]
+            commVar = global.data.com[global.data.date.indexOf(showDate())]
+            descVar = global.data.desc[global.data.date.indexOf(showDate())]
+            slideVar = global.data.percieved[global.data.date.indexOf(showDate())]
+            wheelVar = global.data.time[global.data.date.indexOf(showDate())]
+        }
+    }
+    editData()
+
+    const [desc, onChangeDesc] = React.useState(descVar);
+    const [comm, onChangeComm] = React.useState(commVar);
+    const [goal, onChangeGoal] = React.useState(goalVar);
+    const [slide, onSlide] = React.useState(slideVar);
+    const [time, onChangeTime] = React.useState(wheelVar);
+    const [displayACWR, onChangeACWR] = React.useState(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100);
+    console.log(time+'tim')
+    
+    //const [date, setDate] = useState(new Date())
+    //const [open, setOpen] = useState(false)
+
+    useLayoutEffect(() => {
+       navigation.setOptions({
+           headerRight:()=> (
+               <AntDesign name = "logout" size = {24}
+                color = 'black'/>
+           )
+       })
+    })
 
     const submit = () =>{
         //setDoc(doc(db, "cities", "new-city-id"), data);
@@ -83,7 +113,7 @@ function report({navigation, route}) {
             //global.data.com = JSON.parse(jsonValue).com
             //global.data.goals = JSON.parse(jsonValue).goals
             onChangeACWR(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)
-            //console.log(global.data)
+            console.log(global.data)
             
             //updateDaily()
             //updateData()
@@ -95,25 +125,6 @@ function report({navigation, route}) {
           // error reading value
         }
     }
-
-    const editDate = () =>{
-        /*if (global.data.date.indexOf(showDate()) == -1){
-            updateData()
-        } else {
-
-        }*/
-        console.log(global.data.date.indexOf(showDate()))
-        if (global.data.date.indexOf(showDate()) == -1){
-        
-        } else{
-            goalVar = global.data.goals[global.data.date.indexOf(showDate())]
-            console.log(goalVar)
-        }
-    }
-    editDate()
-    const [desc, onChangeDesc] = React.useState('What did I do today...');
-    const [comm, onChangeComm] = React.useState('What did I notice...');
-    const [goal, onChangeGoal] = React.useState(goalVar + 'dfa');
     
     const updateData = () => {
         //const acwrPast = data.acwr[data.acwr.length]
@@ -137,13 +148,18 @@ function report({navigation, route}) {
         }
 
         //global.data.date.push(new Date())
-        const nowDate = new Date();
+        //const nowDate = new Date();
+        var nowDate = new Date()
+        if (route.params != null){
+            nowDate = new Date(route.params.date)
+        }
+        //new Date(2022, 7, 2, 0, 0, 0, 0);
         const pastDate = new Date(global.data.fullDate[global.data.fullDate.length - 1])
         const Difference_In_Time = nowDate.getTime() - pastDate.getTime();
         const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
         console.log(Difference_In_Days)
 
-        if (Math.round(Difference_In_Days) > 0) {
+        if (Math.round(Difference_In_Days) > 1) {
             console.log('if')
             for (let i = 0; i < Difference_In_Days; i++) {
                 acuteNew = (0 * 0.25) + (0.75 * acutePast) 
@@ -162,17 +178,36 @@ function report({navigation, route}) {
             global.data.date.push(...getDaysArrayShort(nowDate, pastDate))
         }
         else{
-            console.log('else')
-            global.data.date.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
-            global.data.fullDate.push(nowDate)
-            global.data.acute.push(acuteNew)
-            global.data.time.push(time)
-            global.data.chronic.push(chronicNew)
-            global.data.percieved.push(slide)
-            global.data.acwr.push(acwrNew)
-            global.data.desc.push(desc)
-            global.data.com.push(comm)
-            global.data.goals.push(goal)
+            if (global.data.date.indexOf(showDate()) == -1){
+                console.log('else' + nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
+                global.data.date.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
+                global.data.fullDate.push(nowDate)
+                global.data.acute.push(acuteNew)
+                global.data.time.push(time)
+                global.data.chronic.push(chronicNew)
+                global.data.percieved.push(slide)
+                global.data.acwr.push(acwrNew)
+                global.data.desc.push(desc)
+                global.data.com.push(comm)
+                global.data.goals.push(goal)
+            } else{
+                //global.data.date[global.data.date.indexOf(showDate())] = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate()
+                //global.data.fullDate[global.data.date.indexOf(showDate())] = nowDate
+                global.data.acute[global.data.date.indexOf(showDate())] = acuteNew 
+                global.data.time[global.data.date.indexOf(showDate())] = time
+                global.data.chronic[global.data.date.indexOf(showDate())] = chronicNew 
+                global.data.percieved[global.data.date.indexOf(showDate())] = slide
+                global.data.acwr[global.data.date.indexOf(showDate())] = acwrNew
+                global.data.desc[global.data.date.indexOf(showDate())] = desc
+                global.data.com[global.data.date.indexOf(showDate())] = comm
+                global.data.goals[global.data.date.indexOf(showDate())] = goal
+                for (let i = global.data.date.indexOf(showDate()) + 1; i < global.data.date.length; i++) {
+                    const cur = global.data.time[i] * global.data.percieved[i]
+                    global.data.acute[i] = (cur * 0.25) + (0.75 * global.data.acute[i - 1]) 
+                    global.data.chronic[i] = cur * (2/22) + (1 - 2/22) * global.data.chronic[i - 1]
+                    global.data.acwr[i] = global.data.acute[i]/global.data.chronic[i]
+                }
+            }
         }
         storeData(global.data)
     }
@@ -315,7 +350,19 @@ function report({navigation, route}) {
                                     minimumValue={1}
                                     maximumValue={10}
                                     step = {1}
-                                    value = {5.5}
+                                    value = {slideVar}
+                                    minimumTrackTintColor="red"
+                                    maximumTrackTintColor="limegreen"
+                                    onValueChange={onSlide}
+                                    tapToSeek
+                                    //thumbTintColor = 'dodgerblue'
+                                />
+                                <Slider
+                                    style={{width: 200}}
+                                    minimumValue={0}
+                                    maximumValue={24}
+                                    step = {0.}
+                                    value = {slideVar}
                                     minimumTrackTintColor="red"
                                     maximumTrackTintColor="limegreen"
                                     onValueChange={onSlide}
@@ -335,7 +382,7 @@ function report({navigation, route}) {
                                     onValueChange={onChangeTime}
                                     //value = {onChangeTime}
                                     //onValueChange = {time}
-                                    //value = {time}
+                                    value = {wheelVar}
                                     max = {360} 
                                 />
                             </View>
@@ -397,7 +444,7 @@ function report({navigation, route}) {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[{ opacity: 1 }, {backgroundColor: 'dodgerblue', height:40, flex:1}]}
-                                onPress={() => setOpen(true)}
+                                onPress={() => navigation.navigate('ReportTwo')}
                             >
                                 <Text style = {[styles.buttonText]}>
                                     {showDate()}

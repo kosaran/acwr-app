@@ -128,6 +128,7 @@ function homeNav() {
           fontFamily: 'Cochin',
         },
       }}*/
+      
       activeColor="black"
       barStyle={{ backgroundColor: 'white' }}
     >
@@ -137,9 +138,10 @@ function homeNav() {
         component={Home} 
         options={{
           // unmountOnBlur: true,
+          
           tabBarColor:'white',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name='home' size={24} color={"black"}></MaterialIcons>
+            <MaterialIcons name='home' size={24} color={color}></MaterialIcons>
           ),
         }}
         listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
@@ -152,7 +154,7 @@ function homeNav() {
           tabBarLabel: 'Calendar',
           tabBarColor:'white',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name='calendar-today' size={24} color={"black"}></MaterialIcons>
+            <MaterialIcons name='calendar-today' size={24} color={color}></MaterialIcons>
           ),
         }}
         listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
@@ -165,7 +167,7 @@ function homeNav() {
           tabBarLabel: 'Share',
           tabBarColor:'white',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name='people' size={24} color={"black"}></MaterialIcons>
+            <MaterialIcons name='people' size={24} color={color}></MaterialIcons>
           ),
         }}
         listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}

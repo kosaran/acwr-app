@@ -7,6 +7,8 @@ import Slider from '@react-native-community/slider';
 import CircleSlider from "react-native-circle-slider";
 //import DatePicker from 'react-native-date-picker'
 import CustomButton from '../components/CustomButton';
+//import MultiSlider from "@ptomasroos/react-native-multi-slider";
+//import SliderCustomLabel from "./SliderCustomLabel";
 
 import {db} from "./Firebase";
 import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore"; 
@@ -427,7 +429,7 @@ function report({navigation, route}) {
                         <View style={{ flex: 0.5, justifyContent:"flex-end"}}>
                             <View style={{ flex:1, flexDirection:'row'}}>
                             <TouchableOpacity
-                                style={[{ opacity: 1 }, {backgroundColor: 'blue', height:40, flex:1}]}
+                                style={[{ opacity: 1 }, {backgroundColor: 'black', height:40, flex:1, borderRightColor:'white', borderRightWidth: 2}]}
                                     //onPress={() => {
                                     //    setModalVisible(true)     
                                     //    }}
@@ -435,16 +437,14 @@ function report({navigation, route}) {
                                 onPress = {
                                     () => updateData()
                                 }
-                                //onPress = {() => storeData({acute:[slide], chronic: []})}
-
                             >
-                                {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
                                 <Text style = {[styles.buttonText]}>
                                     Submit
                                 </Text>
                             </TouchableOpacity>
+                        
                             <TouchableOpacity
-                                style={[{ opacity: 1 }, {backgroundColor: 'dodgerblue', height:40, flex:1}]}
+                                style={[{ opacity: 1 }, {backgroundColor: 'black', height:40, flex:1}]}
                                 onPress={() => navigation.navigate('ReportTwo')}
                             >
                                 <Text style = {[styles.buttonText]}>
@@ -466,8 +466,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingHorizontal: 20,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 10,
-        //alignItems: 'center',
-        //justifyContent: 'center',
     },
     button: {
         backgroundColor: "#000",
@@ -590,9 +588,6 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         backgroundColor: 'white',
-        //borderRadius:10,
-        //borderWidth: 1,
-        //borderColor: '#fff'
     },
     titleText: {
         fontSize: 14,

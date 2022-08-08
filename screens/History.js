@@ -4,6 +4,7 @@ import React, { useLayoutEffect, useState, useRef, Component} from 'react';
 import { StyleSheet, Pressable, Text, View, ScrollView, RefreshControl, TouchableOpacity, FlatList, VirtualizedList} from 'react-native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
+import RNPickerSelect from 'react-native-picker-select';
 //import { getAuth, signOut } from "firebase/auth";
 //import { auth } from './Firebase';
 

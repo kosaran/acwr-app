@@ -17,7 +17,7 @@ const wait = (timeout) => {
 }
 
 function Share({navigation}) {
-    //console.log(thisUser)
+    console.log(thisUser)
 
     const [refreshing, setRefreshing] = React.useState(false);
 
@@ -119,13 +119,13 @@ function Share({navigation}) {
 
         }
     })
-    //console.log('main',athletes)
+    console.log('main',athletes)
 
     const getData = async () => {
         try {
             const jsonValue = await AsyncStorage.getItem('@storage_Key')
             jsonValue != null ? JSON.parse(jsonValue) : null;
-            //console.log(JSON.parse(jsonValue).acute)
+            console.log(JSON.parse(jsonValue).acute)
             data.acute = JSON.parse(jsonValue).acute
             data.chronic = JSON.parse(jsonValue).chronic
             return jsonValue
@@ -147,8 +147,8 @@ function Share({navigation}) {
     const addData = () => {
         try {
             data.chronic.push(100)
-            //console.log(data.acute)
-            //console.log(data.chronic)
+            console.log(data.acute)
+            console.log(data.chronic)
           } catch (e) {
             // saving error
           }
@@ -166,12 +166,12 @@ function Share({navigation}) {
                         elevation={0}
                     />
                 </View>
-                {/*<View style = {{flex:2, justifyContent:'center'}}>
+                <View style = {{flex:2, justifyContent:'center'}}>
                     <Button
                         title='Filter'
                     >
                     </Button>
-    </View>*/}
+                </View>
             </View>
             <ScrollView
                 refreshControl={
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 40,
-        //paddingHorizontal: 20,
+        paddingHorizontal: 20,
         backgroundColor: '#fff',
     },
     text:{

@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  SafeAreaView,
 } from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,6 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth, db} from "./Firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
+import {Video} from 'expo-av'
+
 
 //var data = {daily: [], acute:[], chronic :[]};
 //var data = {
@@ -132,24 +135,50 @@ const login = ({navigation}) =>{
 
   return (
     <View style={styles.container}>
+      <Video
+          source={require("./../assets/video1.mp4")}
+          style={styles.backgroundVideo}
+          shouldPlay={true}
+          isLooping
+          resizeMode='cover'
+          isMuted
+          ignoreSilentSwitch={"obey"}
+          />
+      <SafeAreaView>
+      
+        <Text style={styles.welcomeText}>PR Login</Text>
+        <View>
       <Input
       placeholder = 'Enter Email'
-      label = 'Email'
-      leftIcon = {{type: 'material', name:'email'}}
+      placeholderTextColor="#bbbbbb"
+      leftIcon = {{type: 'material', name:'email', color: 'white'}}
       value = {email}
       onChangeText = {text => setEmail(text)}
       />
       <Input
       placeholder = 'Enter Password'
-      label = 'Password'
-      leftIcon = {{type: 'material', name:'lock'}}
+      
+      placeholderTextColor="#bbbbbb"
+      leftIcon = {{type: 'material', name:'lock', color:'white'}}
       value = {password}
       onChangeText = {text => setPassword(text)}
       secureTextEntry
       />
-      <Button title = 'Sign In' style = {styles.button} onPress={signIn}/>
+      </View>
+      <View style={styles.buttonBox}>
+      <TouchableOpacity style={styles.button} onPress={signIn}>
+      <View><Text style={styles.buttonText}>Sign In</Text></View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttontwo} onPress={()=>navigation.navigate('Register')}>
+      <View><Text style={styles.buttontwoText}>Register</Text></View>
+      </TouchableOpacity>
+      </View>
+      
+      
       {/*<Button title = 'Sign In' style = {styles.button} onPress={()=>navigation.navigate('LiNK')}/>*/}
-      <Button title = 'Register' style = {styles.button} onPress={()=>navigation.navigate('Register')}/>
+      {/* <Button title = 'Register' style = {styles.button} onPress={()=>navigation.navigate('Register')}/> */}
+      </SafeAreaView>
     </View>
   )
 }
@@ -157,6 +186,14 @@ const login = ({navigation}) =>{
 const offset = 24;
 
 const styles = StyleSheet.create({
+  welcomeText: {
+    fontSize: 43,
+    fontWeight: '700',
+    marginTop: 80,
+    marginBottom: 80,
+    color: 'white',
+
+  },
   title: {
     marginTop: offset,
     marginLeft: offset,
@@ -164,24 +201,60 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     height: offset * 2,
-
+    
     margin: offset,
     paddingHorizontal: offset,
     borderColor: '#111111',
     borderWidth: 1,
   },
   buttonText: {
-    marginLeft: offset,
-    fontSize: offset,
+    // marginLeft: offset,
+    // fontSize: offset,
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  buttontwoText: {
+    // marginLeft: offset,
+    // fontSize: offset,
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '500',
   },
   button:{
-    width:200,
+    width:320,
+    height:45,
     marginTop: 10,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    justifyContent: 'center'
+  },
+  buttontwo:{
+    width:320,
+    height:45,
+    marginTop: 10,
+    borderRadius: 8,
+    borderColor: 'white',
+    borderWidth: 2,
+    justifyContent: 'center'
+  },
+  buttonBox:{
+    justifyContent: 'flex-end',
+    marginVertical: 40,
   },
   container:{
     flex:1,
     alignItems: 'center',
     padding:10,
+  },
+  backgroundVideo: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
   }
 });
 

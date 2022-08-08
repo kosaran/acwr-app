@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     //marginTop: 10,
   },
   dateInfo: {
-    backgroundColor: 'deepskyblue',
+    backgroundColor: 'black',
     margin:20,
     padding: 10,
     flex:1,

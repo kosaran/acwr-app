@@ -7,14 +7,54 @@ import Slider from '@react-native-community/slider';
 import CircleSlider from "react-native-circle-slider";
 //import DatePicker from 'react-native-date-picker'
 import CustomButton from '../components/CustomButton';
-//import MultiSlider from "@ptomasroos/react-native-multi-slider";
-//import SliderCustomLabel from "./SliderCustomLabel";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import SliderCustomLabel from '../components/SliderCustomLabel';
 
 import {db} from "./Firebase";
 import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore"; 
 
 
+const textTransformerTimes = (value) => {
+    if (value == 0){
+      return '12am'
+    }else if (value == 0.25){
+        return '12:15am'
+    }else if (value == 0.5){
+        return '12:30am'
+    }else if (value == 0.75){
+        return '12:45am'
+    } else if (value % Math.floor(value) == 0.5){
+      return (value < 13 ? Math.floor(value) : Math.floor(value) - 12) + (Math.floor(value) < 12 ? ":30am" : ":30pm")
+    }else if (value % Math.floor(value) == 0.25){
+      return (value < 13 ? Math.floor(value) : Math.floor(value) - 12) + (Math.floor(value) < 12 ? ":15am" : ":15pm")
+    }
+    else if (value % Math.floor(value) == 0.75){
+      return (value < 13 ? Math.floor(value) : Math.floor(value) - 12) + (Math.floor(value) < 12 ? ":45am" : ":45pm")
+    }
+    else{
+      return (value < 13 ? value : value - 12) + (value < 12 ? "am" : "pm")
+    }
+  };
+  const TIME = {  min: 0,  max: 24 }
+  const SliderPad = 12;
+
 function report({navigation, route}) {
+    const { min, max } = TIME;
+    const [width, setWidth] = useState(280);
+    const [selected, setSelected] = useState(null);
+  
+    if (!selected) {
+      setSelected([min, max]);
+    }
+  
+    // Callbacks
+    const onLayout = (event) => {
+      setWidth(event.nativeEvent.layout.width - SliderPad * 2);
+    };
+    const onValuesChangeFinish = (values) => {
+      setSelected(values);
+    };
+
     var goalVar = ''
     var commVar = ''
     var descVar = ''
@@ -134,7 +174,8 @@ function report({navigation, route}) {
         //console.log(data.date.length)
         var acutePast = global.data.acute[global.data.acute.length - 1]
         var chronicPast = global.data.chronic[global.data.chronic.length - 1]
-        var current = time * slide
+        //var current = time * slide
+        var current = ((selected[1] - selected[0])*60) * slide
         var acwrNew = 0
         var acuteNew = 0
         var chronicNew = 0
@@ -186,7 +227,8 @@ function report({navigation, route}) {
                 global.data.date.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
                 global.data.fullDate.push(nowDate)
                 global.data.acute.push(acuteNew)
-                global.data.time.push(time)
+                //global.data.time.push(time)
+                global.data.time.push((selected[1] - selected[0])*60)
                 global.data.chronic.push(chronicNew)
                 global.data.percieved.push(slide)
                 global.data.acwr.push(acwrNew)
@@ -197,7 +239,8 @@ function report({navigation, route}) {
                 //global.data.date[global.data.date.indexOf(showDate())] = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate()
                 //global.data.fullDate[global.data.date.indexOf(showDate())] = nowDate
                 global.data.acute[global.data.date.indexOf(showDate())] = acuteNew 
-                global.data.time[global.data.date.indexOf(showDate())] = time
+                //global.data.time[global.data.date.indexOf(showDate())] = time
+                global.data.time[global.data.date.indexOf(showDate())] =  (selected[1] - selected[0])*60
                 global.data.chronic[global.data.date.indexOf(showDate())] = chronicNew 
                 global.data.percieved[global.data.date.indexOf(showDate())] = slide
                 global.data.acwr[global.data.date.indexOf(showDate())] = acwrNew
@@ -329,11 +372,11 @@ function report({navigation, route}) {
                    onPress={Keyboard.dismiss}
                 >
                     <View  style={{flex: 1}}>
-                        <View style={{ flex: 4}}>
+                        <View style={{ flex: 3}}>
                             <View style={[{flex: 1, flexDirection: "row", justifyContent: "space-around"}]}>
                                 {/*<Text style = {[styles.text]}>
                                     Current Status: {Math.round(data.acwr[data.acwr.length - 1] * 100) / 100}
-    </Text>*/}
+                                </Text>*/}
                                 <Text style = {[styles.text]}>
                                                                 Current Status: {displayACWR}
                                 </Text>
@@ -341,7 +384,7 @@ function report({navigation, route}) {
                                     Weekly Target: 1.2
                                 </Text>
                             </View>
-                            <View style={{flex: 8, alignItems: 'center'}}>
+                            <View style={{flex: 7, alignItems: 'center', justifyContent:'space-evenly'}}>
                                 {/*<Text style = {[styles.text]}>
                                     Up Next?: Competiton Tuesday 
                                 </Text>*/}
@@ -360,22 +403,30 @@ function report({navigation, route}) {
                                     tapToSeek
                                     //thumbTintColor = 'dodgerblue'
                                 />
-                                <Slider
-                                    style={{width: 200}}
-                                    minimumValue={0}
-                                    maximumValue={24}
-                                    step = {0.}
-                                    value = {slideVar}
-                                    minimumTrackTintColor="red"
-                                    maximumTrackTintColor="limegreen"
-                                    onValueChange={onSlide}
-                                    tapToSeek
-                                    //thumbTintColor = 'dodgerblue'
-                                />
-                                <Text style = {[styles.text]}>
-                                    {time} 
-                                </Text>
-                                <CircleSlider
+                               
+                               <MultiSlider
+                                    min={min}
+                                    max={max}
+                                    step={0.25}
+                                    allowOverlap
+                                    values={selected}
+                                    sliderLength={200}
+                                    onValuesChangeFinish={onValuesChangeFinish}
+                                    enableLabel={true}
+                                    customLabel={SliderCustomLabel(textTransformerTimes)}
+                                    trackStyle={{
+                                        height: 10,
+                                        borderRadius: 8,
+                                    }}
+                                    markerOffsetY={3}
+                                    selectedStyle={{
+                                        backgroundColor: "black",
+                                    }}
+                                    unselectedStyle={{
+                                        backgroundColor: "#EEF3F7",
+                                    }}
+                                    />
+                                {/*<CircleSlider
                                     dialRadius={60}
                                     btnRadius={25}
                                     textSize={1}
@@ -387,11 +438,12 @@ function report({navigation, route}) {
                                     //onValueChange = {time}
                                     value = {wheelVar}
                                     max = {360} 
-                                />
+                                />*/}
                             </View>
                         </View>
                         <View style={{flex: 5, flexDirection: "column",
                                             justifyContent:'space-evenly',
+                                            //backgroundColor:'red',
                                             paddingHorizontal: 10}}>
                                     <Text style = {[styles.boxtitle]}>
                                         Description 
@@ -599,7 +651,13 @@ const styles = StyleSheet.create({
         width: 150,
         backgroundColor: "blue",
         borderRadius: 5
-    }
+    },
+    wrapper: {
+        flex: 1,
+        margin: SliderPad * 2,
+        justifyContent: "center",
+        alignItems: "center",
+    },
 });
 
 export default report;

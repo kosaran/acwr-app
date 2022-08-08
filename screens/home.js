@@ -144,7 +144,8 @@ function Home({navigation, route}) {
                     <LineChart
                         data={{
                         //labels: ["January", "February", "March", "April", "May", "June"],
-                        labels: global.data.date.slice(-7),
+                        //labels: global.data.date.slice(-7),
+                        labels: chartLabels(),
                         datasets: [
                             {
                             /*data: [

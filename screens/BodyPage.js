@@ -61,10 +61,9 @@ const html = `
 
 
 export default class BodyPage extends React.Component {
-    
     render(){
         return (
-            <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
+            <SafeAreaView style={[{flexDirection: "column"}]}>
     <RenderHTML contentWidth={300} source={{ html }} />
                     {/*<Body scale = {1} data = {exercices[0].muscles}/>*/}
     

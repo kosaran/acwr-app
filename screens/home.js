@@ -12,6 +12,8 @@ import {
 } from "react-native-chart-kit";
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import Carousel from 'react-native-snap-carousel';
+import CustomButton from '../components/CustomButton';
+import InNav from '../components/InNav';
 
 //import { data, thisUser } from './login';
 //import {thisUser} from './login';
@@ -24,11 +26,11 @@ function Home({navigation, route}) {
     const { width, height } = Dimensions.get('window');
 
     const goals = 
-        [
-            {key: 'Improve tendon strength/elasticity'},
-            {key: 'Relaxed upper body and arm swing'},
-            {key: 'Increase stride length'},
-        ]   
+            [
+                {key: 'Improve tendon strength/elasticity'},
+                {key: 'Relaxed upper body and arm swing'},
+                {key: 'Increase stride length'},
+            ]   
     
     
     const tableHead = ['Day/Workout', 'Monday', 'Wednesday', 'Friday']
@@ -61,25 +63,15 @@ function Home({navigation, route}) {
                     text: "Text 5",
                 },
               ]
-
-    const chartLabels = () => {
-        if ( global.data.date.length < 7){
-            const days = global.data.date
-            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-            for (let i = 0; i < global.data.date.length; i++) {
-                days[i] = weekday[new Date(days[i]).getDay()]
-            }
-            return days
-        }else{
-            const days = global.data.date.slice(-7)
-            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-            for (let i = 0; i < 7; i++) {
-                days[i] = weekday[new Date(days[i]).getDay()]
-            }
-            return days
+    /*const pastMonths = () => {
+        const week = data.daily.pop()
+        console.log(week.length)
+        const values = []
+        for (let i = 0; i < week.length; i++) {
+            values.push(week[i].value)
         }
-    }
-
+        return values
+    }*/
     const renderItem = ({ item, index}) => (
 
           <View style={{
@@ -116,62 +108,34 @@ function Home({navigation, route}) {
 
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
-            
-                {/*<Text style = {[styles.text, {color:'orange'}]}>
-                    Current Health Status / Workload or reports / goals
-                </Text>*/}
-            <View style={{ flex: 1, borderBottomColor: 'black', borderBottomWidth: 3, flexDirection:'row', padding:5 , justifyContent:'space-evenly', backgroundColor: pickCol(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)}}>
-                {/*<Carousel
-                  layout={"default"}
-                  //ref={ref => carousel = ref}
-                  data={carouselItems}
-                  sliderWidth={300}
-                  itemWidth={300}
-                  renderItem={renderItem}
-                  //onSnapToItem = { index => this.setState({activeIndex:index}) } 
-                />*/}
-                <View>
-                    <TouchableOpacity
-                        style={[styles.roundButton1,
-                        {
-                            backgroundColor:'white', 
-                            borderColor:'white'
-                        }]}
-                        onPress = {() => navigation.navigate('Report')}
-                    >
-                        <Text>
-                            {
-                                //Math.round(data.acwr[data.acwr.length - 1] * 100) / 100
-                                Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100
-                            }
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View>
-                    <Text>Goals</Text>
-                    <FlatList
-                        data={goals}
-                        renderItem={({item}) => <Text>{'\u2B24' + ' '}{item.key}</Text>}
-                    />
-                </View>
+            <View>
+                    <Text style={styles.welcometext}>Welcome, Kos</Text>
             </View>
-            <View style={{ 
-                flex: 3, 
-                marginHorizontal: 10,
-                justifyContent:'center',
-                //backgroundColor: "darkorange"
-            }}>
-                <Table borderStyle={{borderWidth: 1, borderColor: '#c8e1ff'}}>
-                    <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-                    <Rows data={tableData} textStyle={styles.text}/>
-                </Table>
-            </View>
-            <View style={{ flex: 3, justifyContent: 'center', alignSelf:'center', }}>
-                <Text style={{alignSelf:'center'}}>ACWR by day</Text>
+
+            <View style={{  justifyContent:'center'}}>
+
+               
+                
+                <View style={{  marginVertical:12}}>
+                <View>
+                    <Text style={styles.centersubheading}>Current ACWR</Text>
+                </View>
+                            <Text style={[styles.roundbuttontext1, {color: pickCol(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)}]}>
+                                {
+                                    //Math.round(data.acwr[data.acwr.length - 1] * 100) / 100
+                                    Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100
+                                }
+                            </Text>
+                    </View>
+                           
+                <View style={{ justifyContent: 'center', alignSelf:'center'}}>
+                <View>
+                    <Text style={styles.centersubheading}>Load Progress</Text>
+                </View>
                     <LineChart
                         data={{
-                        //labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                        labels: chartLabels(),
+                        //labels: ["January", "February", "March", "April", "May", "June"],
+                        labels: global.data.date.slice(-7),
                         datasets: [
                             {
                             /*data: [
@@ -192,21 +156,20 @@ function Home({navigation, route}) {
                         //yAxisLabel="$"
                         //yAxisSuffix="k"
                         yAxisInterval={1} // optional, defaults to 1
-                        //renderDotContent = {{x, y, index, indexData}}
                         chartConfig={{
-                        backgroundColor: "#e26a00",
-                        backgroundGradientFrom: "#fb8c00",
-                        backgroundGradientTo: "#ffa726",
+                        backgroundColor: "#fff",
+                        backgroundGradientFrom: "#fff",
+                        backgroundGradientTo: "#fff",
                         decimalPlaces: 2, // optional, defaults to 2dp
-                        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                        color: (opacity = 1) => `rgba(0, 69, 196, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(0, 39, 89, ${opacity})`,
                         style: {
-                            borderRadius: 16
+                            borderRadius: 1
                         },
                         propsForDots: {
-                            r: "6",
-                            strokeWidth: "2",
-                            stroke: "#ffa726"
+                            r: "3",
+                            strokeWidth: "6",
+                            stroke: "#001f59"
                         }
                         }}
                         bezier
@@ -216,6 +179,26 @@ function Home({navigation, route}) {
                         }}
                 />   
             </View>
+                {/* <View>
+                        <Text style={styles.subheading}>Goals</Text>
+                        <FlatList
+                            data={goals}
+                            renderItem={({item}) => <Text style={styles.goalstext}>{item.key}</Text>}
+                        />
+                    </View> */}
+            </View>
+            {/* <View style={{ 
+                padding: 10,
+                justifyContent:'center'
+                //backgroundColor: "darkorange"
+                }}>
+                    <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
+                        <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
+                        <Rows data={tableData} textStyle={styles.text}/>
+                    </Table>
+            </View> */}
+            <InNav image={require('../assets/goals.jpg')} text='View Goals' />
+            <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' />
         </SafeAreaView>
     );
 }
@@ -228,14 +211,25 @@ const styles = StyleSheet.create({
         //alignItems: 'center',
         //justifyContent: 'center',
     },
+    welcometext: {
+        padding: 10,
+        fontSize: 28,
+        fontWeight: "600",
+        marginBottom: 10,
+
+    },
     roundButton1: {
-        width: 100,
-        height: 100,
         //justifyContent: 'center',
         //alignItems: 'center',
-        padding: 10,
         borderRadius: 100,
         backgroundColor: 'orange',
+    },
+    roundbuttontext1: {
+        fontSize: 32,
+        fontWeight: '700',
+        marginVertical: 20,
+        paddingHorizontal: 10,
+        textAlign: 'center',
     },
     profileIcon: {
         marginRight: 25,
@@ -278,6 +272,26 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10
     },
+    subheading: {
+        fontSize: 22,
+        fontWeight: '700',
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingVertical: 5,
+    },
+    centersubheading: {
+        fontSize: 22,
+        fontWeight: '700',
+        paddingLeft: 10,
+        paddingRight: 10,
+        textAlign: 'center',
+    },
+    goalstext: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        fontWeight: '600',
+        paddingVertical: 2,
+    },
     roundButton1: {
         width: 60,
         height: 60,
@@ -293,7 +307,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f1f8ff'
      },
     text: { 
-        margin: 2 
+        margin: 5 
     }
 });
 

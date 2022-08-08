@@ -2,9 +2,10 @@ import React, { useLayoutEffect, useState, useRef} from 'react';
 import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView} from 'react-native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import TimeRangeSlider from 'react-time-range-slider';
+import { useHeaderHeight } from "@react-navigation/elements";
 import Slider from '@react-native-community/slider';
 import CircleSlider from "react-native-circle-slider";
+import CustomButton from '../components/CustomButton';
 //import DatePicker from 'react-native-date-picker'
 
 import {db} from "./Firebase";
@@ -13,51 +14,9 @@ import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from
 
 function report({navigation, route}) {
     var goalVar = ''
-    var commVar = ''
-    var descVar = ''
-    var slideVar = 5
-    var wheelVar = 0
-
-    const showDate = () =>{
-        if (route.params == null){
-            const day = new Date()
-            return day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate()
-        }
-        console.log(route.params)
-        const day  = route.params.date;
-        console.log(day)
-        
-        return day
-    }
-
-    const editData = () =>{
-        /*if (global.data.date.indexOf(showDate()) == -1){
-            updateData()
-        } else {
-
-        }*/
-        console.log(global.data.date.indexOf(showDate()))
-        if (global.data.date.indexOf(showDate()) == -1){
-            goalVar = 'I hope to...'
-            commVar = 'What did I notice...'
-            descVar = 'What did I do today...'
-        } else{
-            goalVar = global.data.goals[global.data.date.indexOf(showDate())]
-            commVar = global.data.com[global.data.date.indexOf(showDate())]
-            descVar = global.data.desc[global.data.date.indexOf(showDate())]
-            slideVar = global.data.percieved[global.data.date.indexOf(showDate())]
-            wheelVar = global.data.time[global.data.date.indexOf(showDate())]
-        }
-    }
-    editData()
-
-    const [desc, onChangeDesc] = React.useState(descVar);
-    const [comm, onChangeComm] = React.useState(commVar);
-    const [goal, onChangeGoal] = React.useState(goalVar);
-    const [slide, onSlide] = React.useState(slideVar);
-    const [time, onChangeTime] = React.useState(wheelVar);
+    const [slide, onSlide] = React.useState(5);
+    const [time, onChangeTime] = React.useState(0);
     const [displayACWR, onChangeACWR] = React.useState(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100);
-    console.log(time+'tim')
     
     //const [date, setDate] = useState(new Date())
     //const [open, setOpen] = useState(false)
@@ -70,6 +29,18 @@ function report({navigation, route}) {
            )
        })
     })
+
+    const showDate = () =>{
+        if (route.params == null){
+            const day = new Date()
+            return day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate()
+        }
+        console.log(route.params)
+        const day  = route.params.date;
+        console.log(day)
+        
+        return day
+    }
 
     const submit = () =>{
         //setDoc(doc(db, "cities", "new-city-id"), data);
@@ -113,7 +84,7 @@ function report({navigation, route}) {
             //global.data.com = JSON.parse(jsonValue).com
             //global.data.goals = JSON.parse(jsonValue).goals
             onChangeACWR(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)
-            console.log(global.data)
+            //console.log(global.data)
             
             //updateDaily()
             //updateData()
@@ -125,6 +96,25 @@ function report({navigation, route}) {
           // error reading value
         }
     }
+
+    const editDate = () =>{
+        /*if (global.data.date.indexOf(showDate()) == -1){
+            updateData()
+        } else {
+
+        }*/
+        console.log(global.data.date.indexOf(showDate()))
+        if (global.data.date.indexOf(showDate()) == -1){
+        
+        } else{
+            goalVar = global.data.goals[global.data.date.indexOf(showDate())]
+            console.log(goalVar)
+        }
+    }
+    editDate()
+    const [desc, onChangeDesc] = React.useState('');
+    const [comm, onChangeComm] = React.useState('');
+    const [goal, onChangeGoal] = React.useState(goalVar + '');
     
     const updateData = () => {
         //const acwrPast = data.acwr[data.acwr.length]
@@ -148,18 +138,13 @@ function report({navigation, route}) {
         }
 
         //global.data.date.push(new Date())
-        //const nowDate = new Date();
-        var nowDate = new Date()
-        if (route.params != null){
-            nowDate = new Date(route.params.date)
-        }
-        //new Date(2022, 7, 2, 0, 0, 0, 0);
+        const nowDate = new Date();
         const pastDate = new Date(global.data.fullDate[global.data.fullDate.length - 1])
         const Difference_In_Time = nowDate.getTime() - pastDate.getTime();
         const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
         console.log(Difference_In_Days)
 
-        if (Math.round(Difference_In_Days) > 1) {
+        if (Math.round(Difference_In_Days) > 0) {
             console.log('if')
             for (let i = 0; i < Difference_In_Days; i++) {
                 acuteNew = (0 * 0.25) + (0.75 * acutePast) 
@@ -178,36 +163,17 @@ function report({navigation, route}) {
             global.data.date.push(...getDaysArrayShort(nowDate, pastDate))
         }
         else{
-            if (global.data.date.indexOf(showDate()) == -1){
-                console.log('else' + nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
-                global.data.date.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
-                global.data.fullDate.push(nowDate)
-                global.data.acute.push(acuteNew)
-                global.data.time.push(time)
-                global.data.chronic.push(chronicNew)
-                global.data.percieved.push(slide)
-                global.data.acwr.push(acwrNew)
-                global.data.desc.push(desc)
-                global.data.com.push(comm)
-                global.data.goals.push(goal)
-            } else{
-                //global.data.date[global.data.date.indexOf(showDate())] = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate()
-                //global.data.fullDate[global.data.date.indexOf(showDate())] = nowDate
-                global.data.acute[global.data.date.indexOf(showDate())] = acuteNew 
-                global.data.time[global.data.date.indexOf(showDate())] = time
-                global.data.chronic[global.data.date.indexOf(showDate())] = chronicNew 
-                global.data.percieved[global.data.date.indexOf(showDate())] = slide
-                global.data.acwr[global.data.date.indexOf(showDate())] = acwrNew
-                global.data.desc[global.data.date.indexOf(showDate())] = desc
-                global.data.com[global.data.date.indexOf(showDate())] = comm
-                global.data.goals[global.data.date.indexOf(showDate())] = goal
-                for (let i = global.data.date.indexOf(showDate()) + 1; i < global.data.date.length; i++) {
-                    const cur = global.data.time[i] * global.data.percieved[i]
-                    global.data.acute[i] = (cur * 0.25) + (0.75 * global.data.acute[i - 1]) 
-                    global.data.chronic[i] = cur * (2/22) + (1 - 2/22) * global.data.chronic[i - 1]
-                    global.data.acwr[i] = global.data.acute[i]/global.data.chronic[i]
-                }
-            }
+            console.log('else')
+            global.data.date.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
+            global.data.fullDate.push(nowDate)
+            global.data.acute.push(acuteNew)
+            global.data.time.push(time)
+            global.data.chronic.push(chronicNew)
+            global.data.percieved.push(slide)
+            global.data.acwr.push(acwrNew)
+            global.data.desc.push(desc)
+            global.data.com.push(comm)
+            global.data.goals.push(goal)
         }
         storeData(global.data)
     }
@@ -338,7 +304,8 @@ function report({navigation, route}) {
                                     Weekly Target: 1.2
                                 </Text>
                             </View>
-                            <View style={{flex: 8, alignItems: 'center'}}>
+                 
+                            <View style={{flex: 3, alignItems: 'center'}}>
                                 {/*<Text style = {[styles.text]}>
                                     Up Next?: Competiton Tuesday 
                                 </Text>*/}
@@ -350,19 +317,7 @@ function report({navigation, route}) {
                                     minimumValue={1}
                                     maximumValue={10}
                                     step = {1}
-                                    value = {slideVar}
-                                    minimumTrackTintColor="red"
-                                    maximumTrackTintColor="limegreen"
-                                    onValueChange={onSlide}
-                                    tapToSeek
-                                    //thumbTintColor = 'dodgerblue'
-                                />
-                                <Slider
-                                    style={{width: 200}}
-                                    minimumValue={0}
-                                    maximumValue={24}
-                                    step = {0.}
-                                    value = {slideVar}
+                                    value = {5.5}
                                     minimumTrackTintColor="red"
                                     maximumTrackTintColor="limegreen"
                                     onValueChange={onSlide}
@@ -374,15 +329,15 @@ function report({navigation, route}) {
                                 </Text>
                                 <CircleSlider
                                     dialRadius={60}
-                                    btnRadius={25}
+                                    btnRadius={15}
                                     textSize={1}
                                     strokeWidth={5}
-                                    meterColor={'dodgerblue'}
+                                    meterColor={'black'}
                                     strokeColor={'#e1e1e1'}
                                     onValueChange={onChangeTime}
                                     //value = {onChangeTime}
                                     //onValueChange = {time}
-                                    value = {wheelVar}
+                                    //value = {time}
                                     max = {360} 
                                 />
                             </View>
@@ -400,8 +355,9 @@ function report({navigation, route}) {
                                         onChangeText={onChangeDesc}
                                         value={desc}
                                         //maxLength={5}
-                                        //clearButtonMode={true}
+                                        // clearButtonMode={true}
                                         //placeholderTextColor='red'
+                                        placeholder='Enter description of activity'
                                     />       
                                     <Text>
                                         Comments
@@ -411,6 +367,7 @@ function report({navigation, route}) {
                                         onChangeText={onChangeComm}
                                         value={comm}
                                         clearButtonMode={true}
+                                        placeholder='Enter comments'
                                     />       
                                     <Text>
                                         Goals
@@ -424,33 +381,10 @@ function report({navigation, route}) {
                                     />     
                             </View>
                         <View style={{ flex: 0.5, justifyContent:"flex-end"}}>
-                            <View style={{ flex:1, flexDirection:'row'}}>
-                            <TouchableOpacity
-                                style={[{ opacity: 1 }, {backgroundColor: 'blue', height:40, flex:1}]}
-                                    //onPress={() => {
-                                    //    setModalVisible(true)     
-                                    //    }}
-                                //onPress = {submit}
-                                onPress = {
-                                    () => updateData()
-                                }
-                                //onPress = {() => storeData({acute:[slide], chronic: []})}
-
-                            >
-                                {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                                <Text style = {[styles.buttonText]}>
-                                    Submit
-                                </Text>
+                            <TouchableOpacity style={styles.button}>
+                            <Text style={styles.buttonText}>Submit</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[{ opacity: 1 }, {backgroundColor: 'dodgerblue', height:40, flex:1}]}
-                                onPress={() => navigation.navigate('ReportTwo')}
-                            >
-                                <Text style = {[styles.buttonText]}>
-                                    {showDate()}
-                                </Text>
-                            </TouchableOpacity>
-                            </View>
+                            {/* <CustomButton disabled={false} text='Subergregremit' onPress={() => updateData()}/> */}
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -463,16 +397,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingHorizontal: 20,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 10,
         //alignItems: 'center',
         //justifyContent: 'center',
     },
+    button: {
+        backgroundColor: "#000",
+    },
+    buttonClose: {
+        backgroundColor: "deeppink",
+        margin: 5,
+        padding:5,
+        alignSelf: 'stretch'
+    },
     buttonText:{
         color:'white',
-        fontSize: 25,
+        fontWeight: '500',
+        fontSize: 20,
         textAlign: 'center',
-        margin:5
+        margin:5,
+        paddingVertical: 5,
     },
     centeredView: {
         flex: 1,
@@ -484,9 +428,10 @@ const styles = StyleSheet.create({
         margin:5,
         //padding:5,
         //paddingLeft:5,
-        fontSize: 15,
+        fontSize: 14,
         fontFamily:'Helvetica',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: '400'
         //color:'white'
     },
     input:{
@@ -502,15 +447,7 @@ const styles = StyleSheet.create({
     boxtitle:{
         marginTop: 10
     },    
-    button: {
-        backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-        backgroundColor: "deeppink",
-        margin: 5,
-        padding:5,
-        alignSelf: 'stretch'
-    },
+    
     textStyle: {
         color: "white",
         fontWeight: "bold",
@@ -545,10 +482,8 @@ const styles = StyleSheet.create({
         //borderColor: '#fff'
     },
     modalView: {
-        margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        padding: 35,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {

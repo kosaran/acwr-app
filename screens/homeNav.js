@@ -15,7 +15,6 @@ import settings from './settings';
 import { auth, db} from "./Firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, getAuth} from "firebase/auth";
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
-
 const Stack = createMaterialBottomTabNavigator();
 var thisUser = {name: '', email: '', acwr: null, team:''}
 var athletes = []
@@ -39,7 +38,7 @@ function homeNav() {
       // https://firebase.google.com/docs/reference/js/firebase.User
       const uid = user.uid;
       setEmail(user.email)
-      //console.log(user.email)
+      console.log(user.email)
       getUser()
       getData()
       // ...
@@ -112,7 +111,6 @@ function homeNav() {
     } catch(e) {
       // error reading value
     }
-    console.log(global.data)
   }
 
   return (
@@ -128,20 +126,18 @@ function homeNav() {
               fontFamily: 'Cochin',
             },
           }}*/
-          activeColor="white"
-          //barStyle={{ backgroundColor: 'slateblue' }}
-          initialRouteName="LiNK"
-          shifting={true}
+          activeColor="black"
+          barStyle={{ backgroundColor: 'white' }}
         >
           
           <Stack.Screen 
-            name="Schedule" 
+            name="Home" 
             component={Home} 
             options={{
-              unmountOnBlur: true,
-              tabBarColor:'royalblue',
+              // unmountOnBlur: true,
+              tabBarColor:'white',
               tabBarIcon: ({ color }) => (
-                <MaterialIcons name='format-list-bulleted' size={24} color={color}></MaterialIcons>
+                <MaterialIcons name='home' size={24} color={"black"}></MaterialIcons>
               ),
             }}
             listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
@@ -150,11 +146,11 @@ function homeNav() {
             name="Calendar" 
             component={Calendar} 
             options={{
-              unmountOnBlur: true,
+              // unmountOnBlur: true,
               tabBarLabel: 'Calendar',
-              tabBarColor:'coral',
+              tabBarColor:'white',
               tabBarIcon: ({ color }) => (
-                <MaterialIcons name='calendar-today' size={24} color={color}></MaterialIcons>
+                <MaterialIcons name='calendar-today' size={24} color={"black"}></MaterialIcons>
               ),
             }}
             listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
@@ -163,15 +159,16 @@ function homeNav() {
             name="Share" 
             component={share} 
             options={{
-              unmountOnBlur: true,
+              // unmountOnBlur: true,
               tabBarLabel: 'Share',
-              tabBarColor:'orange',
+              tabBarColor:'white',
               tabBarIcon: ({ color }) => (
-                <MaterialIcons name='people' size={24} color={color}></MaterialIcons>
+                <MaterialIcons name='people' size={24} color={"black"}></MaterialIcons>
               ),
             }}
             listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
           />
+         
           {/*<Stack.Screen 
             name="Settings" 
             component={settings} 

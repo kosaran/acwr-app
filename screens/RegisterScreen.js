@@ -22,6 +22,7 @@ import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } fro
 const RegisterScreen = ({navigation}) =>{
   const[email, setEmail] = useState('');
   const[name, setName] = useState('');
+  const[team, setTeam] = useState('');
   const[imageURL, setImageURL] = useState('');
   const[password, setPassword] = useState('');
   const register = () =>
@@ -48,36 +49,52 @@ const RegisterScreen = ({navigation}) =>{
     });
     return (
       <View style={styles.container}>
-        <Input
-        placeholder = 'Enter Name'
-        label = 'Name'
-        leftIcon = {{type: 'material', name:'badge'}}
-        value = {name}
-        onChangeText = {text => setName(text)}
-        />
-        <Input
-        placeholder = 'Enter Email'
-        label = 'Email'
-        leftIcon = {{type: 'material', name:'email'}}
-        value = {email}
-        onChangeText = {text => setEmail(text)}
-        />
-        <Input
-        placeholder = 'Enter Password'
-        label = 'Password'
-        leftIcon = {{type: 'material', name:'lock'}}
-        value = {password}
-        onChangeText = {text => setPassword(text)}
-        secureTextEntry
-        />
-        <Input
+        <View style = {{flex:2, justifyContent:'space-evenly'}}>
+          <Input
+          placeholder = 'Enter Name'
+          label = 'Name'
+          leftIcon = {{type: 'material', name:'badge'}}
+          value = {name}
+          onChangeText = {text => setName(text)}
+          />
+          <Input
+          placeholder = 'Enter Team Code'
+          label = 'Team'
+          leftIcon = {{type: 'material', name:'people'}}
+          value = {name}
+          onChangeText = {text => setTeam(text)}
+          />
+          <Input
+          placeholder = 'Enter Email'
+          label = 'Email'
+          leftIcon = {{type: 'material', name:'email'}}
+          value = {email}
+          onChangeText = {text => setEmail(text)}
+          />
+          <Input
+          placeholder = 'Enter Password'
+          label = 'Password'
+          leftIcon = {{type: 'material', name:'lock'}}
+          value = {password}
+          onChangeText = {text => setPassword(text)}
+          secureTextEntry
+          />
+        </View>
+        
+        {/*<Input
         placeholder = 'Enter Image'
         label = 'Image'
         leftIcon = {{type: 'material', name:'face'}}
         value = {imageURL}
         onChangeText = {text => setImageURL(text)}
-        />
-        <Button title = 'Register' style = {styles.button} onPress = {register}/>
+    />*/}
+        <View style = {{flex:1, justifyContent:'center', alignSelf:'center'}}>
+          <TouchableOpacity style = {styles.button} onPress = {register}>
+            <Text style = {styles.buttonText}>
+              Register  
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     )
   }
@@ -92,25 +109,35 @@ const RegisterScreen = ({navigation}) =>{
     },
     nameInput: {
       height: offset * 2,
-  
       margin: offset,
       paddingHorizontal: offset,
       borderColor: '#111111',
       borderWidth: 1,
     },
-    buttonText: {
-      marginLeft: offset,
-      fontSize: offset,
-    },
-    button:{
-      width:200,
-      marginTop: 10,
-    },
     container:{
       flex:1,
-      alignItems: 'center',
+      //alignItems: 'center',
       padding:10,
-    }
+      backgroundColor: 'white'
+    },
+    buttonText: {
+      // marginLeft: offset,
+      // fontSize: offset,
+      color: 'black',
+      textAlign: 'center',
+      fontSize: 18,
+      fontWeight: '500',
+    },
+    button:{
+      //justifyContent:,
+      width:320,
+      height:45,
+      marginTop: 10,
+      borderRadius: 8,
+      borderColor: 'black',
+      borderWidth: 2,
+      justifyContent: 'center'
+    },
   });
   
   export default RegisterScreen;

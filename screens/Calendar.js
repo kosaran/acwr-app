@@ -4,6 +4,7 @@ import CalendarPicker from 'react-native-calendar-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Paragraph } from 'react-native-paper';
+import { color } from 'react-native-elements/dist/helpers';
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)
 const nowDate = new Date(); 
@@ -18,7 +19,8 @@ const customDatesStyles = [
   {
     date:  new Date(),
     // Random colors
-    style: {backgroundColor: '#'+('#00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6)},
+    //style: {backgroundColor: '#'+('#00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6)},
+    style: {backgroundColor: 'lightgrey'},
     textStyle: {color: 'black'}, // sets the font color
     containerStyle: [], // extra styling for day container
     allowDisabled: true, // allow custom style to apply to disabled dates
@@ -87,7 +89,12 @@ export default class Calendar extends Component {
       <View style={styles.container}>
         <CalendarPicker
           onDateChange={this.onDateChange}
-          customDatesStyles={customDatesStyles}
+          todayBackgroundColor = 'lightgrey'
+          todayTextStyle={{color: 'black'}}
+          selectedDayColor="black"
+          selectedDayTextColor="white"
+          
+          //customDatesStyles={customDatesStyles}
         />
         <View style={styles.dateInfo}>
           <View>

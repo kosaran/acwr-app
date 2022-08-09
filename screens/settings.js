@@ -123,13 +123,13 @@ const settings = ({navigation}) => {
                         onValueChange={(itemValue, itemIndex) =>
                             setSelectedLanguage(itemValue)
                         }>
-                        <Picker.Item label="Java" value="java" />
-                        <Picker.Item label="JavaScript" value="js" />
+                        <Picker.Item label="Toronto Racers" value="java" />
+                        <Picker.Item label="Varisty Blues" value="js" />
                     </Picker>
                 </View>
                 <View style={[{padding:30}]}>
                     <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {clearData}/>
-                    <Button title = 'Sign Out' style = {styles.button} onPress = {signOut}/>
+                    <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
                 </View>
             </View>
             <Modal

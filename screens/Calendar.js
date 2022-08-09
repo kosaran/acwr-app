@@ -91,7 +91,7 @@ export default class Calendar extends Component {
           onDateChange={this.onDateChange}
           todayBackgroundColor = 'lightgrey'
           todayTextStyle={{color: 'black'}}
-          selectedDayColor="black"
+          selectedDayColor="dimgray"
           selectedDayTextColor="white"
           
           //customDatesStyles={customDatesStyles}

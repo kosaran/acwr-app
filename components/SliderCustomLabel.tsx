@@ -20,6 +20,23 @@ function LabelBase(props)
     );
 }
 
+function LabelBaseTwo(props)
+{
+    const { position, value } = props;
+
+    return (
+        <View
+            style={[
+                styles.sliderLabelTwo,
+                {
+                    left: position - width / 2,
+                },
+            ]}>
+            <Text style={styles.sliderLabelText}>{value}</Text>
+        </View>
+    );
+}
+
 export default function SliderCustomLabel(textTransformer: (value: number) => string)
 {
     return function (props)
@@ -31,6 +48,8 @@ export default function SliderCustomLabel(textTransformer: (value: number) => st
             twoMarkerLeftPosition,
         } = props;
 
+        //oneMarkerLeftPosition.top = oneMarkerLeftPosition.top - 60
+
         console.log({props, oneMarkerLeftPosition, twoMarkerLeftPosition});
 
         return (
@@ -40,7 +59,7 @@ export default function SliderCustomLabel(textTransformer: (value: number) => st
                     value={textTransformer(oneMarkerValue)}
                 />
                 {twoMarkerValue ? 
-                    <LabelBase
+                    <LabelBaseTwo
                         position={twoMarkerLeftPosition}
                         value={textTransformer(twoMarkerValue)}
                     /> : null
@@ -54,8 +73,17 @@ const styles = StyleSheet.create({
     sliderLabel: {
         position: 'absolute',
         justifyContent: 'center',
+        top: -30,
+        //bottom: 5, 
+        width: width + 10,
+        height: width,
+    },
+    sliderLabelTwo: {
+        position: 'absolute',
+        justifyContent: 'center',
         top: 30,
-        width: width,
+        //bottom: 5, 
+        width: width + 10,
         height: width,
     },
     sliderLabelText: {

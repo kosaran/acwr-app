@@ -9,7 +9,7 @@ import {
 import {Input, Button} from 'react-native-elements';
 
 import { auth, db} from "./Firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore"; 
 
 //import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
@@ -39,6 +39,15 @@ const RegisterScreen = ({navigation}) =>{
           email: email,
           //password: password
         });
+        updateProfile(auth.currentUser, {
+          displayName: name, photoURL: "https://example.com/jane-q-user/profile.jpg"
+        }).then(() => {
+          // Profile updated!
+          // ...
+        }).catch((error) => {
+          // An error occurred
+          // ...
+        });
         navigation.navigate('LiNK')
         //navigation.replace('LiNK')
         //navigation.popToTop();
@@ -49,7 +58,6 @@ const RegisterScreen = ({navigation}) =>{
     });
     return (
       <View style={styles.container}>
-        <View style = {{flex:2, justifyContent:'space-evenly'}}>
           <Input
           placeholder = 'Enter Name'
           label = 'Name'
@@ -61,7 +69,7 @@ const RegisterScreen = ({navigation}) =>{
           placeholder = 'Enter Team Code'
           label = 'Team'
           leftIcon = {{type: 'material', name:'people'}}
-          value = {name}
+          value = {team}
           onChangeText = {text => setTeam(text)}
           />
           <Input
@@ -79,7 +87,7 @@ const RegisterScreen = ({navigation}) =>{
           onChangeText = {text => setPassword(text)}
           secureTextEntry
           />
-        </View>
+        
         
         {/*<Input
         placeholder = 'Enter Image'
@@ -88,13 +96,12 @@ const RegisterScreen = ({navigation}) =>{
         value = {imageURL}
         onChangeText = {text => setImageURL(text)}
     />*/}
-        <View style = {{flex:1, justifyContent:'center', alignSelf:'center'}}>
+        
           <TouchableOpacity style = {styles.button} onPress = {register}>
             <Text style = {styles.buttonText}>
               Register  
             </Text>
           </TouchableOpacity>
-        </View>
       </View>
     )
   }
@@ -116,7 +123,7 @@ const RegisterScreen = ({navigation}) =>{
     },
     container:{
       flex:1,
-      //alignItems: 'center',
+      alignItems: 'center',
       padding:10,
       backgroundColor: 'white'
     },

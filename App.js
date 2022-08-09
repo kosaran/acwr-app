@@ -96,10 +96,10 @@ const App = ({navigation}) => {
             })}
           //options={{ headerShown: false }}
         />
-        <Stack.Screen 
+        {/*<Stack.Screen 
           name="Home" 
           component={Home} 
-        />
+          />*/}
         <Stack.Screen 
           name="Register" 
           component={Register} 

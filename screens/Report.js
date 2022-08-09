@@ -43,10 +43,6 @@ function report({navigation, route}) {
     const [width, setWidth] = useState(280);
     const [selected, setSelected] = useState(null);
   
-    if (!selected) {
-      setSelected([min, max]);
-    }
-  
     // Callbacks
     const onLayout = (event) => {
       setWidth(event.nativeEvent.layout.width - SliderPad * 2);
@@ -84,15 +80,23 @@ function report({navigation, route}) {
             goalVar = 'I hope to...'
             commVar = 'What did I notice...'
             descVar = 'What did I do today...'
+            if (!selected) {
+                setSelected([min, max]);
+            }
         } else{
             goalVar = global.data.goals[global.data.date.indexOf(showDate())]
             commVar = global.data.com[global.data.date.indexOf(showDate())]
             descVar = global.data.desc[global.data.date.indexOf(showDate())]
             slideVar = global.data.percieved[global.data.date.indexOf(showDate())]
             wheelVar = global.data.time[global.data.date.indexOf(showDate())]
+            if (!selected) {
+                setSelected([min, global.data.time[global.data.date.indexOf(showDate())] / 60]);
+            }
+            
         }
     }
     editData()
+    
 
     const [desc, onChangeDesc] = React.useState(descVar);
     const [comm, onChangeComm] = React.useState(commVar);
@@ -410,7 +414,7 @@ function report({navigation, route}) {
                                     step={0.25}
                                     allowOverlap
                                     values={selected}
-                                    sliderLength={200}
+                                    sliderLength={250}
                                     onValuesChangeFinish={onValuesChangeFinish}
                                     enableLabel={true}
                                     customLabel={SliderCustomLabel(textTransformerTimes)}

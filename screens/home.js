@@ -13,11 +13,10 @@ import {
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import Carousel from 'react-native-snap-carousel';
 import CustomButton from '../components/CustomButton';
-import InNav from '../components/InNav';
-import { thisUser } from './homeNav';
+import { getAuth } from "firebase/auth";
 
-//import { data, thisUser } from './login';
-//import {thisUser} from './login';
+import InNav from '../components/InNav';
+
 
 const contacts = []
 var acwrCol = 'white'
@@ -83,6 +82,21 @@ function Home({navigation, route}) {
         }
     }
 
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user !== null) {
+        // The user object has basic properties such as display name, email, etc.
+        var displayName = user.displayName;
+        //const email = user.email;
+        //const photoURL = user.photoURL;
+        //const emailVerified = user.emailVerified;
+
+        // The user's ID, unique to the Firebase project. Do NOT use
+        // this value to authenticate with your backend server, if
+        // you have one. Use User.getToken() instead.
+        //const uid = user.uid;
+    }
+
     const renderItem = ({ item, index}) => (
 
           <View style={{
@@ -120,7 +134,7 @@ function Home({navigation, route}) {
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
             <View>
-                    <Text style={styles.welcometext}>Welcome, {thisUser.name} </Text>
+                    <Text style={styles.welcometext}>Welcome, {displayName} </Text>
             </View>
 
             <View style={{  justifyContent:'center'}}>

@@ -124,7 +124,7 @@ const login = ({navigation}) =>{
     if (user) {
       getData()
       getTeam()
-      navigation.navigate('LiNK',{acwr: Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100});
+      navigation.navigate('LiNK',{acwr: Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100, name: thisUser.name});
       //navigation.replace('LiNK');
     } else {
         navigation.canGoBack() && navigation.popToTop()

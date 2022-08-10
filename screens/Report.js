@@ -429,7 +429,7 @@ function report({navigation, route}) {
                                     unselectedStyle={{
                                         backgroundColor: "#EEF3F7",
                                     }}
-                                    />
+                                />
                                 {/*<CircleSlider
                                     dialRadius={60}
                                     btnRadius={25}

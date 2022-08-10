@@ -12,9 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //import { getAuth, onAuthStateChanged, signInWithEmailAndPassword  } from "firebase/auth";
 //import { auth } from './Firebase';
 import { auth, db} from "./Firebase";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, getAdditionalUserInfo } from "firebase/auth";
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
 import {Video} from 'expo-av'
+import { async } from '@firebase/util';
 
 
 //var data = {daily: [], acute:[], chronic :[]};
@@ -34,7 +35,7 @@ global.data = {
 
 //global [global.data, global.onChangeACWR] = React.useState();
 var allUsers = []
-var thisUser = {name: '', email: '', acwr: null, team:''}
+var thisUser = {name: '', email: '', acwr: null, team:'', teamID: null}
 var athletes = []
 
 const wait = (timeout) => {
@@ -55,32 +56,7 @@ const login = ({navigation}) =>{
         alert(errorMessage)
       }); 
     
-    getDocs(query(collection(db, "users"))).then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            //const allUsers = []
-            //console.log(doc.data().email);
-            if (doc.data().email == email){
-              thisUser.email = email
-              thisUser.name = doc.data().name
-              thisUser.acwr = doc.data().acwr
-              thisUser.team = doc.data().team
-            }
-            const user = {
-                email: doc.data().email,
-                name: doc.data().name,
-                acwr: doc.data().acwr,
-                team: doc.data().team
-            }
-            console.log(thisUser.team);
-            allUsers.push(user)
-            getTeam(thisUser.team)
-            //console.log(doc.id, " => ", doc.data().name);
-            //console.log(thisUser.email);
-            //console.log(thisUser.name);
-            //setEv(events)
-        });
-    });
+    getUser()
   }
 
   const getTeam = async (team) => {
@@ -90,8 +66,33 @@ const login = ({navigation}) =>{
     console.log('login',athletes)
   }
 
+  const getUser = async(email) => {
+    await getDocs(query(collection(db, "users"))).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          //const allUsers = []
+          console.log('doggggg' + email)
+          if (doc.data().email == email){
+            thisUser.email = email
+            thisUser.name = doc.data().name
+            thisUser.acwr = doc.data().acwr
+            thisUser.team = doc.data().team
+            thisUser.teamID = doc.data().teamID
+            console.log('ghost' + thisUser.teamID)
+            if (thisUser.teamID != null){
+              navigation.navigate('CoachHomeNav');
+            }
+            else{
+              navigation.navigate('LiNK',{acwr: Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100, name: thisUser.name});
+            }
+                }
+      });
+    });
+
+   
+  }
+
   const getData = async () => {
-    
     try {
         const jsonValue = await AsyncStorage.getItem('@storage_Key')
         jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -122,9 +123,11 @@ const login = ({navigation}) =>{
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
     if (user) {
+      getUser(user.email)
       getData()
       getTeam()
-      navigation.navigate('LiNK',{acwr: Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100, name: thisUser.name});
+      
+      //console.log('cattt' + getUser(user.email).resolve(value).toString())
       //navigation.replace('LiNK');
     } else {
         navigation.canGoBack() && navigation.popToTop()

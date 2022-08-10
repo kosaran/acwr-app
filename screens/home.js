@@ -22,7 +22,7 @@ const contacts = []
 var acwrCol = 'white'
 
 function Home({navigation, route}) {
-    console.log(global.data)
+    //console.log(global.data)
     const { width, height } = Dimensions.get('window');
 
     const goals = 

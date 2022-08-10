@@ -7,13 +7,17 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs();
+
 import Home from "./screens/home"
 import homeNav from './screens/homeNav';
 import login from './screens/login';
-import Register from './screens/RegisterScreen.js';
 import Settings from './screens/settings.js';
 import Report from './screens/Report';
 import ReportTwo from './screens/BodyPage'
+import RegisterNav from './screens/RegisterNav'
+import CoachHomeNav from './screens/CoachScreens/CoachHomeNav'
 
 const Stack = createNativeStackNavigator();
 
@@ -101,8 +105,37 @@ const App = ({navigation}) => {
           component={Home} 
           />*/}
         <Stack.Screen 
+          name="CoachHomeNav" 
+          component={CoachHomeNav} 
+          options={({ navigation }) => ({
+            //headerTitle: 'ACWR',
+            headerRight: () => (
+              <TouchableOpacity onPress={() => 
+                //alert('This is a button!')
+                //navigation.navigate('Register')
+                navigation.navigate('Settings')
+                //signOut()
+              }>
+                  <MaterialIcons name='settings' size={30} color="black">
+                  </MaterialIcons>
+              </TouchableOpacity>
+            ),
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => 
+                //alert('This is a button!')
+                //navigation.navigate('Register')
+                navigation.navigate('Report')
+                //signOut()
+              }>
+                  <MaterialIcons name='add' size={30} color="black">
+                  </MaterialIcons>
+              </TouchableOpacity>
+            ),
+          })}
+        />
+        <Stack.Screen 
           name="Register" 
-          component={Register} 
+          component={RegisterNav} 
         />
         <Stack.Screen 
           name="Settings" 

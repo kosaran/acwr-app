@@ -37,16 +37,25 @@ const RegisterScreen = ({navigation}) =>{
         setDoc(doc(db, "users", email), {
           name: name,
           email: email.toLowerCase(),
-          team: '4ywTWkPfTDT20ojJcx1c'
+          team: team
           //password: password
         });
 
         //console.log('register' + email)
-        updateDoc(doc(db, "teams", '4ywTWkPfTDT20ojJcx1c'), {
-          athletes: arrayUnion({acwr: null, email: email, name: name})
-          //password: password
-        });
-      
+        setDoc(doc(db, "teams", team, 'athletes',  email.toLowerCase()), {
+          acwr: 1, 
+          name: name
+        })
+        
+        //updateDoc(doc(db, "teams", team), {
+        //  athletes: arrayUnion({acwr: 1, email: email, name: name})
+        //})
+        /*.catch(error => {   
+          switch(error.code) {
+            case 'auth/email-already-in-use':
+                  Alert.alert('Email already in use !')
+                  break;
+        }})*/
 
         updateProfile(auth.currentUser, {
           displayName: name, photoURL: "https://example.com/jane-q-user/profile.jpg"

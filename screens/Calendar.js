@@ -5,6 +5,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Paragraph } from 'react-native-paper';
 import { color } from 'react-native-elements/dist/helpers';
+import { athletes } from './homeNav';
+import { thisUser } from './login';
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)
 const nowDate = new Date(); 

@@ -40,7 +40,7 @@ function homeNav() {
       const uid = user.uid;
       setEmail(user.email)
       //console.log(user.email)
-      getUser()
+      getUser(user.email)
       getData()
       // ...
     } else {
@@ -49,9 +49,9 @@ function homeNav() {
     }
   });
 
-  const getUser = async () =>{
+  const getUser = async (email) =>{
     //console.log('tet',email);
-    getDocs(query(collection(db, "users"))).then((querySnapshot) => {
+    await getDocs(query(collection(db, "users"))).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           //const allUsers = []
@@ -62,23 +62,26 @@ function homeNav() {
             thisUser.acwr = doc.data().acwr
             thisUser.team = doc.data().team
           }
-          const user = {
-              email: doc.data().email,
-              name: doc.data().name,
-              acwr: doc.data().acwr,
-              team: doc.data().team
-          }
-          //console.log('tem', thisUser);
+          //console.log('timmmyyy', thisUser.team);
           //allUsers.push(user)
-          getTeam(thisUser.team)
       });
   });
+  getTeam(thisUser.team)
   }
   
   const getTeam = async (team) => {
-    const docRef = doc(db, "teams", team);
-    const docSnap = await getDoc(docRef);
-    athletes = docSnap.data().athletes
+    const querySnapshot = await getDocs(collection(db, "teams", team, 'athletes'));
+    var players = []
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      players.push(doc.data())
+      //athletes.push('text')
+    });
+    athletes = players
+
+    //const docRef = doc(db, "teams", team);
+    //const docSnap = await getDoc(docRef);
+    //athletes = docSnap.data().athletes
     //console.log('login',athletes)
   }
 

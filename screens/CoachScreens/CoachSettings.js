@@ -106,9 +106,11 @@ const CoachSettings = ({navigation}) => {
                     <Text>
                         Team
                     </Text>
-                    <Text>
-                        {thisUser.teamID}
-                    </Text>
+                    <TextInput
+                        style={styles.input}
+                        value={thisUser.teamID}
+                        clearButtonMode={true}
+                    /> 
                     
                 </View>
                 <View style={[{padding:30}]}>

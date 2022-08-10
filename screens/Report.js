@@ -11,7 +11,8 @@ import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import SliderCustomLabel from '../components/SliderCustomLabel';
 
 import {db} from "./Firebase";
-import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore"; 
+import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"; 
+import { thisUser } from './homeNav';
 
 
 const textTransformerTimes = (value) => {
@@ -96,7 +97,6 @@ function report({navigation, route}) {
         }
     }
     editData()
-    
 
     const [desc, onChangeDesc] = React.useState(descVar);
     const [comm, onChangeComm] = React.useState(commVar);
@@ -104,11 +104,11 @@ function report({navigation, route}) {
     const [slide, onSlide] = React.useState(slideVar);
     const [time, onChangeTime] = React.useState(wheelVar);
     const [displayACWR, onChangeACWR] = React.useState(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100);
-    console.log(time+'tim')
     
+    //console.log(time+'tim')
     //const [date, setDate] = useState(new Date())
     //const [open, setOpen] = useState(false)
-
+    
     useLayoutEffect(() => {
        navigation.setOptions({
            headerRight:()=> (
@@ -221,6 +221,10 @@ function report({navigation, route}) {
                 global.data.desc.push(null)
                 global.data.com.push(null)
                 global.data.goals.push(null)
+                setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                    acwr: acwrNew, 
+                    name: thisUser.name
+                })
             }
             global.data.fullDate.push(...getDaysArray(nowDate, pastDate))
             global.data.date.push(...getDaysArrayShort(nowDate, pastDate))
@@ -239,6 +243,10 @@ function report({navigation, route}) {
                 global.data.desc.push(desc)
                 global.data.com.push(comm)
                 global.data.goals.push(goal)
+                setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                    acwr: acwrNew, 
+                    name: thisUser.name
+                })
             } else{
                 //global.data.date[global.data.date.indexOf(showDate())] = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate()
                 //global.data.fullDate[global.data.date.indexOf(showDate())] = nowDate
@@ -257,6 +265,10 @@ function report({navigation, route}) {
                     global.data.chronic[i] = cur * (2/22) + (1 - 2/22) * global.data.chronic[i - 1]
                     global.data.acwr[i] = global.data.acute[i]/global.data.chronic[i]
                 }
+                setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                    acwr: acwrNew, 
+                    name: thisUser.name
+                })
             }
         }
         storeData(global.data)

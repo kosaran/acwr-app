@@ -79,6 +79,10 @@ const settings = ({navigation}) => {
         //console.log(global.data)
     }
 
+    const teams = (team) => (
+        <Picker.Item label={team} value={team} />
+    )
+
     const alert = (s) => {
         if (s) {
           return <MaterialIcons name='circle' size={50} color="slateblue"></MaterialIcons>;
@@ -123,8 +127,9 @@ const settings = ({navigation}) => {
                         onValueChange={(itemValue, itemIndex) =>
                             setSelectedLanguage(itemValue)
                         }>
-                        <Picker.Item label="Toronto Racers" value="java" />
-                        <Picker.Item label="Varisty Blues" value="js" />
+                        {teams(thisUser.team)}
+                        {/*<Picker.Item label="Toronto Racers" value="java" />
+                        <Picker.Item label="Varisty Blues" value="js" />*/}
                     </Picker>
                 </View>
                 <View style={[{padding:30}]}>

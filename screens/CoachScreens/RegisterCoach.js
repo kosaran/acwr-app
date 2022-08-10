@@ -52,7 +52,7 @@ const RegisterCoachScreen = ({navigation}) =>{
         });
         setDoc(doc(db, "users", email), {
             name: name,
-            email: email,
+            email: email.toLowerCase(),
             teamID: docRef.id,
             //password: password
           });

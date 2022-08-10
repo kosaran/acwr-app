@@ -3,11 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Home from "../home"
-import Report from '../Report';
 import share from '../share'
-import History from '../History';
-import Calendar from '../Calendar'
+import CoachCalendar from './CoachCalendar';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import CoachSettings from './CoachSettings';
@@ -90,7 +87,7 @@ function CoachHomeNav() {
     >
       <Stack.Screen 
         name="Calendar" 
-        component={Calendar} 
+        component={CoachCalendar} 
         options={{
           // unmountOnBlur: true,
           tabBarLabel: 'Calendar',

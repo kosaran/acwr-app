@@ -71,7 +71,7 @@ const login = ({navigation}) =>{
       querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           //const allUsers = []
-          console.log('doggggg' + email)
+          //console.log('doggggg' + email)
           if (doc.data().email == email){
             thisUser.email = email
             thisUser.name = doc.data().name

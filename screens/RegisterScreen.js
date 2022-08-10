@@ -10,13 +10,13 @@ import {Input, Button} from 'react-native-elements';
 
 import { auth, db} from "./Firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore"; 
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc, arrayUnion} from "firebase/firestore"; 
+import { athletes } from './login';
 
 //import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
 //const auth = getAuth();
 //import auth from "@react-native-firebase/auth"
 //import { auth } from './Firebase';
-
 
 
 const RegisterScreen = ({navigation}) =>{
@@ -36,9 +36,18 @@ const RegisterScreen = ({navigation}) =>{
         //});
         setDoc(doc(db, "users", email), {
           name: name,
-          email: email,
+          email: email.toLowerCase(),
+          team: '4ywTWkPfTDT20ojJcx1c'
           //password: password
         });
+
+        //console.log('register' + email)
+        updateDoc(doc(db, "teams", '4ywTWkPfTDT20ojJcx1c'), {
+          athletes: arrayUnion({acwr: null, email: email, name: name})
+          //password: password
+        });
+      
+
         updateProfile(auth.currentUser, {
           displayName: name, photoURL: "https://example.com/jane-q-user/profile.jpg"
         }).then(() => {

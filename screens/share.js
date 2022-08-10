@@ -160,7 +160,8 @@ function Share({navigation}) {
             <View style = {{flexDirection: 'row'}}>
                 <View style = {{flex:7}}>
                     <Searchbar
-                        placeholder= {'search '+ thisUser.team}
+                        //placeholder= {'search '+ thisUser.team}
+                        placeholder= {'SEARCH'}
                         onChangeText={onChangeSearch}
                         value={searchQuery}
                         elevation={0}

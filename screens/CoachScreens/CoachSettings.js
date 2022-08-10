@@ -106,15 +106,10 @@ const CoachSettings = ({navigation}) => {
                     <Text>
                         Team
                     </Text>
-                    <Picker
-                        style={[{backgroundColor:'white'}]}
-                        selectedValue={selectedLanguage}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setSelectedLanguage(itemValue)
-                        }>
-                        <Picker.Item label="Toronto Racers" value="java" />
-                        <Picker.Item label="Varisty Blues" value="js" />
-                    </Picker>
+                    <Text>
+                        {thisUser.teamID}
+                    </Text>
+                    
                 </View>
                 <View style={[{padding:30}]}>
                     <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {clearData}/>

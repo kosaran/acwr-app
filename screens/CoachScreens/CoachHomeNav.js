@@ -10,7 +10,7 @@ import History from '../History';
 import Calendar from '../Calendar'
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import settings from '../settings';
+import CoachSettings from './CoachSettings';
 
 import { auth, db} from "../Firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, getAuth} from "firebase/auth";

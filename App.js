@@ -18,6 +18,7 @@ import Report from './screens/Report';
 import ReportTwo from './screens/BodyPage'
 import RegisterNav from './screens/RegisterNav'
 import CoachHomeNav from './screens/CoachScreens/CoachHomeNav'
+import CoachSettings from './screens/CoachScreens/CoachSettings';
 
 const Stack = createNativeStackNavigator();
 
@@ -108,12 +109,12 @@ const App = ({navigation}) => {
           name="CoachHomeNav" 
           component={CoachHomeNav} 
           options={({ navigation }) => ({
-            //headerTitle: 'ACWR',
+            headerTitle: 'ACWR',
             headerRight: () => (
               <TouchableOpacity onPress={() => 
                 //alert('This is a button!')
                 //navigation.navigate('Register')
-                navigation.navigate('Settings')
+                navigation.navigate('CoachSettings')
                 //signOut()
               }>
                   <MaterialIcons name='settings' size={30} color="black">
@@ -144,6 +145,10 @@ const App = ({navigation}) => {
         <Stack.Screen 
           name="ReportTwo" 
           component={ReportTwo} 
+        />
+        <Stack.Screen 
+        name="CoachSettings" 
+        component={CoachSettings} 
         />
         <Stack.Screen 
             name="Report" 

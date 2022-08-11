@@ -58,6 +58,35 @@ function report({navigation, route}) {
     var slideVar = 5
     var wheelVar = 0
 
+    var getDaysArray = function(end, start) {
+        for(var arr=[],dt=new Date(start); dt<new Date(end); dt.setDate(dt.getDate()+1)){
+            arr.push(new Date(dt));
+        }
+        console.log(arr.slice(1))
+        return arr.slice(1);
+        
+        /*const dates = [];
+        const currentDate = start;
+        console.log(start)
+        console.log(end)
+        while (currentDate < end) {
+            dates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        dates.push(end);
+        console.log(dates)
+        return dates;*/
+    };
+
+    var getDaysArrayShort = function(end, start) {
+        for(var arr=[],dt=new Date(start); dt<new Date(end); dt.setDate(dt.getDate()+1)){
+            const nowDate = new Date(dt)
+            arr.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
+        }
+        console.log(arr.slice(1))
+        return arr.slice(1);
+    };
+
     const showDate = () =>{
         if (route.params == null){
             const day = new Date()
@@ -208,8 +237,8 @@ function report({navigation, route}) {
         console.log(Difference_In_Days)
 
         if (Math.round(Difference_In_Days) > 1) {
-            console.log('if')
-            for (let i = 0; i < Difference_In_Days; i++) {
+            console.log('differnce in days' + Difference_In_Days)
+            for (let i = 0; i < Difference_In_Days - 1; i++) {
                 acuteNew = (0 * 0.25) + (0.75 * acutePast) 
                 chronicNew = 0 * (2/22) + (1 - 2/22) * chronicPast
                 acwrNew = acuteNew/chronicNew
@@ -221,13 +250,44 @@ function report({navigation, route}) {
                 global.data.desc.push(null)
                 global.data.com.push(null)
                 global.data.goals.push(null)
-                setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
-                    acwr: acwrNew, 
-                    name: thisUser.name
-                })
+                acutePast = global.data.acute[global.data.acute.length - 1]
+                chronicPast = global.data.chronic[global.data.chronic.length - 1]
             }
+            console.log(...getDaysArray(nowDate, pastDate))
             global.data.fullDate.push(...getDaysArray(nowDate, pastDate))
             global.data.date.push(...getDaysArrayShort(nowDate, pastDate))
+
+            //var current = time * slide
+            var current = ((selected[1] - selected[0])*60) * slide
+            var acwrNew = 0
+            var acuteNew = 0
+            var chronicNew = 0
+
+            if (global.data.date.length === 0){
+                acwrNew = 1
+                acuteNew = current
+                chronicNew = current
+            }
+            else{
+                acuteNew = (current * 0.25) + (0.75 * acutePast) 
+                chronicNew = current * (2/22) + (1 - 2/22) * chronicPast
+                acwrNew = acuteNew/chronicNew
+            }
+            global.data.date.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
+            global.data.fullDate.push(nowDate)
+            global.data.acute.push(acuteNew)
+            //global.data.time.push(time)
+            global.data.time.push((selected[1] - selected[0])*60)
+            global.data.chronic.push(chronicNew)
+            global.data.percieved.push(slide)
+            global.data.acwr.push(acwrNew)
+            global.data.desc.push(desc)
+            global.data.com.push(comm)
+            global.data.goals.push(goal)
+            setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                acwr: acwrNew, 
+                name: thisUser.name
+            })
         }
         else{
             if (global.data.date.indexOf(showDate()) == -1){
@@ -286,20 +346,7 @@ function report({navigation, route}) {
         getData()
     }
 
-    var getDaysArray = function(start, end) {
-        for(var arr=[],dt=new Date(start); dt<=new Date(end); dt.setDate(dt.getDate()+1)){
-            arr.push(new Date(dt));
-        }
-        return arr;
-    };
-
-    var getDaysArrayShort = function(start, end) {
-        for(var arr=[],dt=new Date(start); dt<=new Date(end); dt.setDate(dt.getDate()+1)){
-            const nowDate = new Date(dt)
-            arr.push(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
-        }
-        return arr;
-    };
+    
 
     /*const updateDaily = () => {
         const len = data.daily.length

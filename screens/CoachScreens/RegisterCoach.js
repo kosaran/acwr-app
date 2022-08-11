@@ -41,8 +41,10 @@ const RegisterCoachScreen = ({navigation}) =>{
         navigation.navigate('CoachHomeNav')
 
     }).catch((error) => {
-
-    });
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      alert(errorMessage)
+  });
 
     const createTeam = async (team, email) =>{
         const docRef = await addDoc(collection(db, "teams"), {

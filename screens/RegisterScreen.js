@@ -5,13 +5,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import {Input, Button} from 'react-native-elements';
 
 import { auth, db} from "./Firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc, arrayUnion} from "firebase/firestore"; 
+import { checkActionCode, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc, arrayUnion, getDoc} from "firebase/firestore"; 
 import { athletes } from './login';
+import { async } from '@firebase/util';
 
 //import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
 //const auth = getAuth();
@@ -25,8 +27,15 @@ const RegisterScreen = ({navigation}) =>{
   const[team, setTeam] = useState('');
   const[imageURL, setImageURL] = useState('');
   const[password, setPassword] = useState('');
-  const register = () =>
-    createUserWithEmailAndPassword(auth, email,password)
+
+  const register = async(getTeam) => {
+    console.log('blablabla')
+    const docSnap = await getDoc(doc(db, 'teams', getTeam));
+    if (docSnap.exists() == false) {
+      alert('TEAM DOES NOT EXIST')
+    } else {
+      // doc.data() will be undefined in this case
+    createUserWithEmailAndPassword(auth, email, password) 
     .then((userCredential) => {
         //var user = userCredential.user;
         //user.updateProfile({
@@ -42,10 +51,12 @@ const RegisterScreen = ({navigation}) =>{
         });
 
         //console.log('register' + email)
+        
         setDoc(doc(db, "teams", team, 'athletes',  email.toLowerCase()), {
           acwr: 1, 
           name: name
         })
+       
         
         //updateDoc(doc(db, "teams", team), {
         //  athletes: arrayUnion({acwr: 1, email: email, name: name})
@@ -70,10 +81,14 @@ const RegisterScreen = ({navigation}) =>{
         //navigation.replace('LiNK')
         //navigation.popToTop();
     }).catch((error) => {
-        //var errorCode = error.code;
-        //var errorMessage = error.message;
-        //alert(errorMessage)
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        alert(errorMessage)
     });
+  }
+}
+
+
     return (
       <View style={styles.container}>
           <Input
@@ -115,7 +130,7 @@ const RegisterScreen = ({navigation}) =>{
         onChangeText = {text => setImageURL(text)}
     />*/}
         
-          <TouchableOpacity style = {styles.button} onPress = {register}>
+          <TouchableOpacity style = {styles.button} onPress = {() => register(team)}>
             <Text style = {styles.buttonText}>
               Register  
             </Text>

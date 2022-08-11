@@ -53,7 +53,8 @@ const login = ({navigation}) =>{
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        alert(errorMessage)
+        //alert(errorMessage)
+        alert('Email or Password Invalid')
       }); 
     
     getUser()
@@ -88,8 +89,6 @@ const login = ({navigation}) =>{
                 }
       });
     });
-
-   
   }
 
   const getData = async () => {
@@ -178,8 +177,6 @@ const login = ({navigation}) =>{
       <View><Text style={styles.buttontwoText}>Register</Text></View>
       </TouchableOpacity>
       </View>
-      
-      
       {/*<Button title = 'Sign In' style = {styles.button} onPress={()=>navigation.navigate('LiNK')}/>*/}
       {/* <Button title = 'Register' style = {styles.button} onPress={()=>navigation.navigate('Register')}/> */}
       </SafeAreaView>

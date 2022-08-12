@@ -213,11 +213,13 @@ const styles = StyleSheet.create({
         //color:'white'
     },
     input:{
-        paddingTop:5,
-        paddingLeft:5,
-        fontSize: 25,
+        padding:5,
+        marginBottom: 2,
+        fontSize: 15,
         borderWidth:1,
         fontFamily:'Helvetica',
+        height:50,
+        borderRadius: 8,
         //color:'white'
     },
     buttonOpen: {

@@ -44,6 +44,8 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         fontSize: 18,
         textAlign: 'center',
-        textDecorationLine: 'underline',
+        fontWeight: "600",
+        fontSize: 18,
+        textAlign: 'center',
     },
 })

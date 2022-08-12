@@ -64,6 +64,7 @@ const settings = ({navigation}) => {
             goals: [],
         }
         storeData(global.data)
+        
     }
 
     const storeData = async (value) => {
@@ -72,9 +73,11 @@ const settings = ({navigation}) => {
           await AsyncStorage.setItem('@storage_Key', jsonValue)
           console.log('delete')
           //console.log(jsonValue)
+          alert('sucess', 'sucess')
         } catch (e) {
           // saving error
           console.log(e)
+          alert('Failed')
         }
         //console.log(global.data)
     }

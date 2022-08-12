@@ -7,6 +7,9 @@ import { Paragraph } from 'react-native-paper';
 import { color } from 'react-native-elements/dist/helpers';
 import { athletes } from './homeNav';
 import { thisUser } from './login';
+import CustomButton from '../components/CustomButton';
+import { compareDocumentPosition } from 'domutils';
+import { Feather } from '@expo/vector-icons';
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)
 const nowDate = new Date(); 
@@ -23,7 +26,7 @@ const customDatesStyles = [
     // Random colors
     //style: {backgroundColor: '#'+('#00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6)},
     style: {backgroundColor: 'lightgrey'},
-    textStyle: {color: 'black'}, // sets the font color
+    textStyle: {color: 'white'}, // sets the font color
     containerStyle: [], // extra styling for day container
     allowDisabled: true, // allow custom style to apply to disabled dates
     info: 'cool'
@@ -98,17 +101,33 @@ export default class Calendar extends Component {
           
           //customDatesStyles={customDatesStyles}
         />
-        <View style={styles.dateInfo}>
-          <View>
-            <Text style={styles.boxText}>Date: { startDate }</Text>
-            <Text style={styles.boxText}>Time: { global.data.time[global.data.date.indexOf(startDate)] }</Text>
-            <Text style={styles.boxText}>Percieved: { global.data.percieved[global.data.date.indexOf(startDate)]}</Text>
-            <Text style={styles.boxText}>ACWR: { global.data.acwr[global.data.date.indexOf(startDate)] }</Text>
-            <Text style={styles.boxText}>Goals: { global.data.goals[global.data.date.indexOf(startDate)] }</Text>
-            <Text style={styles.boxText}>Info: { info }</Text>
-          </View>
-          <EditButton showButton={this.isInThePast(startDate)} />
+         <View style={styles.dateInfoBox}>
+
+      
+        <Text style={styles.datetext}>{ startDate }</Text>
+
+        <View style={styles.infobox}>
+        <Text style={styles.boxsubheading}>Time:</Text>
+        <Text style={styles.boxText}>{ global.data.time[global.data.date.indexOf(startDate)] }</Text>
         </View>
+
+        <View style={styles.infobox}>
+        <Text style={styles.boxsubheading}>Perceived Load:</Text>
+        <Text style={styles.boxText}>{ global.data.percieved[global.data.date.indexOf(startDate)]}</Text>
+        </View>
+
+        <View style={styles.infobox}>
+        <Text style={styles.boxsubheading}>ACWR:</Text>
+        <Text style={styles.boxText}>{ global.data.acwr[global.data.date.indexOf(startDate)] }</Text>
+        </View>
+
+        <TouchableOpacity style = {styles.button} onPress = {() => console.log('hello')}>
+            <Text style = {styles.buttontext}>
+              Edit  <Feather name="edit-2" size={16} color="black" />
+            </Text>
+          </TouchableOpacity>
+
+  </View>
       </View>
     );
   }
@@ -127,6 +146,24 @@ const styles = StyleSheet.create({
     padding: 10,
     flex:1,
     //marginTop: 10,
+    flexDirection:'column',
+  },
+  datetext: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: '800',
+    fontSize: 22,
+    marginVertical:20,  
+  },
+  boxsubheading : {
+    fontWeight: '700',
+    fontSize: 18,
+  },
+  dateInfoBox: {
+    borderTopWidth: 1,
+    margin:20,
+    padding: 10,
+    flex:1,
   },
   editButton:{
     flex:1,
@@ -139,7 +176,33 @@ const styles = StyleSheet.create({
     color: 'white',
     margin: 3,
     fontSize: 15
-  }
+  },
+  infobox:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 26,
+    paddingVertical:17,
+    borderTopWidth: 0.5,
+  },
+  boxText:{
+    color: 'black',
+    fontWeight: '800',
+    textAlign: "left",
+    fontSize: 20,
+  },
+  button: {
+    borderRadius: 8,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    padding: 13,
+    marginHorizontal: 25,
+},
+buttontext: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 16,
+}
 });
 
 //export default Calendar

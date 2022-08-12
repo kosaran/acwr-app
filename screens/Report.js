@@ -9,7 +9,7 @@ import CircleSlider from "react-native-circle-slider";
 import CustomButton from '../components/CustomButton';
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import SliderCustomLabel from '../components/SliderCustomLabel';
-
+import { Ionicons } from '@expo/vector-icons';
 import {db} from "./Firebase";
 import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"; 
 import { thisUser } from './homeNav';
@@ -435,8 +435,8 @@ function report({navigation, route}) {
                    onPress={Keyboard.dismiss}
                 >
                     <View  style={{flex: 1}}>
-                        <View style={{ flex: 3}}>
-                            <View style={[{flex: 1, flexDirection: "row", justifyContent: "space-around"}]}>
+                        <View style={{ flex: 1}}>
+                            <View style={[{flexDirection: "row", justifyContent: "space-around"}]}>
                                 {/*<Text style = {[styles.text]}>
                                     Current Status: {Math.round(data.acwr[data.acwr.length - 1] * 100) / 100}
                                 </Text>*/}
@@ -447,7 +447,7 @@ function report({navigation, route}) {
                                     Weekly Target: 1.2
                                 </Text>
                             </View>
-                            <View style={{flex: 7, alignItems: 'center', justifyContent:'space-evenly'}}>
+                            <View style={{flex: 1, alignItems: 'center', marginVertical: 10,}}>
                                 {/*<Text style = {[styles.text]}>
                                     Up Next?: Competiton Tuesday 
                                 </Text>*/}
@@ -478,7 +478,7 @@ function report({navigation, route}) {
                                     enableLabel={true}
                                     customLabel={SliderCustomLabel(textTransformerTimes)}
                                     trackStyle={{
-                                        height: 10,
+                                        height: 5,
                                         borderRadius: 8,
                                     }}
                                     markerOffsetY={3}
@@ -504,11 +504,9 @@ function report({navigation, route}) {
                                 />*/}
                             </View>
                         </View>
-                        <View style={{flex: 5, flexDirection: "column",
-                                            justifyContent:'space-evenly',
-                                            //backgroundColor:'red',
+                        <View style={{flex: 2, flexDirection: "column",
                                             paddingHorizontal: 10}}>
-                                    <Text style = {[styles.boxtitle]}>
+                                    <Text style = {[styles.titleText]}>
                                         Description 
                                     </Text>
                                     <TextInput
@@ -521,7 +519,7 @@ function report({navigation, route}) {
                                         //clearButtonMode={true}
                                         //placeholderTextColor='red'
                                     />       
-                                    <Text>
+                                    <Text style = {[styles.titleText]}>
                                         Comments
                                     </Text>
                                     <TextInput
@@ -530,7 +528,7 @@ function report({navigation, route}) {
                                         value={comm}
                                         clearButtonMode={true}
                                     />       
-                                    <Text>
+                                    <Text style = {[styles.titleText]}>
                                         Goals
                                     </Text>
                                     <TextInput
@@ -544,7 +542,7 @@ function report({navigation, route}) {
                         <View style={{ flex: 0.5, justifyContent:"flex-end"}}>
                             <View style={{ flex:1, flexDirection:'row'}}>
                             <TouchableOpacity
-                                style={[{ opacity: 1 }, {backgroundColor: 'black', height:40, flex:1, borderRightColor:'white', borderRightWidth: 2}]}
+                                style={[{ opacity: 1 }, {backgroundColor: 'white', borderRadius: 8, height:45, flex:1, borderColor:'black', borderWidth: 2, paddingTop: 7}]}
                                     //onPress={() => {
                                     //    setModalVisible(true)     
                                     //    }}
@@ -554,18 +552,18 @@ function report({navigation, route}) {
                                 }
                             >
                                 <Text style = {[styles.buttonText]}>
-                                    Submit
+                                    Submit <Ionicons name="enter-outline" size={20} color="black" />
                                 </Text>
                             </TouchableOpacity>
                         
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 style={[{ opacity: 1 }, {backgroundColor: 'black', height:40, flex:1}]}
                                 onPress={() => navigation.navigate('ReportTwo')}
                             >
                                 <Text style = {[styles.buttonText]}>
                                     {showDate()}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             </View>
                         </View>
                     </View>
@@ -592,10 +590,10 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch'
     },
     buttonText:{
-        color:'white',
-        fontSize: 25,
+        color:'black',
+        fontSize: 18,
         textAlign: 'center',
-        margin:5
+        fontWeight: '700',
     },
     centeredView: {
         flex: 1,
@@ -605,25 +603,25 @@ const styles = StyleSheet.create({
     },
     text:{
         margin:5,
-        //padding:5,
-        //paddingLeft:5,
-        fontSize: 15,
+        paddingTop: 10,
+        fontSize: 17,
+        fontWeight: '600',
         fontFamily:'Helvetica',
         textAlign: 'center'
         //color:'white'
     },
     input:{
-        paddingTop:5,
-        paddingLeft:5,
-        marginBottom: 20,
+        padding:5,
+        marginBottom: 2,
         fontSize: 15,
         borderWidth:1,
         fontFamily:'Helvetica',
-        height:50
+        height:50,
+        borderRadius: 8,
         //color:'white'
     },
     boxtitle:{
-        marginTop: 10
+        marginTop: 5,
     },    
     button: {
         backgroundColor: "#F194FF",
@@ -706,8 +704,9 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontSize: 14,
-        lineHeight: 24,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginTop: 25,
+        marginBottom: 10,
       },
     box: {
         height: 150,

@@ -133,11 +133,12 @@ function Home({navigation, route}) {
 
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
-            <View>
+  
+            {/* <View>
                     <Text style={styles.welcometext}>Welcome, {displayName} </Text>
-            </View>
+            </View> */}
 
-            <View style={{  justifyContent:'center'}}>
+            <View style={{  justifyContent:'space-between'}}>
 
                 <View style={{ marginVertical:12}}>
                 <View>
@@ -221,8 +222,10 @@ function Home({navigation, route}) {
                         <Rows data={tableData} textStyle={styles.text}/>
                     </Table>
             </View> */}
+            <View>
             <InNav style={{  alignSelf:'center'}} image={require('../assets/goals.jpg')} text='View Goals' />
             <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' />
+            </View>
         </SafeAreaView>
     );
 }

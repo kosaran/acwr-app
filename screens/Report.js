@@ -516,7 +516,7 @@ function report({navigation, route}) {
                                         onChangeText={onChangeDesc}
                                         value={desc}
                                         //maxLength={5}
-                                        //clearButtonMode={true}
+                                        clearButtonMode={true}
                                         //placeholderTextColor='red'
                                     />       
                                     <Text style = {[styles.titleText]}>

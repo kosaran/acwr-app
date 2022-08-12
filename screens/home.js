@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { StyleSheet, Button, Text, View, SafeAreaView, Platform, StatusBar, TouchableOpacity, FlatList, RefreshControl, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,24 +14,120 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 import Carousel from 'react-native-snap-carousel';
 import CustomButton from '../components/CustomButton';
 import { getAuth } from "firebase/auth";
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from 'expo-task-manager';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+});
+
+Notifications.scheduleNotificationAsync({
+  content: {
+    title: 'Remember to report your activity!',
+  },
+  trigger: {
+    seconds: 60 * 1,
+    repeats: true,
+  },
+});
 
 import InNav from '../components/InNav';
-
+import { async } from '@firebase/util';
 
 const contacts = []
-var acwrCol = 'white'
+
+const BACKGROUND_FETCH_TASK = 'background-fetch';
+
+// 1. Define the task by providing a name and the function that should be executed
+// Note: This needs to be called in the global scope (e.g outside of your React components)
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  const now = new Date.now();
+
+  console.log(`Got background fetch call at date: ${new Date(now).toISOString()}`);
+
+  // Be sure to return the successful result type!
+  return BackgroundFetch.BackgroundFetchResult.NewData;
+});
+
+// 2. Register the task at some point in your app by providing the same name, and some configuration options for how the background fetch should behave
+// Note: This does NOT need to be in the global scope and CAN be used in your React components!
+async function registerBackgroundFetchAsync() {
+  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+    minimumInterval: 60 * 1, // 15 minutes
+    stopOnTerminate: false, // android only,
+    startOnBoot: true, // android only
+  });
+}
+
+// 3. (Optional) Unregister tasks by specifying the task name
+// This will cancel any future background fetch calls that match the given name
+// Note: This does NOT need to be in the global scope and CAN be used in your React components!
+async function unregisterBackgroundFetchAsync() {
+  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+}
+
+var goals = []
 
 function Home({navigation, route}) {
-    //console.log(global.data)
-    const { width, height } = Dimensions.get('window');
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
-    const goals = 
-        [
-            {key: 'Improve tendon strength/elasticity'},
-            {key: 'Relaxed upper body and arm swing'},
-            {key: 'Increase stride length'},
-        ]   
-    
+      //console.log(global.data)
+  const [isRegistered, setIsRegistered] = useState(true);
+  const [status, setStatus] = useState(null);
+
+  const getGoals = async() => {
+    for (let i = 0; i < 3; i++) {
+      goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + global.data.goals[Math.floor(Math.random() * global.data.goals.length)]})
+    }
+  };
+
+  useEffect(() => {
+    getGoals()
+    checkStatusAsync();
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  const checkStatusAsync = async () => {
+    const status = await BackgroundFetch.getStatusAsync();
+    const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
+    setStatus(status);
+    setIsRegistered(isRegistered);
+  };
+
+  const toggleFetchTask = async () => {
+    if (isRegistered) {
+      await unregisterBackgroundFetchAsync();
+    } else {
+      await registerBackgroundFetchAsync();
+    }
+
+    checkStatusAsync();
+  };
+
+  const { width, height } = Dimensions.get('window'); 
+
     
     const tableHead = ['Day/Workout', 'Monday', 'Wednesday', 'Friday']
     const tableData = [
@@ -223,12 +319,75 @@ function Home({navigation, route}) {
                     </Table>
             </View> */}
             <View>
-            <InNav style={{  alignSelf:'center'}} image={require('../assets/goals.jpg')} text='View Goals' />
-            <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' />
+                {/*<Text>Your expo push token: {expoPushToken}</Text>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Text>Title: {notification && notification.request.content.title} </Text>
+                    <Text>Body: {notification && notification.request.content.body}</Text>
+                    <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
+                </View>*/}
+                {/*<Button
+                    title="Press to schedule a notification"
+                    onPress={async () => {
+                    await schedulePushNotification();
+                    }}
+                  />*/}
+                <View style={styles.goalstextbox}>
+                  <Text style={styles.goalstext}>
+                    Goals
+                  </Text>
+                  <FlatList 
+                            data={goals}
+                            renderItem={({item}) => <Text style={styles.goalstexttwo}>{item.key}</Text>}
+                  />
+                </View>
+                {/*<InNav style={{  alignSelf:'center'}} image={require('../assets/goals.jpg')} text='View Goals'/>*/}
+                <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' />
             </View>
         </SafeAreaView>
     );
 }
+
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "You've got mail! 📬",
+        body: 'Here is the notification body',
+        data: { data: 'goes here' },
+      },
+      trigger: { seconds: 2 },
+    });
+  }
+  
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    return token;
+  }
 
 const styles = StyleSheet.create({
     container: {
@@ -313,11 +472,27 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         textAlign: 'center',
     },
+    goalstextbox: {
+      marginLeft: 20,
+      marginRight: 20,
+      padding: 5,
+      borderWidth: 3,
+      borderColor: 'black'
+    },
     goalstext: {
-        paddingLeft: 10,
-        paddingRight: 10,
+        marginLeft: 2,
+        //marginRight: 10,
         fontWeight: '600',
-        paddingVertical: 2,
+        //paddingVertical: 2,
+        fontSize: 30,
+        //borderWidth: 5,
+        //borderColor: 'red'
+    },
+    goalstexttwo: {
+      marginLeft: 10,
+      fontWeight: '400',
+      paddingVertical: 2,
+      fontSize: 18,
     },
     roundButton1: {
         width: 60,
@@ -337,6 +512,7 @@ const styles = StyleSheet.create({
         margin: 5 
     }
 });
+
 
 export {contacts};
 export default Home;

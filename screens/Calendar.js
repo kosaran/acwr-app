@@ -16,22 +16,39 @@ const nowDate = new Date();
 const date = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate();
 //console.log(date)
 
+const pickCol = (s) =>{
+  if (0.9 <= s && s <= 1.3) {
+      return 'limegreen'
+    } else if (1.3 < s && s <= 1.5) {
+        return 'yellow'
+    } else {
+      return 'red'
+    }
+}
 
-
-//var today = moment();
-//var day = today.clone().startOf('month');
-const customDatesStyles = [
-  {
-    date:  new Date(),
+let customDatesStyles = [];
+for (let i = 0; i < global.data.date.length; i++) {
+  customDatesStyles.push({
+    date: new Date(global.data.date[i]),
     // Random colors
-    //style: {backgroundColor: '#'+('#00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6)},
-    style: {backgroundColor: 'lightgrey'},
+    style: {backgroundColor: pickCol(global.data.acwr[i])},
     textStyle: {color: 'white'}, // sets the font color
     containerStyle: [], // extra styling for day container
     allowDisabled: true, // allow custom style to apply to disabled dates
-    info: 'cool'
-  }
-];
+  });
+}
+
+
+/*while(day.add(1, 'day').isSame(today, 'month')) {
+  customDatesStyles.push({
+    date: day.clone(),
+    // Random colors
+    style: {backgroundColor: '#'+('#00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6)},
+    textStyle: {color: 'black'}, // sets the font color
+    containerStyle: [], // extra styling for day container
+    allowDisabled: true, // allow custom style to apply to disabled dates
+  });
+}*/
 
 
 export default class Calendar extends Component {
@@ -48,9 +65,10 @@ export default class Calendar extends Component {
   onDateChange(date) {
     const nowDate = new Date(date)
     this.setState({
+      //selectedStartDate: new Date(date).toDateString(),
       selectedStartDate: nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate(),
-      null: date.info
-      //selectedStartDate: new Date(date).setHours(0,0,0,0),
+      null: date.info,
+      
       //selectedStartDate: {year: new Date(date).getFullYear(), day: new Date(date).getDate()}
     });
   }
@@ -70,6 +88,21 @@ export default class Calendar extends Component {
     const test = today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate()
     return new Date(date) <= new Date(test);
   }
+
+  displayDate(date){
+    console.log(date)
+    if (date == ''){
+      return ''
+    }
+    const dateStr = new Date(date).toDateString(); // 'Fri Apr 10 2020'
+    const dateStrArr = dateStr.split(' '); // ['Fri', 'Apr', '10', '2020']
+    const year = [dateStrArr[3]]
+    year.unshift(',')
+
+    //dateStrArr.splice(1,2).push[', ']
+    //const str = dateStrArr.splice.join(' ')
+    return dateStrArr.splice(1,2).join(' ') + year.join(' ')
+  }
   
 
   render() {
@@ -77,7 +110,7 @@ export default class Calendar extends Component {
     const { selectedStartDate, info } = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
     const EditButton = ({showButton}) => (
-      <View style={styles.editButton}>
+      /*<View style={styles.editButton}>
         {showButton && 
           <TouchableOpacity onPress={() => 
             navigation.navigate('Report', {date: startDate})
@@ -85,6 +118,15 @@ export default class Calendar extends Component {
               <MaterialIcons name='edit' size={35} color="white">
               </MaterialIcons>
           </TouchableOpacity>
+        }
+      </View>*/
+      <View style = {{flex:1}}>
+        {showButton && 
+          <TouchableOpacity style = {styles.button} onPress = {() => navigation.navigate('Report', {date: startDate})}>
+          <Text style = {styles.buttontext}>
+            Edit  <Feather name="edit-2" size={16} color="black" />
+          </Text>
+        </TouchableOpacity>
         }
       </View>
     )
@@ -98,13 +140,12 @@ export default class Calendar extends Component {
           todayTextStyle={{color: 'black'}}
           selectedDayColor="dimgray"
           selectedDayTextColor="white"
-          
-          //customDatesStyles={customDatesStyles}
+          customDatesStyles={customDatesStyles}
         />
          <View style={styles.dateInfoBox}>
 
       
-        <Text style={styles.datetext}>{ startDate }</Text>
+        <Text style={styles.datetext}>{ this.displayDate(startDate) }</Text>
 
         <View style={styles.infobox}>
         <Text style={styles.boxsubheading}>Time:</Text>
@@ -118,14 +159,11 @@ export default class Calendar extends Component {
 
         <View style={styles.infobox}>
         <Text style={styles.boxsubheading}>ACWR:</Text>
-        <Text style={styles.boxText}>{ global.data.acwr[global.data.date.indexOf(startDate)] }</Text>
+        <Text style={styles.boxText}>{ Math.round(global.data.acwr[global.data.date.indexOf(startDate)]* 100) / 100 }</Text>
         </View>
+        <EditButton showButton={this.isInThePast(startDate)} />
 
-        <TouchableOpacity style = {styles.button} onPress = {() => console.log('hello')}>
-            <Text style = {styles.buttontext}>
-              Edit  <Feather name="edit-2" size={16} color="black" />
-            </Text>
-          </TouchableOpacity>
+        
 
   </View>
       </View>

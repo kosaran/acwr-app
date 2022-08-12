@@ -80,7 +80,7 @@ const App = ({navigation}) => {
 
     checkStatusAsync();
   };
-  toggleFetchTask()
+  //toggleFetchTask()
 
   const auth = getAuth();
   const [open, setOpen] = useState(false);

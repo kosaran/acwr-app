@@ -425,7 +425,7 @@ function report({navigation, route}) {
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
             {/*<DatePicker date={date} onDateChange={setDate} />*/}
             <KeyboardAvoidingView
-            keyboardVerticalOffset = {100}
+            keyboardVerticalOffset = {1}
             behavior='position'
             //behavior={Platform.OS === "ios" ? "padding" : "height"}
             //style={styles.container}

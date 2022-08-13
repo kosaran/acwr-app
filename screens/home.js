@@ -73,6 +73,8 @@ async function unregisterBackgroundFetchAsync() {
 }
 
 var goals = []
+const SLIDER_WIDTH = Dimensions.get('window').width + 80
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
 function Home({navigation, route}) {
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -126,8 +128,7 @@ function Home({navigation, route}) {
     checkStatusAsync();
   };
 
-  const { width, height } = Dimensions.get('window'); 
-
+ 
     
     const tableHead = ['Day/Workout', 'Monday', 'Wednesday', 'Friday']
     const tableData = [
@@ -136,29 +137,6 @@ function Home({navigation, route}) {
               ['Superset 2', 'Calf Bounds', 'Rows\nLateral Raises', 'Back Extension\nReverse Nordic'],
               ['Cool Down', 'Tibialis Raises', 'Rotator Cuff', 'Calf Raises']
             ]
-
-            const carouselItems= [
-                {
-                    title:"Item 1",
-                    text: "Text 1",
-                },
-                {
-                    title:"Item 2",
-                    text: "Text 2",
-                },
-                {
-                    title:"Item 3",
-                    text: "Text 3",
-                },
-                {
-                    title:"Item 4",
-                    text: "Text 4",
-                },
-                {
-                    title:"Item 5",
-                    text: "Text 5",
-                },
-              ]
 
     const chartLabels = () => {
         if ( global.data.date.length < 7){
@@ -193,29 +171,71 @@ function Home({navigation, route}) {
         //const uid = user.uid;
     }
 
-    const renderItem = ({ item, index}) => (
-
-          <View style={{
-              backgroundColor:'floralwhite',
-              borderRadius: 5,
-              height: 250,
-              //padding: 50,
-              marginLeft: 25,
-              marginRight: 25, 
-              }}>
-            <TouchableOpacity
-                            style={[styles.roundButton1,{borderColor:'limegreen'}]}
-                        >
-                            <Text>
-                                {
-                                    //Math.round(data.acwr[data.acwr.length - 1] * 100) / 100
-                                    Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100
-                                }
-                            </Text>
-            </TouchableOpacity>
-          </View>
-
-    )
+    const data = [
+      {
+        labels: chartLabels(),
+        data: global.data.acwr.slice(-7)
+      },
+      {
+        labels: global.data.date,
+        data: global.data.acwr
+      },
+    ];
+    
+    const CarouselCardItem = ({ item, index }) => {
+      return (
+        <View style={[styles.carousel,{justifyContent:'center', alignContent:'center'}]}  key={index}>
+          <LineChart
+          data={{
+          //labels: global.data.date.slice(-7),
+          //labels: chartLabels(),
+          labels: item.labels,
+          datasets: [
+              {
+              /*data: [
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100
+              ]*/
+              //data: global.data.acwr.slice(-7)
+              data: item.data
+              }
+          ]
+          }}
+          width={Dimensions.get("window").width - 50} // from react-native
+          height={240}
+          //yAxisLabel="$"
+          //yAxisSuffix="k"
+          yAxisInterval={1} // optional, defaults to 1
+          chartConfig={{
+          backgroundColor: "#fff",
+          backgroundGradientFrom: "#fff",
+          backgroundGradientTo: "#fff",
+          decimalPlaces: 2, // optional, defaults to 2dp
+          color: (opacity = 1) => `rgba(0, 69, 196, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(0, 39, 89, ${opacity})`,
+          style: {
+              borderRadius: 1
+          },
+          propsForDots: {
+              r: "3",
+              strokeWidth: "6",
+              stroke: "#001f59"
+          }
+          }}
+          bezier
+          style={{
+          marginVertical: 10,
+          borderRadius: 10
+          }}
+        />
+      </View>
+      )
+    }
+    const isCarousel = React.useRef(null)
 
     const pickCol = (s) =>{
         if (0.9 <= s && s <= 1.3) {
@@ -234,17 +254,14 @@ function Home({navigation, route}) {
                     <Text style={styles.welcometext}>Welcome, {displayName} </Text>
             </View> */}
 
-            <View style={{  justifyContent:'space-between'}}>
+            <View style={{flex: 2, justifyContent:'space-between'}}>
 
                 <View style={{ marginVertical:12}}>
                 <View>
                     <Text style={styles.centersubheading}>Current ACWR</Text>
                 </View>
                             <Text style={[styles.roundbuttontext1, {color: pickCol(Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100)}]}>
-                                {
-                                    //Math.round(data.acwr[data.acwr.length - 1] * 100) / 100
-                                    Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100
-                                }
+                                {Math.round(global.data.acwr[global.data.acwr.length - 1] * 100) / 100}
                             </Text>
                     </View>
                            
@@ -252,53 +269,19 @@ function Home({navigation, route}) {
                 <View>
                     <Text style={styles.centersubheading}>Load Progress</Text>
                 </View>
-                    <LineChart
-                        data={{
-                        //labels: ["January", "February", "March", "April", "May", "June"],
-                        //labels: global.data.date.slice(-7),
-                        labels: chartLabels(),
-                        datasets: [
-                            {
-                            /*data: [
-                                Math.random() * 100,
-                                Math.random() * 100,
-                                Math.random() * 100,
-                                Math.random() * 100,
-                                Math.random() * 100,
-                                Math.random() * 100
-                            ]*/
-                            data: global.data.acwr.slice(-7)
-                            //data: pastMonths()
-                            }
-                        ]
-                        }}
-                        width={Dimensions.get("window").width - 10} // from react-native
-                        height={225}
-                        //yAxisLabel="$"
-                        //yAxisSuffix="k"
-                        yAxisInterval={1} // optional, defaults to 1
-                        chartConfig={{
-                        backgroundColor: "#fff",
-                        backgroundGradientFrom: "#fff",
-                        backgroundGradientTo: "#fff",
-                        decimalPlaces: 2, // optional, defaults to 2dp
-                        color: (opacity = 1) => `rgba(0, 69, 196, ${opacity})`,
-                        labelColor: (opacity = 1) => `rgba(0, 39, 89, ${opacity})`,
-                        style: {
-                            borderRadius: 1
-                        },
-                        propsForDots: {
-                            r: "3",
-                            strokeWidth: "6",
-                            stroke: "#001f59"
-                        }
-                        }}
-                        bezier
-                        style={{
-                        marginVertical: 8,
-                        borderRadius: 10
-                        }}
-                />   
+                <View>
+                  <Carousel
+                      layout="tinder"
+                      layoutCardOffset={9}
+                      ref={isCarousel}
+                      data={data}
+                      renderItem={CarouselCardItem}
+                      sliderWidth={SLIDER_WIDTH}
+                      itemWidth={ITEM_WIDTH}
+                      inactiveSlideShift={0}
+                      useScrollView={true}
+                    />   
+                </View>
             </View>
                 {/* <View>
                         <Text style={styles.subheading}>Goals</Text>
@@ -318,7 +301,7 @@ function Home({navigation, route}) {
                         <Rows data={tableData} textStyle={styles.text}/>
                     </Table>
             </View> */}
-            <View>
+            <View style={{flex:1}}>
                 {/*<Text>Your expo push token: {expoPushToken}</Text>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text>Title: {notification && notification.request.content.title} </Text>
@@ -397,12 +380,25 @@ const styles = StyleSheet.create({
         //alignItems: 'center',
         //justifyContent: 'center',
     },
+    carousel:{
+        //backgroundColor: 'black',
+        borderRadius: 5,
+        width: ITEM_WIDTH,
+        paddingBottom: 20,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 3,
+        },
+        shadowOpacity: 0.29,
+        shadowRadius: 4.65,
+        elevation: 7,
+    },
     welcometext: {
         padding: 10,
         fontSize: 28,
         fontWeight: "600",
         marginBottom: 10,
-
     },
     roundButton1: {
         //justifyContent: 'center',
@@ -477,7 +473,8 @@ const styles = StyleSheet.create({
       marginRight: 20,
       padding: 5,
       borderWidth: 3,
-      borderColor: 'black'
+      borderColor: 'black',
+      height: 140
     },
     goalstext: {
         marginLeft: 2,

@@ -301,7 +301,7 @@ function Home({navigation, route}) {
                         <Rows data={tableData} textStyle={styles.text}/>
                     </Table>
             </View> */}
-            <View style={{flex:1}}>
+            <View style={{flex:1,}}>
                 {/*<Text>Your expo push token: {expoPushToken}</Text>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text>Title: {notification && notification.request.content.title} </Text>
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
       padding: 5,
       borderWidth: 3,
       borderColor: 'black',
-      height: 140
+      height: 130
     },
     goalstext: {
         marginLeft: 2,

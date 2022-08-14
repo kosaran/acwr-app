@@ -27,16 +27,7 @@ const pickCol = (s) =>{
 }
 
 let customDatesStyles = [];
-for (let i = 0; i < global.data.date.length; i++) {
-  customDatesStyles.push({
-    date: new Date(global.data.date[i]),
-    // Random colors
-    style: {backgroundColor: pickCol(global.data.acwr[i])},
-    textStyle: {color: 'white'}, // sets the font color
-    containerStyle: [], // extra styling for day container
-    allowDisabled: true, // allow custom style to apply to disabled dates
-  });
-}
+
 
 
 /*while(day.add(1, 'day').isSame(today, 'month')) {
@@ -60,6 +51,16 @@ export default class Calendar extends Component {
       info: null
     };
     this.onDateChange = this.onDateChange.bind(this);
+    for (let i = 0; i < global.data.date.length; i++) {
+      customDatesStyles.push({
+        date: new Date(global.data.date[i]),
+        // Random colors
+        style: {backgroundColor: pickCol(global.data.acwr[i])},
+        textStyle: {color: 'white'}, // sets the font color
+        containerStyle: [], // extra styling for day container
+        allowDisabled: true, // allow custom style to apply to disabled dates
+      });
+    }
   }
 
   onDateChange(date) {

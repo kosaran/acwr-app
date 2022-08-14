@@ -4,7 +4,7 @@ import React from 'react'
 const InNav = (props) => {
   return (
     <View>
-        <TouchableOpacity style={styles.navbutton}>
+        <TouchableOpacity style={styles.navbutton} onPress = {props.onPress}>
         {/* <Image
         style={{
             width=50,

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { StyleSheet, Button, Text, View, SafeAreaView, Platform, StatusBar, TouchableOpacity, FlatList, RefreshControl, Dimensions } from 'react-native';
+import { StyleSheet, Button, Text, View, SafeAreaView, Platform, StatusBar, TouchableOpacity, FlatList, RefreshControl, Dimensions} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -18,6 +18,8 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -91,6 +93,7 @@ function Home({navigation, route}) {
       goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + global.data.goals[Math.floor(Math.random() * global.data.goals.length)]})
     }
   };
+
 
   useEffect(() => {
     getGoals()
@@ -324,10 +327,15 @@ function Home({navigation, route}) {
                   />
                 </View>
                 {/*<InNav style={{  alignSelf:'center'}} image={require('../assets/goals.jpg')} text='View Goals'/>*/}
-                <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' />
+                <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' onPress={() => openLink()}/>
+                
             </View>
         </SafeAreaView>
     );
+}
+
+async function openLink() {
+    WebBrowser.openBrowserAsync('https://docs.google.com/document/d/1-AE1s9csIH2K-I1qxqjm1voYK95gGR6fGIg5ZtYK5CU/edit?usp=sharing')
 }
 
 async function schedulePushNotification() {

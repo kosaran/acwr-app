@@ -29,18 +29,26 @@ Notifications.setNotificationHandler({
     }),
 });
 
-Notifications.scheduleNotificationAsync({
-  content: {
-    title: 'Remember to report your activity!',
+
+
+Notifications.scheduleNotificationAsync(
+  {
+    content: {
+      title: 'Remember to report your activity!',
+      //data:{data: }
+    },
+    trigger: {
+      seconds: 60 * 1,
+      repeats: true,
+    },
   },
-  trigger: {
-    seconds: 60 * 1,
-    repeats: true,
-  },
-});
+);
+//Notifications.BackgroundNotificationsTask()
+//Notifications.cancelAllScheduledNotificationsAsync()
 
 import InNav from '../components/InNav';
 import { async } from '@firebase/util';
+import { removePushTokenSubscription } from 'expo-notifications';
 
 const contacts = []
 
@@ -78,7 +86,34 @@ var goals = []
 const SLIDER_WIDTH = Dimensions.get('window').width + 80
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
+const TASK_NAME = "BACKGROUND_TASK"
+
+TaskManager.defineTask(TASK_NAME, () => {
+  try {
+    // fetch data here...
+    const receivedNewData = "Simulated fetch " + Math.random()
+    console.log("My task ", receivedNewData)
+    return receivedNewData
+      ? BackgroundFetch.Result.NewData
+      : BackgroundFetch.Result.NoData
+  } catch (err) {
+    console.log('big error' + err)
+    return BackgroundFetch.Result.Failed
+  }
+})
+
 function Home({navigation, route}) {
+  
+RegisterBackgroundTask = async () => {
+  try {
+    await BackgroundFetch.registerTaskAsync(TASK_NAME, {
+      minimumInterval: 5, // seconds,
+    })
+    console.log("Task registered")
+  } catch (err) {
+    console.log("Task Register failed:", err)
+  }
+}
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -130,8 +165,6 @@ function Home({navigation, route}) {
 
     checkStatusAsync();
   };
-
- 
     
     const tableHead = ['Day/Workout', 'Monday', 'Wednesday', 'Friday']
     const tableData = [
@@ -250,6 +283,16 @@ function Home({navigation, route}) {
           }
     }
 
+    React.useEffect(() => {
+      const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+        //const url = response.notification.request.content.data.url;
+        //Linking.openURL(url);
+        navigation.navigate('Calendar')
+        //console.log('gooob' + url)
+      });
+      //return () => subscription.remove();
+    }, []);
+  
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
   
@@ -327,7 +370,10 @@ function Home({navigation, route}) {
                   />
                 </View>
                 {/*<InNav style={{  alignSelf:'center'}} image={require('../assets/goals.jpg')} text='View Goals'/>*/}
-                <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' onPress={() => openLink()}/>
+                <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' 
+                onPress={() => openLink()}
+                //onPress={() => removePushTokenSubscription(isRegistered)}
+                />
                 
             </View>
         </SafeAreaView>
@@ -337,17 +383,6 @@ function Home({navigation, route}) {
 async function openLink() {
     WebBrowser.openBrowserAsync('https://docs.google.com/document/d/1-AE1s9csIH2K-I1qxqjm1voYK95gGR6fGIg5ZtYK5CU/edit?usp=sharing')
 }
-
-async function schedulePushNotification() {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "You've got mail! 📬",
-        body: 'Here is the notification body',
-        data: { data: 'goes here' },
-      },
-      trigger: { seconds: 2 },
-    });
-  }
   
   async function registerForPushNotificationsAsync() {
     let token;

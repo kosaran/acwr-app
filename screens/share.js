@@ -10,6 +10,7 @@ import { auth, db } from './Firebase';
 
 import { thisUser } from './login';
 import { athletes } from './homeNav';
+//import { athletes } from './CoachScreens/CoachHomeNav';
 
 
 const wait = (timeout) => {

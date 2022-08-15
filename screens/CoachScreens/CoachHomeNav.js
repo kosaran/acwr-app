@@ -55,10 +55,17 @@ function CoachHomeNav() {
   });
   }
   
+
+  
   const getTeam = async (team) => {
-    const docRef = doc(db, "teams", team);
-    const docSnap = await getDoc(docRef);
-    athletes = docSnap.data().athletes
+    const querySnapshot = await getDocs(collection(db, "teams", team, 'athletes'));
+    var players = []
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      players.push(doc.data())
+      //athletes.push('text')
+    });
+    athletes = players
   }
 
   const getData = async () => {

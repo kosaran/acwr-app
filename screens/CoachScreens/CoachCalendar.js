@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType} from 'react-native';
+import React, { Component, useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType, TextInput, Button} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Paragraph } from 'react-native-paper';
 import { color } from 'react-native-elements/dist/helpers';
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
+import { auth, db } from '../Firebase'
+import { thisUser } from './CoachHomeNav';
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)
 const nowDate = new Date(); 
@@ -35,9 +38,11 @@ export default class CoachCalendar extends Component {
     super(props);
     this.state = {
       selectedStartDate: null,
-      info: null
+      info: null,
+      workout: 'workout',
     };
     this.onDateChange = this.onDateChange.bind(this);
+    this.workoutChange = this.workoutChange.bind(this)
   }
 
   onDateChange(date) {
@@ -45,6 +50,14 @@ export default class CoachCalendar extends Component {
     this.setState({
       selectedStartDate: nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate(),
       null: date.info
+      //selectedStartDate: new Date(date).setHours(0,0,0,0),
+      //selectedStartDate: {year: new Date(date).getFullYear(), day: new Date(date).getDate()}
+    });
+  }
+
+  workoutChange(text) {
+    this.setState({
+      workout: text
       //selectedStartDate: new Date(date).setHours(0,0,0,0),
       //selectedStartDate: {year: new Date(date).getFullYear(), day: new Date(date).getDate()}
     });
@@ -66,10 +79,15 @@ export default class CoachCalendar extends Component {
     return new Date(date) <= new Date(test);
   }
   
+  async addWorkout(link) {
+    await setDoc(doc(db, "teams", thisUser.teamID, 'workouts', date), {
+      link: link
+    });
+  }
 
   render() {
     const { navigation } = this.props;
-    const { selectedStartDate, info } = this.state;
+    const { selectedStartDate, info, workout } = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
 
     return (
@@ -86,13 +104,22 @@ export default class CoachCalendar extends Component {
         <View style={styles.dateInfo}>
           <View>
             <Text style={styles.boxText}>Date: { startDate }</Text>
+            <Text style={styles.boxText}>Workout: { workout}</Text>
+            <TextInput
+              style={styles.workoutInput}
+              onChangeText={this.workoutChange}
+              value={workout}
+              clearButtonMode={true}
+            />
+            <Button title='Submit' onPress={() => this.addWorkout(workout)}>
+            </Button>   
           </View>
           <View style={styles.editButton}>
             <TouchableOpacity onPress={() => 
                 navigation.navigate('Report', {date: startDate})
             }>
-                <MaterialIcons name='edit' size={35} color="white">
-                </MaterialIcons>
+              <MaterialIcons name='edit' size={35} color="white">
+              </MaterialIcons>
             </TouchableOpacity>
       </View>
         </View>
@@ -126,5 +153,16 @@ const styles = StyleSheet.create({
     color: 'white',
     margin: 3,
     fontSize: 15
+  },
+  workoutInput:{
+      padding:5,
+      marginBottom: 2,
+      fontSize: 15,
+      fontFamily:'Helvetica',
+      height:50,
+      borderRadius: 8,
+      borderColor:'white', 
+      borderWidth: 1,
+      color:'white'
   }
 });

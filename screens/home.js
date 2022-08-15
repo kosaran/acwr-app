@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { StyleSheet, Button, Text, View, SafeAreaView, Platform, StatusBar, TouchableOpacity, FlatList, RefreshControl, Dimensions} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
+import { auth, db } from './Firebase';
 import {
     LineChart,
     BarChart,
@@ -29,8 +31,6 @@ Notifications.setNotificationHandler({
     }),
 });
 
-
-
 Notifications.scheduleNotificationAsync(
   {
     content: {
@@ -52,7 +52,7 @@ import { removePushTokenSubscription } from 'expo-notifications';
 
 const contacts = []
 
-const BACKGROUND_FETCH_TASK = 'background-fetch';
+/*const BACKGROUND_FETCH_TASK = 'background-fetch';
 
 // 1. Define the task by providing a name and the function that should be executed
 // Note: This needs to be called in the global scope (e.g outside of your React components)
@@ -80,7 +80,7 @@ async function registerBackgroundFetchAsync() {
 // Note: This does NOT need to be in the global scope and CAN be used in your React components!
 async function unregisterBackgroundFetchAsync() {
   return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
-}
+}*/
 
 var goals = []
 const SLIDER_WIDTH = Dimensions.get('window').width + 80
@@ -132,7 +132,7 @@ RegisterBackgroundTask = async () => {
 
   useEffect(() => {
     getGoals()
-    checkStatusAsync();
+    //checkStatusAsync();
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -149,7 +149,7 @@ RegisterBackgroundTask = async () => {
     };
   }, []);
 
-  const checkStatusAsync = async () => {
+  /*const checkStatusAsync = async () => {
     const status = await BackgroundFetch.getStatusAsync();
     const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
     setStatus(status);
@@ -164,7 +164,7 @@ RegisterBackgroundTask = async () => {
     }
 
     checkStatusAsync();
-  };
+  };*/
     
     const tableHead = ['Day/Workout', 'Monday', 'Wednesday', 'Friday']
     const tableData = [
@@ -381,7 +381,10 @@ RegisterBackgroundTask = async () => {
 }
 
 async function openLink() {
-    WebBrowser.openBrowserAsync('https://docs.google.com/document/d/1-AE1s9csIH2K-I1qxqjm1voYK95gGR6fGIg5ZtYK5CU/edit?usp=sharing')
+  const querySnapshot = await getDoc(doc(db, "teams", 'varsity blues', 'workouts', '2022.8.14'));
+  console.log("Document data:", querySnapshot.data().link);
+  //WebBrowser.openBrowserAsync('https://docs.google.com/document/d/1-AE1s9csIH2K-I1qxqjm1voYK95gGR6fGIg5ZtYK5CU/edit?usp=sharing')
+  WebBrowser.openBrowserAsync(querySnapshot.data().link)
 }
   
   async function registerForPushNotificationsAsync() {

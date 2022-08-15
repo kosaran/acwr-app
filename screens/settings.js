@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState, useRef, Component} from 'react';
-import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, Modal,Animated, PanResponder, Button} from 'react-native';
+import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, Modal, Button, Switch} from 'react-native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
 import {Picker} from '@react-native-picker/picker';
@@ -11,6 +11,8 @@ import {thisUser} from './homeNav'
 
 
 const settings = ({navigation}) => {
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [selectedLanguage, setSelectedLanguage] = useState();
 
     const [properties, setProperty] = useState([
@@ -83,7 +85,7 @@ const settings = ({navigation}) => {
     }
 
     const teams = (team) => (
-        <Picker.Item label={team} value={team} />
+        <Picker.Item label={team} value={team}/>
     )
 
     const alert = (s) => {
@@ -97,7 +99,7 @@ const settings = ({navigation}) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={[{ flexDirection: "column" }, {flex:6}]}>
-                <View style={[ {padding:15}]}>
+                <View style={[{padding:15}]}>
                     <Text>
                         Username
                     </Text>
@@ -120,7 +122,7 @@ const settings = ({navigation}) => {
                         clearButtonMode={true}
                     />       
                 </View>
-                <View style={[{padding:15}]}>
+                <View style={[{padding:15, flex:1}]}>
                     <Text>
                         Team
                     </Text>
@@ -135,7 +137,14 @@ const settings = ({navigation}) => {
                         <Picker.Item label="Varisty Blues" value="js" />*/}
                     </Picker>
                 </View>
-                <View style={[{padding:30}]}>
+                <View style={[{padding:30, alignItems:'center', flex:1}]}>
+                    <Switch
+                        trackColor={{ false: "#767577", true: "lightgrey" }}
+                        thumbColor={isEnabled ? "limegreen" : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                    />
                     <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {clearData}/>
                     <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
                 </View>

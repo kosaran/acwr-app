@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { StyleSheet, Button, Text, View, SafeAreaView, Platform, StatusBar, TouchableOpacity, FlatList, RefreshControl, Dimensions} from 'react-native';
+import { StyleSheet, Button, Text, View, SafeAreaView, Platform, TouchableOpacity, FlatList, RefreshControl, Dimensions} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
@@ -38,7 +38,9 @@ Notifications.scheduleNotificationAsync(
       //data:{data: }
     },
     trigger: {
-      seconds: 60 * 1,
+      //seconds: 60 * 1,
+      hour: 13, 
+      minute: 0, 
       repeats: true,
     },
   },
@@ -84,14 +86,14 @@ async function unregisterBackgroundFetchAsync() {
 
 var goals = []
 const SLIDER_WIDTH = Dimensions.get('window').width + 80
-const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.75)
 
-const TASK_NAME = "BACKGROUND_TASK"
+/*const TASK_NAME = "BACKGROUND_TASK"
 
 TaskManager.defineTask(TASK_NAME, () => {
   try {
     // fetch data here...
-    const receivedNewData = "Simulated fetch " + Math.random()
+    const receivedNewData = "Simulated fetchhome " + Math.random()
     console.log("My task ", receivedNewData)
     return receivedNewData
       ? BackgroundFetch.Result.NewData
@@ -100,20 +102,20 @@ TaskManager.defineTask(TASK_NAME, () => {
     console.log('big error' + err)
     return BackgroundFetch.Result.Failed
   }
-})
+})*/
 
 function Home({navigation, route}) {
   
-RegisterBackgroundTask = async () => {
+/*RegisterBackgroundTask = async () => {
   try {
     await BackgroundFetch.registerTaskAsync(TASK_NAME, {
-      minimumInterval: 5, // seconds,
+      minimumInterval: 1, // seconds,
     })
     console.log("Task registered")
   } catch (err) {
     console.log("Task Register failed:", err)
   }
-}
+}*/
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -125,7 +127,11 @@ RegisterBackgroundTask = async () => {
 
   const getGoals = async() => {
     for (let i = 0; i < 3; i++) {
-      goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + global.data.goals[Math.floor(Math.random() * global.data.goals.length)]})
+      const tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
+      while (tempGo == null){
+        tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
+      }
+      goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + tempGo})
     }
   };
 
@@ -241,8 +247,8 @@ RegisterBackgroundTask = async () => {
               }
           ]
           }}
-          width={Dimensions.get("window").width - 50} // from react-native
-          height={240}
+          width={Dimensions.get("window").width - 40} // from react-native
+          height={250}
           //yAxisLabel="$"
           //yAxisSuffix="k"
           yAxisInterval={1} // optional, defaults to 1
@@ -264,8 +270,8 @@ RegisterBackgroundTask = async () => {
           }}
           bezier
           style={{
-          marginVertical: 10,
-          borderRadius: 10
+            marginVertical: 10,
+            borderRadius: 10
           }}
         />
       </View>
@@ -422,7 +428,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+        //paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
         //alignItems: 'center',
         //justifyContent: 'center',
     },

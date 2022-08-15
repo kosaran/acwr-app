@@ -15,8 +15,39 @@ import { auth, db} from "./Firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, getAdditionalUserInfo } from "firebase/auth";
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
 import {Video} from 'expo-av'
-import { async } from '@firebase/util';
+import * as BackgroundFetch from "expo-background-fetch"
+import * as TaskManager from "expo-task-manager"
 
+
+
+function myTask() {
+  try {
+    // fetch data here...
+    const backendData = "Simulated fetch " + Math.random();
+    console.log("myTask() ", backendData);
+    return backendData
+      ? BackgroundFetch.Result.NewData
+      : BackgroundFetch.Result.NoData;
+  } catch (err) {
+    //return BackgroundFetch.Result.Failed;
+  }
+}
+async function initBackgroundFetch(taskName,
+  taskFn,
+  interval = 60 * 1) {
+try {
+if (!TaskManager.isTaskDefined(taskName)) {
+TaskManager.defineTask(taskName, taskFn);
+}
+const options = {
+minimumInterval: interval // in seconds
+};
+await BackgroundFetch.registerTaskAsync(taskName, options);
+} catch (err) {
+console.log("registerTaskAsync() failed:", err);
+}
+}
+initBackgroundFetch('myTaskName', myTask, 1);
 
 //var data = {daily: [], acute:[], chronic :[]};
 //var data = {
@@ -44,6 +75,7 @@ const wait = (timeout) => {
 
 
 const login = ({navigation}) =>{
+
   const[email, setEmail] = useState('');
   const[password, setPassword] = useState('');
   
@@ -53,6 +85,7 @@ const login = ({navigation}) =>{
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(errorMessage)
         //alert(errorMessage)
         alert('Email or Password Invalid')
       }); 

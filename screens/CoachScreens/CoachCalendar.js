@@ -80,7 +80,9 @@ export default class CoachCalendar extends Component {
   }
   
   async addWorkout(link) {
-    await setDoc(doc(db, "teams", thisUser.teamID, 'workouts', date), {
+    const newD = date.replaceAll('/', '.')
+    console.log('thedayandlin'+newD+link)
+    await setDoc(doc(db, "teams", thisUser.teamID, 'workouts', newD), {
       link: link
     });
   }
@@ -104,7 +106,7 @@ export default class CoachCalendar extends Component {
         <View style={styles.dateInfo}>
           <View>
             <Text style={styles.boxText}>Date: { startDate }</Text>
-            <Text style={styles.boxText}>Workout: { workout}</Text>
+            <Text style={styles.boxText}>Workout:</Text>
             <TextInput
               style={styles.workoutInput}
               onChangeText={this.workoutChange}

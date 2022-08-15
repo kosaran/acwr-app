@@ -26,16 +26,6 @@ const Stack = createNativeStackNavigator();
 //export default function App() {
 const App = ({navigation}) => {
   //console.log(thisUser.name)
-  const signOut = () => {
-    //navigation.navigate('Login')
-    getAuth().signOut().then(function() {
-        navigation.navigate('Login')
-      // Sign-out successful.
-    }, function(error) {
-      // An error happened.
-    });
-}
-signOut()
 
   const auth = getAuth();
   const [open, setOpen] = useState(false);

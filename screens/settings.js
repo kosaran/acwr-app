@@ -137,15 +137,21 @@ const settings = ({navigation}) => {
                         <Picker.Item label="Varisty Blues" value="js" />*/}
                     </Picker>
                 </View>
-                <View style={[{padding:30, alignItems:'center', flex:1}]}>
+                <View style={[{alignItems:'center', flexDirection:'row', justifyContent:'center'}]}>
+                    <Text>Notifications</Text>
                     <Switch
-                        trackColor={{ false: "#767577", true: "lightgrey" }}
-                        thumbColor={isEnabled ? "limegreen" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
-                    />
-                    <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {clearData}/>
+                            trackColor={{ false: "#767577", true: "limegreen" }}
+                            thumbColor={isEnabled ? "white" : "#f4f3f4"}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleSwitch}
+                            value={isEnabled}
+                        />
+                </View>
+                <View style={[{padding:30, alignItems:'center', flex:1}]}>
+                    <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {
+                        //clearData
+                        () => setModalVisible(!modalVisible)
+                        }/>
                     <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
                 </View>
             </View>
@@ -160,16 +166,12 @@ const settings = ({navigation}) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
+                        <Text>Are you sure?</Text>
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
+                            onPress={clearData}
                         >
-                            <Text style={styles.textStyle}>Change Picture</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={signOut}
-                        >
-                            <Text style={styles.textStyle}>Sign Out</Text>
+                            <Text style={styles.textStyle}>Delete</Text>
                         </Pressable>
                         <Pressable
                             style={[styles.button, styles.buttonClose]}

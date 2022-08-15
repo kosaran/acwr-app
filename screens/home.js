@@ -39,7 +39,7 @@ Notifications.scheduleNotificationAsync(
     },
     trigger: {
       //seconds: 60 * 1,
-      hour: 13, 
+      hour: 20, 
       minute: 0, 
       repeats: true,
     },

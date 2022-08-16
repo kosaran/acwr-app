@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { StyleSheet, Button, Text, View, SafeAreaView, Platform, TouchableOpacity, FlatList, RefreshControl, Dimensions} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+//import { MaterialIcons } from '@expo/vector-icons';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
 import { auth, db } from './Firebase';
+import { useIsFocused } from '@react-navigation/native'
 import {
     LineChart,
     BarChart,
@@ -12,18 +13,18 @@ import {
     ContributionGraph,
     StackedBarChart
 } from "react-native-chart-kit";
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+//import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import Carousel from 'react-native-snap-carousel';
-import CustomButton from '../components/CustomButton';
+//import CustomButton from '../components/CustomButton';
 import { getAuth } from "firebase/auth";
-import * as BackgroundFetch from 'expo-background-fetch';
-import * as TaskManager from 'expo-task-manager';
-import * as Linking from 'expo-linking';
+//import * as BackgroundFetch from 'expo-background-fetch';
+//import * as TaskManager from 'expo-task-manager';
+//import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
 import InNav from '../components/InNav';
-import { async } from '@firebase/util';
-import { removePushTokenSubscription } from 'expo-notifications';
+//import { async } from '@firebase/util';
+//import { removePushTokenSubscription } from 'expo-notifications';
 
 const contacts = []
 
@@ -112,9 +113,9 @@ function Home({navigation, route}) {
     }
   };
 
-
+  const isFocused = useIsFocused()
   useEffect(() => {
-    getGoals()
+    global.data = global.data
     //checkStatusAsync();
     /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
@@ -130,7 +131,7 @@ function Home({navigation, route}) {
       Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
     };*/
-  }, []);
+  }, [isFocused]);
 
   /*const checkStatusAsync = async () => {
     const status = await BackgroundFetch.getStatusAsync();
@@ -180,6 +181,7 @@ function Home({navigation, route}) {
     if (user !== null) {
         // The user object has basic properties such as display name, email, etc.
         var displayName = user.displayName;
+        getGoals()
         //const email = user.email;
         //const photoURL = user.photoURL;
         //const emailVerified = user.emailVerified;

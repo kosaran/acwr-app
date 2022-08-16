@@ -26,7 +26,7 @@ const Stack = createNativeStackNavigator();
 //export default function App() {
 const App = ({navigation}) => {
   //console.log(thisUser.name)
-
+  
 
   const auth = getAuth();
   const [open, setOpen] = useState(false);

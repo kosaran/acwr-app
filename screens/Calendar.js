@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
-import { MaterialIcons } from '@expo/vector-icons';
+/*import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Paragraph } from 'react-native-paper';
 import { color } from 'react-native-elements/dist/helpers';
 import { athletes } from './homeNav';
 import { thisUser } from './login';
 import CustomButton from '../components/CustomButton';
-import { compareDocumentPosition } from 'domutils';
+import { compareDocumentPosition } from 'domutils';*/
 import { Feather } from '@expo/vector-icons';
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)

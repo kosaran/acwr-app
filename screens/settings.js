@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState, useRef, Component, useEffect} from 'react';
 import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, Modal, Button, Switch} from 'react-native';
-import { MaterialIcons, AntDesign } from '@expo/vector-icons';
+import { MaterialIcons} from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
 import {Picker} from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';

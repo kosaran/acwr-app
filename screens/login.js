@@ -24,6 +24,15 @@ function myTask() {
   try {
     // fetch data here...
     const backendData = "Simulated fetch " + Math.random();
+    const day = new Date()
+    if (global.data.date.indexOf(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate()) == -1){
+      global.data.acwr.push(0)
+      global.data.time.push(0)
+      global.data.fullDate.push(day)
+      global.data.date.push(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate())
+    }
+    console.log(global.data.acwr)
+    console.log(global.data.date)
     console.log("myTask() ", backendData);
     return backendData
       ? BackgroundFetch.Result.NewData
@@ -32,22 +41,24 @@ function myTask() {
     //return BackgroundFetch.Result.Failed;
   }
 }
-async function initBackgroundFetch(taskName,
-  taskFn,
-  interval = 60 * 1) {
-try {
-if (!TaskManager.isTaskDefined(taskName)) {
-TaskManager.defineTask(taskName, taskFn);
+async function initBackgroundFetch(taskName,taskFn,interval = 1) {
+  try {
+    if (!TaskManager.isTaskDefined(taskName)) {
+    TaskManager.defineTask(taskName, taskFn);
+    }
+    const options = {
+    minimumInterval: interval, // in seconds
+    stopOnTerminate: false, // android only,
+    startOnBoot: true, // android only
+  };
+
+  await BackgroundFetch.registerTaskAsync(taskName, options);
+  } catch (err) {
+  console.log("registerTaskAsync() failed:", err);
+  }
 }
-const options = {
-minimumInterval: interval // in seconds
-};
-await BackgroundFetch.registerTaskAsync(taskName, options);
-} catch (err) {
-console.log("registerTaskAsync() failed:", err);
-}
-}
-initBackgroundFetch('myTaskName', myTask, 1);
+
+  initBackgroundFetch('myTaskName', myTask, 1);
 
 //var data = {daily: [], acute:[], chronic :[]};
 //var data = {

@@ -1,16 +1,49 @@
-import React, { useLayoutEffect, useState, useRef, Component} from 'react';
+import React, { useLayoutEffect, useState, useRef, Component, useEffect} from 'react';
 import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOpacity, Modal, Button, Switch} from 'react-native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
 import {Picker} from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 //import { getAuth, signOut } from "firebase/auth";
 //import { auth } from './Firebase';
 //import { thisUser } from './login';
 import {thisUser} from './homeNav'
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+});
+
+Notifications.scheduleNotificationAsync(
+  {
+    content: {
+      title: 'Remember to report your activity!',
+      //data:{data: }
+    },
+    trigger: {
+      //seconds: 60 * 1,
+      hour: 20, 
+      minute: 0, 
+      repeats: true,
+    },
+  },
+);
+//Notifications.BackgroundNotificationsTask()
+//Notifications.cancelAllScheduledNotificationsAsync()
+
+
 
 const settings = ({navigation}) => {
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [selectedLanguage, setSelectedLanguage] = useState();
@@ -41,6 +74,32 @@ const settings = ({navigation}) => {
            )
        })
     })*/
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+          setNotification(notification);
+        });
+    
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log(response);
+        });
+    
+        return () => {
+          Notifications.removeNotificationSubscription(notificationListener.current);
+          Notifications.removeNotificationSubscription(responseListener.current);
+        };
+      }, []);
+
+      React.useEffect(() => {
+        const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+          //const url = response.notification.request.content.data.url;
+          //Linking.openURL(url);
+          navigation.navigate('Calendar')
+          //console.log('gooob' + url)
+        });
+        //return () => subscription.remove();
+      }, []);
 
     const signOut = () => {
         //navigation.navigate('Login')
@@ -166,15 +225,15 @@ const settings = ({navigation}) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text>Are you sure?</Text>
+                        <Text style={{paddingBottom:10, fontSize: 20, fontWeight:'600'}}>ARE YOU SURE?</Text>
                         <Pressable
-                            style={[styles.button, styles.buttonClose]}
+                            style={[styles.buttonDelete]}
                             onPress={clearData}
                         >
                             <Text style={styles.textStyle}>Delete</Text>
                         </Pressable>
                         <Pressable
-                            style={[styles.button, styles.buttonClose]}
+                            style={[styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
                         >
                             <Text style={styles.textStyle}>Close</Text>
@@ -185,6 +244,37 @@ const settings = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
+async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    return token;
+  }
 
 const styles = StyleSheet.create({
     /*container: {
@@ -208,7 +298,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 22
     },
     container: {
         flex: 1,
@@ -236,11 +325,17 @@ const styles = StyleSheet.create({
     buttonOpen: {
         backgroundColor: "#F194FF",
     },
-    buttonClose: {
-        backgroundColor: "deeppink",
+    buttonDelete: {
+        backgroundColor: "red",
         margin: 5,
-        padding:5,
+        padding: 15,
         alignSelf: 'stretch'
+    },
+    buttonClose: {
+        backgroundColor: "grey",
+        margin: 5,
+        padding: 15,
+        //alignSelf: 'stretch'
     },
     textStyle: {
         color: "white",
@@ -276,11 +371,11 @@ const styles = StyleSheet.create({
         //borderColor: '#fff'
     },
     modalView: {
-        margin: 20,
+        margin: 10,
         backgroundColor: "white",
         borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
+        padding: 50,
+        //alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
           width: 0,

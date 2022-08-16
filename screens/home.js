@@ -18,35 +18,8 @@ import CustomButton from '../components/CustomButton';
 import { getAuth } from "firebase/auth";
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: false,
-    }),
-});
-
-Notifications.scheduleNotificationAsync(
-  {
-    content: {
-      title: 'Remember to report your activity!',
-      //data:{data: }
-    },
-    trigger: {
-      //seconds: 60 * 1,
-      hour: 20, 
-      minute: 0, 
-      repeats: true,
-    },
-  },
-);
-//Notifications.BackgroundNotificationsTask()
-//Notifications.cancelAllScheduledNotificationsAsync()
 
 import InNav from '../components/InNav';
 import { async } from '@firebase/util';
@@ -94,7 +67,9 @@ TaskManager.defineTask(TASK_NAME, () => {
   try {
     // fetch data here...
     const receivedNewData = "Simulated fetchhome " + Math.random()
-    console.log("My task ", receivedNewData)
+    global.data.acwr.push(0)
+    //console.log("My task ", receivedNewData)
+    console.log('task done' + global.data.acwr)
     return receivedNewData
       ? BackgroundFetch.Result.NewData
       : BackgroundFetch.Result.NoData
@@ -110,16 +85,18 @@ function Home({navigation, route}) {
   try {
     await BackgroundFetch.registerTaskAsync(TASK_NAME, {
       minimumInterval: 1, // seconds,
+      stopOnTerminate: false, // android only,
+      startOnBoot: true, // android only
     })
     console.log("Task registered")
   } catch (err) {
     console.log("Task Register failed:", err)
   }
 }*/
-  const [expoPushToken, setExpoPushToken] = useState('');
+  /*const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
-  const responseListener = useRef();
+  const responseListener = useRef();*/
 
       //console.log(global.data)
   const [isRegistered, setIsRegistered] = useState(true);
@@ -139,7 +116,7 @@ function Home({navigation, route}) {
   useEffect(() => {
     getGoals()
     //checkStatusAsync();
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
@@ -152,7 +129,7 @@ function Home({navigation, route}) {
     return () => {
       Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
-    };
+    };*/
   }, []);
 
   /*const checkStatusAsync = async () => {
@@ -288,16 +265,6 @@ function Home({navigation, route}) {
             return 'red'
           }
     }
-
-    React.useEffect(() => {
-      const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-        //const url = response.notification.request.content.data.url;
-        //Linking.openURL(url);
-        navigation.navigate('Calendar')
-        //console.log('gooob' + url)
-      });
-      //return () => subscription.remove();
-    }, []);
   
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
@@ -393,36 +360,6 @@ async function openLink() {
   WebBrowser.openBrowserAsync(querySnapshot.data().link)
 }
   
-  async function registerForPushNotificationsAsync() {
-    let token;
-    if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
-    } else {
-      alert('Must use physical device for Push Notifications');
-    }
-  
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-    }
-  
-    return token;
-  }
 
 const styles = StyleSheet.create({
     container: {

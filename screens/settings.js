@@ -19,34 +19,58 @@ Notifications.setNotificationHandler({
     }),
 });
 
-Notifications.scheduleNotificationAsync(
-  {
-    content: {
-      title: 'Remember to report your activity!',
-      //data:{data: }
-    },
-    trigger: {
-      //seconds: 60 * 1,
-      hour: 20, 
-      minute: 0, 
-      repeats: true,
-    },
-  },
-);
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync(
+        {
+          content: {
+            title: 'Remember to report your activity!',
+            //data:{data: }
+          },
+          trigger: {
+            //seconds: 60*1,
+            hour: 20, 
+            minute: 0, 
+            repeats: true,
+          },
+        },
+      );
+}
+
+if (global.data.notifications){
+    schedulePushNotification()
+} else{
+    Notifications.cancelAllScheduledNotificationsAsync()
+}
+
+console.log('are notis on' + global.data.notifications)
 //Notifications.BackgroundNotificationsTask()
 //Notifications.cancelAllScheduledNotificationsAsync()
-
-
 
 const settings = ({navigation}) => {
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const [selectedLanguage, setSelectedLanguage] = useState();
+
+    const [isEnabled, setIsEnabled] = useState(global.data.notifications);
+    const toggleSwitch = async() => {
+        setIsEnabled(previousState => !previousState)
+        if (global.data.notifications){
+            global.data.notifications = false
+        } else{
+            global.data.notifications = true
+        }
+        
+        try {
+            const jsonValue = JSON.stringify(global.data)
+            await AsyncStorage.setItem('@storage_Key', jsonValue)
+            //console.log(new Date())
+            //console.log(jsonValue)
+        } catch (e) {
+              // saving error
+        }
+    };
 
     const [properties, setProperty] = useState([
         { name: 'Name', id: '1'},
@@ -123,6 +147,7 @@ const settings = ({navigation}) => {
             desc: [],
             com: [],
             goals: [],
+            notifications: true,
         }
         storeData(global.data)
         
@@ -244,6 +269,7 @@ const settings = ({navigation}) => {
         </SafeAreaView>
     );
 }
+
 
 async function registerForPushNotificationsAsync() {
     let token;

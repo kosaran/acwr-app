@@ -18,7 +18,19 @@ import {Video} from 'expo-av'
 import * as BackgroundFetch from "expo-background-fetch"
 import * as TaskManager from "expo-task-manager"
 
-
+global.data = {
+  date: [],
+  fullDate: [],
+  time: [],
+  percieved: [],
+  acute: [],
+  chronic: [],
+  acwr: [],
+  desc: [],
+  com: [],
+  goals: [],
+  notifications:true
+}
 
 function myTask() {
   try {
@@ -26,10 +38,29 @@ function myTask() {
     const backendData = "Simulated fetch " + Math.random();
     const day = new Date()
     if (global.data.date.indexOf(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate()) == -1){
-      global.data.acwr.push(0)
-      global.data.time.push(0)
-      global.data.fullDate.push(day)
-      global.data.date.push(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate())
+        var acutePast = global.data.acute[global.data.acute.length - 1]
+        var chronicPast = global.data.chronic[global.data.chronic.length - 1]
+        //var current = time * slide
+        var current = 0
+        var acwrNew = 0
+        var acuteNew = 0
+        var chronicNew = 0
+
+        if (global.data.date.length === 0){
+            acwrNew = 0
+            acuteNew = current
+            chronicNew = current
+        }
+        else{
+            acuteNew = (current * 0.25) + (0.75 * acutePast) 
+            chronicNew = current * (2/22) + (1 - 2/22) * chronicPast
+            acwrNew = acuteNew/chronicNew
+        }
+
+        global.data.acwr.push(acwrNew)
+        global.data.time.push(0)
+        global.data.fullDate.push(day)
+        global.data.date.push(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate())
     }
     console.log(global.data.acwr)
     console.log(global.data.date)
@@ -62,18 +93,6 @@ async function initBackgroundFetch(taskName,taskFn,interval = 1) {
 
 //var data = {daily: [], acute:[], chronic :[]};
 //var data = {
-global.data = {
-    date: [],
-    fullDate: [],
-    time: [],
-    percieved: [],
-    acute: [],
-    chronic: [],
-    acwr: [],
-    desc: [],
-    com: [],
-    goals: [],
-}
 
 //global [global.data, global.onChangeACWR] = React.useState();
 var allUsers = []

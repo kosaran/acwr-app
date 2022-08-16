@@ -109,6 +109,7 @@ function homeNav() {
         global.data.desc = JSON.parse(jsonValue).desc
         global.data.com = JSON.parse(jsonValue).com
         global.data.goals = JSON.parse(jsonValue).goals
+        global.data.notifications = JSON.parse(jsonValue).notifications
         //global.data.desc = []        
         //global.data.com = []
         //global.data.goals = []

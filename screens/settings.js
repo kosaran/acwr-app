@@ -184,7 +184,7 @@ const settings = ({navigation}) => {
         <SafeAreaView style={styles.container}>
             <View style={[{ flexDirection: "column" }, {flex:6}]}>
                 <View style={[{padding:15}]}>
-                    <Text>
+                    <Text style={[{fontWeight: '500', fontSize: 20}]}>
                         Username
                     </Text>
                     <TextInput
@@ -196,7 +196,7 @@ const settings = ({navigation}) => {
                     />       
                 </View>
                 <View style={[{padding:15}]}>
-                    <Text>
+                    <Text style={[{fontWeight: '500', fontSize: 20}]}>
                         Email
                     </Text>
                     <TextInput
@@ -206,8 +206,8 @@ const settings = ({navigation}) => {
                         clearButtonMode={true}
                     />       
                 </View>
-                <View style={[{padding:15, flex:1}]}>
-                    <Text>
+                <View style={[{padding:15}]}>
+                    <Text style={[{fontWeight: '500', fontSize: 20}]}>
                         Team
                     </Text>
                     <Picker
@@ -222,14 +222,14 @@ const settings = ({navigation}) => {
                     </Picker>
                 </View>
                 <View style={[{alignItems:'center', flexDirection:'row', justifyContent:'center'}]}>
-                    <Text>Notifications</Text>
+                    <Text style={[{paddingRight: 20, fontWeight: '500', fontSize: 20}]}>Notifications</Text>
                     <Switch
-                            trackColor={{ false: "#767577", true: "limegreen" }}
-                            thumbColor={isEnabled ? "white" : "#f4f3f4"}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleSwitch}
-                            value={isEnabled}
-                        />
+                        trackColor={{ false: "#767577", true: "limegreen" }}
+                        thumbColor={isEnabled ? "white" : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                    />
                 </View>
                 <View style={[{padding:30, alignItems:'center', flex:1}]}>
                     <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {

@@ -61,6 +61,10 @@ function myTask() {
         global.data.time.push(0)
         global.data.fullDate.push(day)
         global.data.date.push(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate())
+        setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+          acwr: acwrNew, 
+          name: thisUser.name
+      })
     }
     console.log(global.data.acwr)
     console.log(global.data.date)
@@ -72,7 +76,7 @@ function myTask() {
     //return BackgroundFetch.Result.Failed;
   }
 }
-async function initBackgroundFetch(taskName,taskFn,interval = 1) {
+async function initBackgroundFetch(taskName,taskFn,interval = 60*15) {
   try {
     if (!TaskManager.isTaskDefined(taskName)) {
     TaskManager.defineTask(taskName, taskFn);
@@ -89,7 +93,7 @@ async function initBackgroundFetch(taskName,taskFn,interval = 1) {
   }
 }
 
-  initBackgroundFetch('myTaskName', myTask, 1);
+  initBackgroundFetch('myTaskName', myTask, 60);
 
 //var data = {daily: [], acute:[], chronic :[]};
 //var data = {

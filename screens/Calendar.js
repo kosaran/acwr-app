@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 /*import { MaterialIcons } from '@expo/vector-icons';
@@ -10,10 +10,12 @@ import { thisUser } from './login';
 import CustomButton from '../components/CustomButton';
 import { compareDocumentPosition } from 'domutils';*/
 import { Feather } from '@expo/vector-icons';
+import { useIsFocused } from '@react-navigation/native'
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)
 const nowDate = new Date(); 
 const date = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate();
+//const isFocused = useIsFocused()
 //console.log(date)
 
 const pickCol = (s) =>{
@@ -51,6 +53,9 @@ export default class Calendar extends Component {
       info: null
     };
     this.onDateChange = this.onDateChange.bind(this);
+    if (global.data.date.length == 0){
+      customDatesStyles = []
+    }
     for (let i = 0; i < global.data.date.length; i++) {
       customDatesStyles.push({
         date: new Date(global.data.date[i]),
@@ -60,8 +65,9 @@ export default class Calendar extends Component {
         containerStyle: [], // extra styling for day container
         allowDisabled: true, // allow custom style to apply to disabled dates
       });
-    }
+    }  
   }
+  
 
   onDateChange(date) {
     const nowDate = new Date(date)
@@ -69,9 +75,21 @@ export default class Calendar extends Component {
       //selectedStartDate: new Date(date).toDateString(),
       selectedStartDate: nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate(),
       null: date.info,
-      
       //selectedStartDate: {year: new Date(date).getFullYear(), day: new Date(date).getDate()}
     });
+    if (global.data.date.length == 0){
+      customDatesStyles = []
+    }
+    for (let i = 0; i < global.data.date.length; i++) {
+      customDatesStyles.push({
+        date: new Date(global.data.date[i]),
+        // Random colors
+        style: {backgroundColor: pickCol(global.data.acwr[i])},
+        textStyle: {color: 'white'}, // sets the font color
+        containerStyle: [], // extra styling for day container
+        allowDisabled: true, // allow custom style to apply to disabled dates
+      });
+    }  
   }
   
   isInThePast(date) {
@@ -99,7 +117,6 @@ export default class Calendar extends Component {
     const dateStrArr = dateStr.split(' '); // ['Fri', 'Apr', '10', '2020']
     const year = [dateStrArr[3]]
     year.unshift(',')
-
     //dateStrArr.splice(1,2).push[', ']
     //const str = dateStrArr.splice.join(' ')
     return dateStrArr.splice(1,2).join(' ') + year.join(' ')
@@ -110,6 +127,7 @@ export default class Calendar extends Component {
     const { navigation } = this.props;
     const { selectedStartDate, info } = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
+
     const EditButton = ({showButton}) => (
       /*<View style={styles.editButton}>
         {showButton && 
@@ -163,9 +181,6 @@ export default class Calendar extends Component {
         <Text style={styles.boxText}>{ Math.round(global.data.acwr[global.data.date.indexOf(startDate)]* 100) / 100 }</Text>
         </View>
         <EditButton showButton={this.isInThePast(startDate)} />
-
-        
-
   </View>
       </View>
     );

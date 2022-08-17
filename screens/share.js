@@ -173,7 +173,7 @@ function Share({navigation}) {
                         title='Filter'
                     >
                     </Button>
-    </View>*/}
+                </View>*/}
             </View>
             <ScrollView
                 refreshControl={
@@ -199,7 +199,7 @@ function Share({navigation}) {
                                 <Text style={[styles.text,{ flex:3}]}>
                                     {item.name}
                                 </Text>
-                                {alert(item.acwr)}
+                                {alert(Math.round(item.acwr * 100) / 100)}
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -316,9 +316,6 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         backgroundColor: 'white',
-        //borderRadius:10,
-        //borderWidth: 1,
-        //borderColor: '#fff'
     },
     modalView: {
         margin: 10,
@@ -336,16 +333,9 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     docIcon: {
-        //marginRight:5,
-        //marginLeft: 5,
         marginTop: 24,
-        //marginBottom:5,
         paddingTop: 15,
-        //paddingBottom:5,
         backgroundColor: 'white',
-        //borderRadius:10,
-        //borderWidth: 1,
-        //borderColor: '#fff'
     },
     fileIcon: {
         marginRight: 25,
@@ -355,9 +345,6 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         backgroundColor: 'white',
-        //borderRadius:10,
-        //borderWidth: 1,
-        //borderColor: '#fff'
     },
     loginScreenButton: {
         marginRight: 40,

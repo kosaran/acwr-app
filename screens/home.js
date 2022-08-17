@@ -114,10 +114,9 @@ function Home({navigation, route}) {
       }
     }
   };
-
+  
   const isFocused = useIsFocused()
   useEffect(() => {
-    getGoals()
     global.data = global.data
     //checkStatusAsync();
     /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
@@ -135,6 +134,10 @@ function Home({navigation, route}) {
       Notifications.removeNotificationSubscription(responseListener.current);
     };*/
   }, [isFocused]);
+
+  useEffect(() => {
+    getGoals()
+  }, [])
 
   /*const checkStatusAsync = async () => {
     const status = await BackgroundFetch.getStatusAsync();

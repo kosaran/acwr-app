@@ -182,63 +182,65 @@ const settings = ({navigation}) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={[{ flexDirection: "column" }, {flex:6}]}>
-                <View style={[{padding:15}]}>
-                    <Text style={[{fontWeight: '500', fontSize: 20}]}>
-                        Username
-                    </Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={onChangeUsername}
-                        value={username}
-                        clearButtonMode={true}
-                        //placeholderTextColor='red'
-                    />       
+                <View style={[{flex:2}]}>
+                    <View style={[{padding: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Username
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeUsername}
+                            value={username}
+                            clearButtonMode={true}
+                            //placeholderTextColor='red'
+                        />       
+                    </View>
+                    <View style={[{paddingHorizontal: 20, paddingBottom: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Email
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeEmail}
+                            value={email}
+                            clearButtonMode={true}
+                        />       
+                    </View>
+                    <View style={[{paddingHorizontal: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25}]}>
+                            Team
+                        </Text>
+                        <Picker
+                            style={[{backgroundColor:'white'}]}
+                            selectedValue={selectedLanguage}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedLanguage(itemValue)
+                            }>
+                            {teams(thisUser.team)}
+                            {/*<Picker.Item label="Toronto Racers" value="java" />
+                            <Picker.Item label="Varisty Blues" value="js" />*/}
+                        </Picker>
+                    </View>
                 </View>
-                <View style={[{padding:15}]}>
-                    <Text style={[{fontWeight: '500', fontSize: 20}]}>
-                        Email
-                    </Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={onChangeEmail}
-                        value={email}
-                        clearButtonMode={true}
-                    />       
+                <View style={[{flex:1, paddingTop: 50}]}>
+                    <View style={[{alignItems:'center', flexDirection:'row', justifyContent:'center'}]}>
+                        <Text style={[{paddingRight: 20, fontWeight: '500', fontSize: 20}]}>Notifications</Text>
+                        <Switch
+                            trackColor={{ false: "#767577", true: "limegreen" }}
+                            thumbColor={isEnabled ? "white" : "#f4f3f4"}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleSwitch}
+                            value={isEnabled}
+                        />
+                    </View>
+                    <View style={[{padding:30, alignItems:'center', flex:1}]}>
+                        <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {
+                            //clearData
+                            () => setModalVisible(!modalVisible)
+                            }/>
+                        <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
+                    </View>
                 </View>
-                <View style={[{padding:15}]}>
-                    <Text style={[{fontWeight: '500', fontSize: 20}]}>
-                        Team
-                    </Text>
-                    <Picker
-                        style={[{backgroundColor:'white'}]}
-                        selectedValue={selectedLanguage}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setSelectedLanguage(itemValue)
-                        }>
-                        {teams(thisUser.team)}
-                        {/*<Picker.Item label="Toronto Racers" value="java" />
-                        <Picker.Item label="Varisty Blues" value="js" />*/}
-                    </Picker>
-                </View>
-                <View style={[{alignItems:'center', flexDirection:'row', justifyContent:'center'}]}>
-                    <Text style={[{paddingRight: 20, fontWeight: '500', fontSize: 20}]}>Notifications</Text>
-                    <Switch
-                        trackColor={{ false: "#767577", true: "limegreen" }}
-                        thumbColor={isEnabled ? "white" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
-                    />
-                </View>
-                <View style={[{padding:30, alignItems:'center', flex:1}]}>
-                    <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {
-                        //clearData
-                        () => setModalVisible(!modalVisible)
-                        }/>
-                    <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
-                </View>
-            </View>
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -334,7 +336,7 @@ const styles = StyleSheet.create({
     text:{
         paddingTop:5,
         paddingLeft:5,
-        fontSize: 20,
+        fontSize: 30,
         fontFamily:'Helvetica',
         //color:'white'
     },
@@ -342,11 +344,12 @@ const styles = StyleSheet.create({
         padding:5,
         marginBottom: 2,
         fontSize: 15,
-        borderWidth:1,
-        fontFamily:'Helvetica',
+        borderWidth:1.5,
+        fontWeight:'200',
+        //fontFamily:'Helvetica',
         height:50,
         borderRadius: 8,
-        //color:'white'
+        fontSize: 20
     },
     buttonOpen: {
         backgroundColor: "#F194FF",

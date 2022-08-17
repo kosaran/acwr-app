@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
         paddingTop:5,
         paddingLeft:5,
         fontSize: 30,
-        fontFamily:'Helvetica',
+        //fontFamily:'Helvetica',
         //color:'white'
     },
     input:{

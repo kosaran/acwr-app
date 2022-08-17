@@ -1,5 +1,5 @@
-import React, { Component, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType} from 'react-native';
+import React, { Component, useEffect, useState} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, Button} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 /*import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -30,8 +30,6 @@ const pickCol = (s) =>{
 
 let customDatesStyles = [];
 
-
-
 /*while(day.add(1, 'day').isSame(today, 'month')) {
   customDatesStyles.push({
     date: day.clone(),
@@ -43,14 +41,14 @@ let customDatesStyles = [];
   });
 }*/
 
-
 export default class Calendar extends Component {
 //function Calendar ({navigation}) {
   constructor(props) {
     super(props);
     this.state = {
       selectedStartDate: null,
-      info: null
+      info: null,
+      modalVisible: false,
     };
     this.onDateChange = this.onDateChange.bind(this);
     if (global.data.date.length == 0){
@@ -91,6 +89,12 @@ export default class Calendar extends Component {
       });
     }  
   }
+
+  setModalVisible(bool){
+    this.setState({
+      modalVisible: bool
+    });
+  }
   
   isInThePast(date) {
     const today = new Date();
@@ -125,7 +129,7 @@ export default class Calendar extends Component {
 
   render() {
     const { navigation } = this.props;
-    const { selectedStartDate, info } = this.state;
+    const { selectedStartDate, info, modalVisible} = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
 
     const EditButton = ({showButton}) => (
@@ -161,27 +165,46 @@ export default class Calendar extends Component {
           selectedDayTextColor="white"
           customDatesStyles={customDatesStyles}
         />
-         <View style={styles.dateInfoBox}>
-
-      
-        <Text style={styles.datetext}>{ this.displayDate(startDate) }</Text>
-
-        <View style={styles.infobox}>
-        <Text style={styles.boxsubheading}>Time:</Text>
-        <Text style={styles.boxText}>{ global.data.time[global.data.date.indexOf(startDate)] }</Text>
+        <View style={styles.dateInfoBox}>
+            <TouchableOpacity onPress = {() => this.setModalVisible(!modalVisible)}>
+              <Text style={styles.datetext}>{ this.displayDate(startDate) }</Text>
+            </TouchableOpacity>
+          <View style={styles.infobox}>
+            <Text style={styles.boxsubheading}>Time:</Text>
+            <Text style={styles.boxText}>{ global.data.time[global.data.date.indexOf(startDate)] }</Text>
+          </View>
+          <View style={styles.infobox}>
+            <Text style={styles.boxsubheading}>Perceived Load:</Text>
+            <Text style={styles.boxText}>{ global.data.percieved[global.data.date.indexOf(startDate)]}</Text>
+          </View>
+          <View style={styles.infobox}>
+            <Text style={styles.boxsubheading}>ACWR:</Text>
+            <Text style={styles.boxText}>{ Math.round(global.data.acwr[global.data.date.indexOf(startDate)]* 100) / 100 }</Text>
+          </View>
+          <EditButton showButton={this.isInThePast(startDate)} />
         </View>
-
-        <View style={styles.infobox}>
-        <Text style={styles.boxsubheading}>Perceived Load:</Text>
-        <Text style={styles.boxText}>{ global.data.percieved[global.data.date.indexOf(startDate)]}</Text>
-        </View>
-
-        <View style={styles.infobox}>
-        <Text style={styles.boxsubheading}>ACWR:</Text>
-        <Text style={styles.boxText}>{ Math.round(global.data.acwr[global.data.date.indexOf(startDate)]* 100) / 100 }</Text>
-        </View>
-        <EditButton showButton={this.isInThePast(startDate)} />
-  </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+          this.setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Description: {global.data.desc[global.data.date.indexOf(startDate)]}</Text>
+                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Comments: {global.data.com[global.data.date.indexOf(startDate)]}</Text>
+                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Goals: {global.data.goals[global.data.date.indexOf(startDate)]}</Text>
+                  <Button
+                      style={[styles.buttonClose]}
+                      onPress={() => this.setModalVisible(!modalVisible)}
+                      color = 'red'
+                      title = 'Close'
+                  />
+              </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -193,6 +216,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     flexDirection:'column'
     //marginTop: 10,
+  },
+  modalView: {
+    margin: 5,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    //alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonClose: {
+    //margin: 5,
+    //paddingTop: ,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   dateInfo: {
     backgroundColor: 'black',

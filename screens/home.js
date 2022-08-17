@@ -104,17 +104,20 @@ function Home({navigation, route}) {
   const [status, setStatus] = useState(null);
 
   const getGoals = async() => {
-    for (let i = 0; i < 3; i++) {
-      const tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
-      while (tempGo == null){
-        tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
+    if (global.data.goals.length > 0){
+      for (let i = 0; i < 3; i++) {
+        const tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
+        while (tempGo == null){
+          tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
+        }
+        goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + tempGo})
       }
-      goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + tempGo})
     }
   };
 
   const isFocused = useIsFocused()
   useEffect(() => {
+    getGoals()
     global.data = global.data
     //checkStatusAsync();
     /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
@@ -181,7 +184,6 @@ function Home({navigation, route}) {
     if (user !== null) {
         // The user object has basic properties such as display name, email, etc.
         var displayName = user.displayName;
-        getGoals()
         //const email = user.email;
         //const photoURL = user.photoURL;
         //const emailVerified = user.emailVerified;

@@ -203,7 +203,7 @@ function Home({navigation, route}) {
         data: global.data.acwr.slice(-7)
       },
       {
-        labels: global.data.date,
+        //labels: global.data.date,
         data: global.data.acwr
       },
     ];

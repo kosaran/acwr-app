@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType, TextInput, Button} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, EdgeInsetsPropType, TextInput, Button, KeyboardAvoidingView} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -39,7 +39,7 @@ export default class CoachCalendar extends Component {
     this.state = {
       selectedStartDate: null,
       info: null,
-      workout: 'workout',
+      workout: 'Todays Workout...',
     };
     this.onDateChange = this.onDateChange.bind(this);
     this.workoutChange = this.workoutChange.bind(this)
@@ -79,6 +79,20 @@ export default class CoachCalendar extends Component {
     return new Date(date) <= new Date(test);
   }
   
+  displayDate(date){
+    console.log(date)
+    if (date == ''){
+      return ''
+    }
+    const dateStr = new Date(date).toDateString(); // 'Fri Apr 10 2020'
+    const dateStrArr = dateStr.split(' '); // ['Fri', 'Apr', '10', '2020']
+    const year = [dateStrArr[3]]
+    year.unshift(',')
+    //dateStrArr.splice(1,2).push[', ']
+    //const str = dateStrArr.splice.join(' ')
+    return dateStrArr.splice(1,2).join(' ') + year.join(' ')
+  } 
+
   async addWorkout(link) {
     const newD = date.replaceAll('/', '.')
     console.log('thedayandlin'+newD+link)
@@ -93,6 +107,13 @@ export default class CoachCalendar extends Component {
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
 
     return (
+      <KeyboardAvoidingView
+            keyboardVerticalOffset = {10}
+            behavior='position'
+            //behavior={Platform.OS === "ios" ? "padding" : "height"}
+            //style={styles.container}
+            style={{flexDirection: "column", alignItems: 'center'}}
+            >
       <View style={styles.container}>
         <CalendarPicker
           onDateChange={this.onDateChange}
@@ -103,29 +124,22 @@ export default class CoachCalendar extends Component {
           
           //customDatesStyles={customDatesStyles}
         />
-        <View style={styles.dateInfo}>
-          <View>
-            <Text style={styles.boxText}>Date: { startDate }</Text>
-            <Text style={styles.boxText}>Workout:</Text>
+        <View style={styles.dateInfoBox}>
+            <TouchableOpacity>
+              <Text style={styles.datetext}> {this.displayDate(startDate)} </Text>
+            </TouchableOpacity>
+          <View style={{padding:15}}>
             <TextInput
               style={styles.workoutInput}
               onChangeText={this.workoutChange}
               value={workout}
               clearButtonMode={true}
             />
-            <Button title='Submit' onPress={() => this.addWorkout(workout)}>
-            </Button>   
           </View>
-          <View style={styles.editButton}>
-            <TouchableOpacity onPress={() => 
-                navigation.navigate('Report', {date: startDate})
-            }>
-              <MaterialIcons name='edit' size={35} color="white">
-              </MaterialIcons>
-            </TouchableOpacity>
-      </View>
+          <Button title='Submit' onPress={() => this.addWorkout(workout)}/>
         </View>
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -137,12 +151,25 @@ const styles = StyleSheet.create({
     flexDirection:'column'
     //marginTop: 10,
   },
-  dateInfo: {
-    backgroundColor: 'black',
+  dateInfoBox: {
+    //backgroundColor: 'black',
     margin:20,
     padding: 10,
     flex:1,
     //marginTop: 10,
+  },
+  dateInfoBox: {
+    borderTopWidth: 1,
+    margin:20,
+    padding: 10,
+    flex:1,
+  },
+  datetext: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: '800',
+    fontSize: 22,
+    marginVertical:20,  
   },
   editButton:{
     flex:1,
@@ -157,14 +184,14 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   workoutInput:{
-      padding:5,
-      marginBottom: 2,
-      fontSize: 15,
-      fontFamily:'Helvetica',
-      height:50,
-      borderRadius: 8,
-      borderColor:'white', 
-      borderWidth: 1,
-      color:'white'
+      padding: 20,
+      marginBottom: 5,
+      fontSize: 20,
+      //fontFamily:'Helvetica',
+      fontWeight: '200',
+      height:75,
+      borderRadius: 5,
+      borderColor:'black', 
+      borderBottomWidth: 1.5,
   }
 });

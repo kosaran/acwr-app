@@ -78,46 +78,47 @@ const CoachSettings = ({navigation}) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={[{ flexDirection: "column" }, {flex:6}]}>
-                <View style={[ {padding:15}]}>
-                    <Text>
-                        Username
-                    </Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={onChangeUsername}
-                        value={username}
-                        clearButtonMode={true}
-                        //placeholderTextColor='red'
-                    />       
+            <View style={[{flex:2}]}>
+                    <View style={[{padding: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Username
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeUsername}
+                            value={username}
+                            clearButtonMode={true}
+                            //placeholderTextColor='red'
+                        />       
+                    </View>
+                    <View style={[{paddingHorizontal: 20, paddingBottom: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Email
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeEmail}
+                            value={email}
+                            clearButtonMode={true}
+                        />       
+                    </View>
+                    <View style={[{paddingHorizontal: 20, paddingBottom: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Team Code
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            value={thisUser.teamID}
+                            clearButtonMode={true}
+                        />       
+                    </View>
                 </View>
-                <View style={[{padding:15}]}>
-                    <Text>
-                        Email
-                    </Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={onChangeEmail}
-                        value={email}
-                        clearButtonMode={true}
-                    />       
+                <View style={[{flex:1, paddingTop: 50}]}>
+                    <View style={[{padding:30, alignItems:'center', flex:1}]}>
+                        <Button color = 'red' title = 'Delete Data' style = {styles.button}/>
+                        <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
+                    </View>
                 </View>
-                <View style={[{padding:15}]}>
-                    <Text>
-                        Team
-                    </Text>
-                    <TextInput
-                        style={styles.input}
-                        value={thisUser.teamID}
-                        clearButtonMode={true}
-                    /> 
-                    
-                </View>
-                <View style={[{padding:30}]}>
-                    <Button color = 'red' title = 'Delete Data' style = {styles.button} onPress = {clearData}/>
-                    <Button title = 'Sign Out' style = {styles.button} color = 'black' onPress = {signOut}/>
-                </View>
-            </View>
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -191,12 +192,15 @@ const styles = StyleSheet.create({
         //color:'white'
     },
     input:{
-        paddingTop:5,
-        paddingLeft:5,
-        fontSize: 25,
-        borderWidth:1,
-        fontFamily:'Helvetica',
-        //color:'white'
+        padding:5,
+        marginBottom: 2,
+        fontSize: 15,
+        borderWidth:1.5,
+        fontWeight:'200',
+        //fontFamily:'Helvetica',
+        height:50,
+        borderRadius: 8,
+        fontSize: 20
     },
     buttonOpen: {
         backgroundColor: "#F194FF",

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import share from '../share'
+import CoachShare from './CoachShare'
 import CoachCalendar from './CoachCalendar';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -107,7 +107,7 @@ function CoachHomeNav() {
       />
       <Stack.Screen 
         name="Share" 
-        component={share} 
+        component={CoachShare} 
         options={{
           // unmountOnBlur: true,
           tabBarLabel: 'Share',

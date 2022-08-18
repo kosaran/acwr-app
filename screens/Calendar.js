@@ -30,6 +30,7 @@ const pickCol = (s) =>{
 
 let customDatesStyles = [];
 
+
 /*while(day.add(1, 'day').isSame(today, 'month')) {
   customDatesStyles.push({
     date: day.clone(),

@@ -23,6 +23,7 @@ import { getAuth } from "firebase/auth";
 import * as WebBrowser from 'expo-web-browser';
 
 import InNav from '../components/InNav';
+import { thisUser } from './homeNav';
 //import { async } from '@firebase/util';
 //import { removePushTokenSubscription } from 'expo-notifications';
 
@@ -104,7 +105,7 @@ function Home({navigation, route}) {
   const [status, setStatus] = useState(null);
 
   const getGoals = async() => {
-    if (global.data.goals.length > 0){
+    if (global.data.goals.length > 0 && goals.length < 3){
       for (let i = 0; i < 3; i++) {
         const tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
         while (tempGo == null){
@@ -114,6 +115,8 @@ function Home({navigation, route}) {
       }
     }
   };
+
+  getGoals()
   
   const isFocused = useIsFocused()
   useEffect(() => {
@@ -136,7 +139,7 @@ function Home({navigation, route}) {
   }, [isFocused]);
 
   useEffect(() => {
-    getGoals()
+    //getGoals()
   }, [])
 
   /*const checkStatusAsync = async () => {
@@ -361,10 +364,11 @@ function Home({navigation, route}) {
 }
 
 async function openLink() {
-  const querySnapshot = await getDoc(doc(db, "teams", 'varsity blues', 'workouts', '2022.8.14'));
-  console.log("Document data:", querySnapshot.data().link);
+  const querySnapshot = await getDoc(doc(db, "teams", thisUser.team));
+  //const querySnapshot = await getDoc(doc(db, "teams", 'varsity blues', 'workouts', '2022.8.14'));
+  console.log("Document data:", querySnapshot.data().workout);
   //WebBrowser.openBrowserAsync('https://docs.google.com/document/d/1-AE1s9csIH2K-I1qxqjm1voYK95gGR6fGIg5ZtYK5CU/edit?usp=sharing')
-  WebBrowser.openBrowserAsync(querySnapshot.data().link)
+  WebBrowser.openBrowserAsync(querySnapshot.data().workout)
 }
   
 

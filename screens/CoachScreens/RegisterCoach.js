@@ -50,7 +50,8 @@ const RegisterCoachScreen = ({navigation}) =>{
         const docRef = await addDoc(collection(db, "teams"), {
             name: team,
             athletes: [],
-            coach: email
+            coach: email,
+            workout:''
         });
         setDoc(doc(db, "users", email), {
             name: name,

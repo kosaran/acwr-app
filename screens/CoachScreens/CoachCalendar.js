@@ -94,11 +94,14 @@ export default class CoachCalendar extends Component {
   } 
 
   async addWorkout(link) {
-    const newD = date.replaceAll('/', '.')
-    console.log('thedayandlin'+newD+link)
-    await setDoc(doc(db, "teams", thisUser.teamID, 'workouts', newD), {
-      link: link
-    });
+    //const newD = date.replaceAll('/', '.')
+    //console.log('thedayandlin'+newD+link)
+    //await setDoc(doc(db, "teams", thisUser.teamID, 'workouts', newD), {
+    //  link: link
+    //});
+    setDoc(doc(db, "teams", thisUser.team), {
+      workout: link
+    })
   }
 
   render() {

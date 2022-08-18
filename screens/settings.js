@@ -150,6 +150,7 @@ const settings = ({navigation}) => {
             notifications: true,
         }
         storeData(global.data)
+        navigation.navigate('Home')
         
     }
 
@@ -254,13 +255,23 @@ const settings = ({navigation}) => {
                     <View style={styles.modalView}>
                         <Text style={{paddingBottom:10, fontSize: 20, fontWeight:'600'}}>ARE YOU SURE?</Text>
                         <Pressable
-                            style={[styles.buttonDelete]}
+                            style={({ pressed }) => [
+                                {
+                                  backgroundColor: pressed
+                                    ? 'grey'
+                                    : 'red'
+                                },styles.buttonDelete]}
                             onPress={clearData}
                         >
                             <Text style={styles.textStyle}>Delete</Text>
                         </Pressable>
                         <Pressable
-                            style={[styles.buttonClose]}
+                            style={({ pressed }) => [
+                                {
+                                  backgroundColor: pressed
+                                    ? 'red'
+                                    : 'grey'
+                                }, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
                         >
                             <Text style={styles.textStyle}>Close</Text>
@@ -355,13 +366,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#F194FF",
     },
     buttonDelete: {
-        backgroundColor: "red",
+        //backgroundColor: "red",
         margin: 5,
         padding: 15,
         alignSelf: 'stretch'
     },
     buttonClose: {
-        backgroundColor: "grey",
+        //backgroundColor: "grey",
         margin: 5,
         padding: 15,
         //alignSelf: 'stretch'

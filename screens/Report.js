@@ -344,6 +344,7 @@ function report({navigation, route}) {
           // saving error
         }
         getData()
+        navigation.navigate('Home')
     }
 
     

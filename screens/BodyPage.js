@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 //import * as Svg from 'react-native-svg';
 //import { Svg } from 'expo'
 import { StyleSheet, Pressable, Text, View, SafeAreaView, Platform} from 'react-native';
 //import Body from "react-native-body-highlighter"
+import { Dropdown } from 'react-native-element-dropdown';
 import RenderHTML from "react-native-render-html";
+import { MaterialIcons} from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
+
 
 const exercices = [
     {
@@ -15,6 +19,23 @@ const exercices = [
         ]
     }
 ]
+
+const data = [
+  { label: 'Hips', value: '1' },
+  { label: 'Hamstring', value: '2' },
+  { label: 'Quad', value: '3' },
+  { label: 'Glute', value: '4' },
+  { label: 'Ankle', value: '5' },
+  { label: 'Foot', value: '6' },
+  { label: 'Upper Body', value: '7' },
+  { label: 'Lower Body', value: '8' },
+];
+
+const stressData = [
+  { label: 'School', value: '1' },
+  { label: 'Personal', value: '2' },
+  { label: 'Financial', value: '3' },
+];
 
 /*const html = `
 <main>
@@ -50,19 +71,169 @@ const exercices = [
     <p>By <a href="http://ryanmpoe.com">Ryan M. Poe</a> (<a href="https://twitter.com/RyanPoe85">@RyanPoe85</a>) for the fitness website <a href="http://w8mngr.com/">w8mngr.com</a></p>
   </div>
 
-</main>`;*/
+</main>`;
 
-export default class BodyPage extends React.Component {
-    
-    render(){
+render(){
         return (
             <View style={[{flexDirection: "column"}]}>
-    {/*<RenderHTML contentWidth={300} source={{ html }} />*/}
-                    {/*<Body scale = {1} data = {exercices[0].muscles}/>*/}
-    
-            </View>
-        );
+              {/*<RenderHTML contentWidth={300} source={{ html }} />
+              {/*<Body scale = {1} data = {exercices[0].muscles}/>              
+          
+*/
+
+const BodyPage = () => {
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const [slide, onSlide] = React.useState(5);
+
+  const renderLabel = (label) => {
+    if (value || isFocus) {
+      return (
+        <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+          {label}
+        </Text>
+      );
     }
-}
+    return null;
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
+        {renderLabel('Select area')}
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Injury Report' : '...'}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setValue(item.value);
+            setIsFocus(false);
+          }}
+          renderLeftIcon={() => (
+            <MaterialIcons
+              style={styles.icon}
+              color={isFocus ? 'blue' : 'black'}
+              name="person"
+              size={20}
+            />
+          )}
+        />
+        <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {slide}</Text>
+        <Slider
+          style={{width: 300, alignSelf:'center'}}
+          minimumValue={0}
+          maximumValue={10}
+          step = {0.5}
+          value = {slide}
+          minimumTrackTintColor="red"
+          //maximumTrackTintColor="limegreen"
+          onValueChange={onSlide}
+          tapToSeek
+          //thumbTintColor = 'dodgerblue'
+        />
+      </View>
+      <View style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
+        {renderLabel('Select source')}
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={stressData}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Stress Report' : '...'}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setValue(item.value);
+            setIsFocus(false);
+          }}
+          renderLeftIcon={() => (
+            <MaterialIcons
+              style={styles.icon}
+              color={isFocus ? 'blue' : 'black'}
+              name="person"
+              size={20}
+            />
+          )}
+        />
+        <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {slide}</Text>
+        <Slider
+          style={{width: 300, alignSelf:'center'}}
+          minimumValue={0}
+          maximumValue={10}
+          step = {0.5}
+          value = {slide}
+          minimumTrackTintColor="red"
+          //maximumTrackTintColor="limegreen"
+          onValueChange={onSlide}
+          tapToSeek
+          //thumbTintColor = 'dodgerblue'
+        />
+      </View>
+    </View>
+  );
+};
+
+export default BodyPage;
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    padding: 16,
+    flex:1
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+});
 
 

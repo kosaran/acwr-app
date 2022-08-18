@@ -3,6 +3,7 @@ import { StyleSheet, Pressable, Text, View, SafeAreaView, TextInput, TouchableOp
 import { MaterialIcons} from '@expo/vector-icons';
 import { getAuth, signOut } from "firebase/auth";
 import {Picker} from '@react-native-picker/picker';
+import { Dropdown } from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -47,6 +48,17 @@ console.log('are notis on' + global.data.notifications)
 //Notifications.cancelAllScheduledNotificationsAsync()
 
 const settings = ({navigation}) => {
+    var teamsData = [
+        { label: thisUser.team, value: thisUser.team },
+    ];
+    var statusData = [
+        { label: 'Resting', value: '1' },
+        { label: 'Academic', value: '2' },
+        { label: 'Injured', value: '3' },
+    ];
+    const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
@@ -181,9 +193,20 @@ const settings = ({navigation}) => {
         }
     }
 
+    const renderLabel = (label) => {
+        if (value || isFocus) {
+          return (
+            <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+              {label}
+            </Text>
+          );
+        }
+        return null;
+      };
+
     return (
         <SafeAreaView style={styles.container}>
-                <View style={[{flex:2}]}>
+                <View style={[{flex:3}]}>
                     <View style={[{padding: 20}]}>
                         <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
                             Username
@@ -208,19 +231,98 @@ const settings = ({navigation}) => {
                         />       
                     </View>
                     <View style={[{paddingHorizontal: 20}]}>
-                        <Text style={[{fontWeight: '500', fontSize: 25}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
                             Team
                         </Text>
-                        <Picker
+                        <View style={[{paddingTop: 16, paddingBottom: 16}]}>
+                        {renderLabel('Select team')}
+                            <Dropdown
+                            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={teamsData}
+                            search
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={!isFocus ? thisUser.team : '...'}
+                            searchPlaceholder="Search..."
+                            value={value}
+                            onFocus={() => setIsFocus(true)}
+                            onBlur={() => setIsFocus(false)}
+                            onChange={item => {
+                                setValue(item.value);
+                                setIsFocus(false);
+                            }}
+                            renderLeftIcon={() => (
+                                <MaterialIcons
+                                style={styles.icon}
+                                color={isFocus ? 'blue' : 'black'}
+                                name="people"
+                                size={20}
+                                />
+                            )}
+                            />
+                            </View>
+                        {/*<Picker
                             style={[{backgroundColor:'white'}]}
                             selectedValue={selectedLanguage}
                             onValueChange={(itemValue, itemIndex) =>
                                 setSelectedLanguage(itemValue)
                             }>
                             {teams(thisUser.team)}
-                            {/*<Picker.Item label="Toronto Racers" value="java" />
-                            <Picker.Item label="Varisty Blues" value="js" />*/}
-                        </Picker>
+                            <Picker.Item label="Toronto Racers" value="java" />
+                            <Picker.Item label="Varisty Blues" value="js" />
+                        </Picker>*/}
+                    </View>
+                    <View style={[{paddingHorizontal: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Status
+                        </Text>
+                        <View style={[{paddingTop: 16, paddingBottom: 16}]}>
+                        {renderLabel('Select team')}
+                            <Dropdown
+                            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={statusData}
+                            search
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={!isFocus ? thisUser.team : '...'}
+                            searchPlaceholder="Search..."
+                            value={value}
+                            onFocus={() => setIsFocus(true)}
+                            onBlur={() => setIsFocus(false)}
+                            onChange={item => {
+                                setValue(item.value);
+                                setIsFocus(false);
+                            }}
+                            renderLeftIcon={() => (
+                                <MaterialIcons
+                                style={styles.icon}
+                                color={isFocus ? 'blue' : 'black'}
+                                name="battery-alert"
+                                size={20}
+                                />
+                            )}
+                            />
+                            </View>
+                        {/*<Picker
+                            style={[{backgroundColor:'white'}]}
+                            selectedValue={selectedLanguage}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedLanguage(itemValue)
+                            }>
+                            {teams(thisUser.team)}
+                            <Picker.Item label="Toronto Racers" value="java" />
+                            <Picker.Item label="Varisty Blues" value="js" />
+                        </Picker>*/}
                     </View>
                 </View>
                 <View style={[{flex:1, paddingTop: 50}]}>
@@ -354,7 +456,6 @@ const styles = StyleSheet.create({
     input:{
         padding:5,
         marginBottom: 2,
-        fontSize: 15,
         borderWidth:1.5,
         fontWeight:'200',
         //fontFamily:'Helvetica',
@@ -477,7 +578,41 @@ const styles = StyleSheet.create({
         width: 150,
         backgroundColor: "blue",
         borderRadius: 5
-    }
+    },
+    dropdown: {
+        height: 50,
+        borderColor: 'black',
+        borderWidth: 1.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+      },
+      icon: {
+        marginRight: 5,
+      },
+      label: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+      },
+      placeholderStyle: {
+        fontSize: 20,
+        fontWeight: '200'
+      },
+      selectedTextStyle: {
+        fontSize: 16,
+      },
+      iconStyle: {
+        width: 20,
+        height: 20,
+      },
+      inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+      },
 });
 
 export default settings;

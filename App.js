@@ -13,7 +13,7 @@ LogBox.ignoreAllLogs();
 import Home from "./screens/home"
 import homeNav from './screens/homeNav';
 import login from './screens/login';
-import Settings from './screens/settings.js';
+import Settings from './screens/settings';
 import Report from './screens/Report';
 import ReportTwo from './screens/BodyPage'
 import RegisterNav from './screens/RegisterNav'
@@ -148,6 +148,9 @@ const App = ({navigation}) => {
         <Stack.Screen 
           name="ReportTwo" 
           component={ReportTwo} 
+          options={({ navigation }) => ({
+            headerTitle:'Extra'
+          })}
         />
         <Stack.Screen 
         name="CoachSettings" 
@@ -156,14 +159,25 @@ const App = ({navigation}) => {
         <Stack.Screen 
             name="Report" 
             component={Report} 
-            options={{
-              unmountOnBlur: true,
-              tabBarColor:'limegreen',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name='accessibility' size={24} color={color}></MaterialIcons>
+            options={({ navigation }) => ({
+              //gestureEnabled: false,
+              headerRight: () => (
+                <TouchableOpacity onPress={() => 
+                    //alert('This is a button!')
+                    //navigation.navigate('Register')
+                    navigation.navigate('ReportTwo')
+                    //signOut()
+                  }
+                  //style={{alignItems:'flex-end', justifyContent:''}}
+                >
+                  <View style={{flexDirection:'row', alignItems:'center'}}>
+                    {/*<Text>More</Text>*/}
+                    <MaterialIcons name='arrow-right' size={35} color="black">
+                    </MaterialIcons>
+                  </View>
+                </TouchableOpacity>
               ),
-            }}
-            listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}
+            })}
         />
     {/*<View style={styles.container}>
       <Home></Home>

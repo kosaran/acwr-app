@@ -139,12 +139,12 @@ function report({navigation, route}) {
     //const [open, setOpen] = useState(false)
     
     useLayoutEffect(() => {
-       navigation.setOptions({
+       /*navigation.setOptions({
            headerRight:()=> (
                <AntDesign name = "logout" size = {24}
                 color = 'black'/>
            )
-       })
+       })*/
     })
 
     const submit = () =>{

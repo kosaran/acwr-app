@@ -1,6 +1,6 @@
 import React from 'react';
 //import * as Svg from 'react-native-svg';
-import { Svg } from 'expo'
+//import { Svg } from 'expo'
 import { StyleSheet, Pressable, Text, View, SafeAreaView, Platform} from 'react-native';
 //import Body from "react-native-body-highlighter"
 import RenderHTML from "react-native-render-html";
@@ -16,10 +16,7 @@ const exercices = [
     }
 ]
 
-
-
-
-const html = `
+/*const html = `
 <main>
 
 <div class="muscle-groups">
@@ -53,19 +50,17 @@ const html = `
     <p>By <a href="http://ryanmpoe.com">Ryan M. Poe</a> (<a href="https://twitter.com/RyanPoe85">@RyanPoe85</a>) for the fitness website <a href="http://w8mngr.com/">w8mngr.com</a></p>
   </div>
 
-</main>`
-
-;
+</main>`;*/
 
 export default class BodyPage extends React.Component {
     
     render(){
         return (
-            <SafeAreaView style={[{flexDirection: "column"}]}>
-    <RenderHTML contentWidth={300} source={{ html }} />
+            <View style={[{flexDirection: "column"}]}>
+    {/*<RenderHTML contentWidth={300} source={{ html }} />*/}
                     {/*<Body scale = {1} data = {exercices[0].muscles}/>*/}
     
-            </SafeAreaView>
+            </View>
         );
     }
 }

@@ -160,10 +160,10 @@ export default class Calendar extends Component {
       <View style={styles.container}>
         <CalendarPicker
           onDateChange={this.onDateChange}
-          todayBackgroundColor = 'lightgrey'
-          todayTextStyle={{color: 'black'}}
-          selectedDayColor="dimgray"
-          selectedDayTextColor="white"
+          todayBackgroundColor = 'black'
+          todayTextStyle={{color: 'white'}}
+          selectedDayColor="lightgray"
+          selectedDayTextColor="black"
           customDatesStyles={customDatesStyles}
         />
         <View style={styles.dateInfoBox}>

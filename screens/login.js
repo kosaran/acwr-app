@@ -61,9 +61,8 @@ function myTask() {
         global.data.time.push(0)
         global.data.fullDate.push(day)
         global.data.date.push(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate())
-        setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+        updateDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
           acwr: acwrNew, 
-          name: thisUser.name
       })
     }
     console.log(global.data.acwr)

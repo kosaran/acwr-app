@@ -32,6 +32,17 @@ global.data = {
   notifications:true
 }
 
+const storeData = async (value) => {
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem('@storage_Key', jsonValue)
+    //console.log(new Date())
+    //console.log(jsonValue)
+  } catch (e) {
+    // saving error
+  }
+}
+
 function myTask() {
   try {
     // fetch data here...
@@ -61,6 +72,7 @@ function myTask() {
         global.data.time.push(0)
         global.data.fullDate.push(day)
         global.data.date.push(day.getFullYear()+'/'+(day.getMonth()+1)+'/'+day.getDate())
+        storeData()
         updateDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
           acwr: acwrNew, 
       })

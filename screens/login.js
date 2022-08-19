@@ -146,6 +146,7 @@ const login = ({navigation}) =>{
             thisUser.acwr = doc.data().acwr
             thisUser.team = doc.data().team
             thisUser.teamID = doc.data().teamID
+            thisUser.status = doc.data().status
             console.log('ghost' + thisUser.teamID)
             if (thisUser.teamID != null){
               navigation.navigate('CoachHomeNav');

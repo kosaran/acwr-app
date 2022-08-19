@@ -476,6 +476,7 @@ const styles = StyleSheet.create({
     },
     goalstext: {
         marginLeft: 2,
+        paddingBottom: 2,
         //marginRight: 10,
         fontWeight: '600',
         //paddingVertical: 2,

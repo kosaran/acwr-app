@@ -22,7 +22,7 @@ const RegisterCoachScreen = ({navigation}) =>{
     createUserWithEmailAndPassword(auth, email,password)
     .then((userCredential) => {
         //console.log("Document written with ID: ", docRef.id);
-        createTeam(team,email)
+        createTeam(team,email.toLowerCase())
         /*addDoc(collection(db, "teams"), {
             name: team,
             athletes: [],
@@ -53,7 +53,7 @@ const RegisterCoachScreen = ({navigation}) =>{
             coach: email,
             workout:''
         });
-        setDoc(doc(db, "users", email), {
+        setDoc(doc(db, "users", email.toLowerCase()), {
             name: name,
             email: email.toLowerCase(),
             teamID: docRef.id,

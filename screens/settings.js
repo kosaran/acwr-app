@@ -7,6 +7,8 @@ import { Dropdown } from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import {db } from './Firebase';
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
 //import { getAuth, signOut } from "firebase/auth";
 //import { auth } from './Firebase';
 //import { thisUser } from './login';
@@ -52,12 +54,15 @@ const settings = ({navigation}) => {
         { label: thisUser.team, value: thisUser.team },
     ];
     var statusData = [
-        { label: 'Resting', value: '1' },
-        { label: 'Academic', value: '2' },
-        { label: 'Injured', value: '3' },
+        { label: 'Active', value: '1' },
+        { label: 'Resting', value: '2' },
+        { label: 'Academic', value: '3' },
+        { label: 'Injured', value: '4' },
     ];
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
+    const [statValue, setStatValue] = useState(thisUser.status);
+    const [isStatFocus, setStatIsFocus] = useState(false);
 
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(false);
@@ -94,7 +99,8 @@ const settings = ({navigation}) => {
     //const [email, onChangeEmail] = React.useState(auth.currentUser.email);
     const [username, onChangeUsername] = React.useState(thisUser.name);
     const [email, onChangeEmail] = React.useState(thisUser.email);
-    const [text, onChangeText] = React.useState("123-456-789");
+    //const [text, onChangeText] = React.useState("123-456-789");
+    //const [status, onChangeStatus] = React.useState(thisUser.status);
     
     
     const [modalVisible, setModalVisible] = useState(false);
@@ -110,7 +116,7 @@ const settings = ({navigation}) => {
            )
        })
     })*/
-    
+
     useEffect(() => {
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
     
@@ -194,10 +200,10 @@ const settings = ({navigation}) => {
         }
     }
 
-    const renderLabel = (label) => {
-        if (value || isFocus) {
+    const renderLabel = (label, foc) => {
+        if (value || foc) {
           return (
-            <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+            <Text style={[styles.label, foc && { color: 'blue' }]}>
               {label}
             </Text>
           );
@@ -233,10 +239,54 @@ const settings = ({navigation}) => {
                     </View>
                     <View style={[{paddingHorizontal: 20}]}>
                         <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                            Status
+                        </Text>
+                        <View style={[{paddingTop: 16, paddingBottom: 16}]}>
+                        {renderLabel('Select team', isStatFocus)}
+                            <Dropdown
+                            style={[styles.dropdown, isStatFocus && { borderColor: 'blue' }]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={statusData}
+                            search
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={!isStatFocus ? statValue : '...'}
+                            searchPlaceholder="Search..."
+                            value={statValue}
+                            onFocus={() => setStatIsFocus(true)}
+                            onBlur={() => setStatIsFocus(false)}
+                            onChange={item => {
+                                setStatValue(item.value);
+                                setStatIsFocus(false);
+                                updateDoc(doc(db, "users", email), {
+                                    status: item.label
+                                });
+                                updateDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                                    status: item.label
+                                });
+
+                            }}
+                            renderLeftIcon={() => (
+                                <MaterialIcons
+                                style={styles.icon}
+                                color={isStatFocus ? 'blue' : 'black'}
+                                name="battery-alert"
+                                size={20}
+                                />
+                            )}
+                            />
+                            </View>
+                    </View>
+                    <View style={[{paddingHorizontal: 20}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
                             Team
                         </Text>
                         <View style={[{paddingTop: 16, paddingBottom: 16}]}>
-                        {renderLabel('Select team')}
+                        {renderLabel('Select team', isFocus)}
                             <Dropdown
                             style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
                             placeholderStyle={styles.placeholderStyle}
@@ -262,53 +312,6 @@ const settings = ({navigation}) => {
                                 style={styles.icon}
                                 color={isFocus ? 'blue' : 'black'}
                                 name="people"
-                                size={20}
-                                />
-                            )}
-                            />
-                            </View>
-                        {/*<Picker
-                            style={[{backgroundColor:'white'}]}
-                            selectedValue={selectedLanguage}
-                            onValueChange={(itemValue, itemIndex) =>
-                                setSelectedLanguage(itemValue)
-                            }>
-                            {teams(thisUser.team)}
-                            <Picker.Item label="Toronto Racers" value="java" />
-                            <Picker.Item label="Varisty Blues" value="js" />
-                        </Picker>*/}
-                    </View>
-                    <View style={[{paddingHorizontal: 20}]}>
-                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
-                            Status
-                        </Text>
-                        <View style={[{paddingTop: 16, paddingBottom: 16}]}>
-                        {renderLabel('Select team')}
-                            <Dropdown
-                            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            data={statusData}
-                            search
-                            maxHeight={300}
-                            labelField="label"
-                            valueField="value"
-                            placeholder={!isFocus ? thisUser.team : '...'}
-                            searchPlaceholder="Search..."
-                            value={value}
-                            onFocus={() => setIsFocus(true)}
-                            onBlur={() => setIsFocus(false)}
-                            onChange={item => {
-                                setValue(item.value);
-                                setIsFocus(false);
-                            }}
-                            renderLeftIcon={() => (
-                                <MaterialIcons
-                                style={styles.icon}
-                                color={isFocus ? 'blue' : 'black'}
-                                name="battery-alert"
                                 size={20}
                                 />
                             )}

@@ -10,6 +10,9 @@ import { auth, db } from './Firebase';
 
 import { thisUser } from './login';
 import { athletes } from './homeNav';
+import { getStatusAsync } from 'expo-background-fetch';
+import { async } from '@firebase/util';
+import { color } from 'react-native-elements/dist/helpers';
 //import { athletes } from './CoachScreens/CoachHomeNav';
 
 
@@ -112,6 +115,21 @@ function Share({navigation}) {
         //var [peo, setPeo] = useState(athletes)
         //console.log(people)
     }
+
+    const statCol = (stat) =>{
+        if (stat == 'Resting'){
+            return 'orange'
+        }
+        else if (stat == 'Academic'){
+            return 'blue'
+        }
+        else if (stat == 'Injured'){
+            return 'red'
+        }
+        else if (stat == 'Active'){
+            return 'green'
+        }
+    }
     
 
     useLayoutEffect(() => {
@@ -199,6 +217,11 @@ function Share({navigation}) {
                                 <Text style={[styles.text,{ flex:3}]}>
                                     {item.name}
                                 </Text>
+                                <TouchableOpacity  style={[styles.statusBox,{backgroundColor: statCol(item.status)}]}>
+                                    <Text style={[styles.statusText]}>
+                                        {item.status}
+                                    </Text>
+                                </TouchableOpacity>
                                 {alert(Math.round(item.acwr * 100) / 100)}
                             </View>
                         </TouchableOpacity>
@@ -277,7 +300,7 @@ const styles = StyleSheet.create({
     text:{
         paddingTop:10,
         paddingLeft:25,
-        fontSize: 25,
+        fontSize: 30,
         fontFamily:'Helvetica',
         justifyContent:'center'
         //color:'white'
@@ -332,37 +355,22 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5
     },
-    docIcon: {
-        marginTop: 24,
-        paddingTop: 15,
-        backgroundColor: 'white',
+    statusText:{
+       fontSize:12,
+       color:'white'
     },
-    fileIcon: {
-        marginRight: 25,
-        marginLeft: 25,
-        marginTop: 5,
-        marginBottom: 5,
-        paddingTop: 5,
-        paddingBottom: 5,
-        backgroundColor: 'white',
-    },
-    loginScreenButton: {
-        marginRight: 40,
-        marginLeft: 40,
-        marginTop: 10,
-        paddingTop: 10,
-        paddingBottom: 10,
-        backgroundColor: '#1E6738',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#fff'
-    },
-    loginText: {
-        color: '#fff',
-        textAlign: 'center',
-        paddingLeft: 10,
-        paddingRight: 10
+    statusBox:{
+        justifyContent:'center',
+        alignItems:'center',
+        flex:1,
+        marginRight:15,
+        padding:5,
+        //borderWidth:2,
+        borderRadius:15,
+        //borderColor:'red'
+        //backgroundColor:'red'
     }
+    
 });
 
 export default Share;

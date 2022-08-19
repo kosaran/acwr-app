@@ -43,10 +43,11 @@ const RegisterScreen = ({navigation}) =>{
         //}).catch(function(error) {
           //setValidationMessage(error.message);
         //});
-        setDoc(doc(db, "users", email), {
+        setDoc(doc(db, "users", email.toLowerCase()), {
           name: name,
           email: email.toLowerCase(),
-          team: team
+          team: team,
+          status: 'Active'
           //password: password
         });
 
@@ -54,7 +55,8 @@ const RegisterScreen = ({navigation}) =>{
         
         setDoc(doc(db, "teams", team, 'athletes',  email.toLowerCase()), {
           acwr: 1, 
-          name: name
+          name: name,
+          status: 'Active'
         })
        
         

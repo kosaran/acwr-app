@@ -61,6 +61,7 @@ function homeNav() {
             thisUser.name = doc.data().name
             thisUser.acwr = doc.data().acwr
             thisUser.team = doc.data().team
+            thisUser.status = doc.data().status
           }
           //console.log('timmmyyy', thisUser.team);
           //allUsers.push(user)

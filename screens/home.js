@@ -471,8 +471,6 @@ const styles = StyleSheet.create({
     goalstextbox: {
       marginLeft: 20,
       marginRight: 20,
-      padding: 5,
-      borderWidth: 3,
       borderColor: 'black',
       height: 130
     },
@@ -486,9 +484,7 @@ const styles = StyleSheet.create({
         //borderColor: 'red'
     },
     goalstexttwo: {
-      marginLeft: 10,
       fontWeight: '400',
-      paddingVertical: 2,
       fontSize: 18,
     },
     roundButton1: {

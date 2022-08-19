@@ -110,6 +110,7 @@ const settings = ({navigation}) => {
            )
        })
     })*/
+    
     useEffect(() => {
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
     

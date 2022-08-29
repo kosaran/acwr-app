@@ -64,7 +64,8 @@ const App = ({navigation}) => {
       <Stack.Navigator>
       <Stack.Screen 
           name="Login" 
-          component={login} 
+          component={login}
+          options={{headerShown: false}}
       />
       <Stack.Screen 
           name="LiNK" 

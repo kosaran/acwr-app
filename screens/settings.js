@@ -215,7 +215,7 @@ const settings = ({navigation}) => {
         <SafeAreaView style={styles.container}>
                 <View style={[{flex:3}]}>
                     <View style={[{padding: 20}]}>
-                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 18, paddingBottom: 5}]}>
                             Username
                         </Text>
                         <TextInput
@@ -227,7 +227,7 @@ const settings = ({navigation}) => {
                         />       
                     </View>
                     <View style={[{paddingHorizontal: 20, paddingBottom: 20}]}>
-                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 18, paddingBottom: 5}]}>
                             Email
                         </Text>
                         <TextInput
@@ -238,7 +238,7 @@ const settings = ({navigation}) => {
                         />       
                     </View>
                     <View style={[{paddingHorizontal: 20}]}>
-                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 18, paddingBottom: 5}]}>
                             Status
                         </Text>
                         <View style={[{paddingTop: 16, paddingBottom: 16}]}>
@@ -282,7 +282,7 @@ const settings = ({navigation}) => {
                             </View>
                     </View>
                     <View style={[{paddingHorizontal: 20}]}>
-                        <Text style={[{fontWeight: '500', fontSize: 25, paddingBottom: 5}]}>
+                        <Text style={[{fontWeight: '500', fontSize: 18, paddingBottom: 5}]}>
                             Team
                         </Text>
                         <View style={[{paddingTop: 16, paddingBottom: 16}]}>
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     text:{
         paddingTop:5,
         paddingLeft:5,
-        fontSize: 30,
+        fontSize: 25,
         //fontFamily:'Helvetica',
         //color:'white'
     },

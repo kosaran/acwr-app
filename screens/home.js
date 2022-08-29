@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { StyleSheet, Button, Text, View, SafeAreaView, Platform, TouchableOpacity, FlatList, RefreshControl, Dimensions} from 'react-native';
+import { StyleSheet, Button, Text, View, SafeAreaView, Platform, TouchableOpacity, FlatList, RefreshControl, Dimensions, ScrollView} from 'react-native';
 //import { MaterialIcons } from '@expo/vector-icons';
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
@@ -15,6 +15,7 @@ import {
 } from "react-native-chart-kit";
 //import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import Carousel from 'react-native-snap-carousel';
+import {Pagination} from 'react-native-snap-carousel';
 //import CustomButton from '../components/CustomButton';
 import { getAuth } from "firebase/auth";
 //import * as BackgroundFetch from 'expo-background-fetch';
@@ -288,6 +289,7 @@ function Home({navigation, route}) {
   
     return (
         <SafeAreaView style={[styles.container, {flexDirection: "column"}]}>
+          <ScrollView>
   
             {/* <View>
                     <Text style={styles.welcometext}>Welcome, {displayName} </Text>
@@ -308,7 +310,8 @@ function Home({navigation, route}) {
                 <View>
                     <Text style={styles.centersubheading}>Load Progress</Text>
                 </View>
-                <View>
+                <View style={{flex:1,}}>
+                
                   <Carousel
                       layout="stack"
                       layoutCardOffset={0}
@@ -320,47 +323,55 @@ function Home({navigation, route}) {
                       inactiveSlideShift={0}
                       useScrollView={true}
                     />   
+                          
+                </View>
+                <View style={{flex: 20, marginTop: -40, marginBottom: 5,}}>
+                <Pagination
+                  dotsLength={data.length}
+                  activeDotIndex={isCarousel.current}
+                  carouselRef={isCarousel}
+                  dotStyle={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginHorizontal: 2,
+                    backgroundColor: '#000',
+                  }}
+                  tappableDots={true}
+                  inactiveDotStyle={{
+                    backgroundColor: 'black',
+                    // Define styles for inactive dots here
+                  }}
+                  inactiveDotOpacity={0.4}
+                  inactiveDotScale={1}
+                />    
                 </View>
             </View>
-                {/* <View>
-                        <Text style={styles.subheading}>Goals</Text>
-                        <FlatList
-                            data={goals}
-                            renderItem={({item}) => <Text style={styles.goalstext}>{item.key}</Text>}
-                        />
-                    </View> */}
             </View>
-            {/* <View style={{ 
-                padding: 10,
-                justifyContent:'center'
-                //backgroundColor: "darkorange"
-                }}>
-                    <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-                        <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-                        <Rows data={tableData} textStyle={styles.text}/>
-                    </Table>
-            </View> */}
             <View style={{flex:1,}}>
-                {/*<Text>Your expo push token: {expoPushToken}</Text>
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>Title: {notification && notification.request.content.title} </Text>
-                    <Text>Body: {notification && notification.request.content.body}</Text>
-                    <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-                </View>*/}
-                {/*<Button
-                    title="Press to schedule a notification"
-                    onPress={async () => {
-                    await schedulePushNotification();
-                    }}
-                  />*/}
                 <View style={styles.goalstextbox}>
                   <Text style={styles.goalstext}>
                     Goals
                   </Text>
-                  <FlatList 
+                  {/* <FlatList 
                             data={goals}
                             renderItem={({item}) => <Text style={styles.goalstexttwo}>{item.key}</Text>}
-                  />
+                  /> */}
+                  <FlatList
+                  style={styles.goallistcontainer}
+                    data={goals}
+                    horizontal
+                    showsHorizontalScrollIndicator={true}
+                        renderItem={({ item }) => (
+                            <View style={styles.goalsbutton}>
+                                <View>
+                                    <View style={styles.itemtitlebox}>
+                                    <Text style={styles.itemtitle}>{item.key}</Text> 
+                                    </View>
+                                </View>
+                            </View>
+                        )}  
+                    />
                 </View>
                 {/*<InNav style={{  alignSelf:'center'}} image={require('../assets/goals.jpg')} text='View Goals'/>*/}
                 <InNav image={require('../assets/workout.jpg')} text='View Workout Plan' 
@@ -369,6 +380,7 @@ function Home({navigation, route}) {
                 />
                 
             </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -482,7 +494,6 @@ const styles = StyleSheet.create({
       marginLeft: 20,
       marginRight: 20,
       borderColor: 'black',
-      height: 130
     },
     goalstext: {
         marginLeft: 2,
@@ -514,7 +525,36 @@ const styles = StyleSheet.create({
      },
     text: { 
         margin: 5 
-    }
+    },
+    goallistcontainer: {
+      paddingVertical: 28,
+
+  },
+    goalsbutton:{
+      backgroundColor: '#f0f0f0',
+      width:200,
+      marginRight: 20,
+      shadowColor: "#000",
+      shadowOffset: {
+          width: 0,
+          height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      borderRadius: 10,
+    },
+    itemtitle: {
+      fontSize: 15,
+      fontWeight: "800",
+      color: "#757575",
+      padding: 20,
+    },
+    itemtitlebox: {
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      backgroundColor: "#f0f0f0",
+    },
 });
 
 

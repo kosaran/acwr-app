@@ -185,6 +185,16 @@ function Home({navigation, route}) {
         }
     }
 
+    const allTimeLabels = (length) => {
+      const dates = []
+      for (let i = 0; i < length - 1; i++) {
+        dates[i] = ''
+      }
+      dates[0] = global.data.date[0]
+      dates.push(global.data.date[global.data.date.length-1])
+      return dates
+  }
+
     const auth = getAuth();
     const user = auth.currentUser;
     if (user !== null) {
@@ -206,7 +216,7 @@ function Home({navigation, route}) {
         data: global.data.acwr.slice(-7)
       },
       {
-        //labels: global.data.date,
+        labels: allTimeLabels(global.data.acwr.length),
         data: global.data.acwr
       },
     ];
@@ -300,8 +310,8 @@ function Home({navigation, route}) {
                 </View>
                 <View>
                   <Carousel
-                      layout="tinder"
-                      layoutCardOffset={9}
+                      layout="stack"
+                      layoutCardOffset={0}
                       ref={isCarousel}
                       data={data}
                       renderItem={CarouselCardItem}

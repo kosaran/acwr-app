@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect} from 'react';
-import { StyleSheet, Button, Image, Pressable, Text, View, SafeAreaView, SectionList, TouchableOpacity, Navigator, ScrollView, Modal, RefreshControl} from 'react-native';
+import { StyleSheet, Button, Image, Pressable, Text, View, SafeAreaView, SectionList, TouchableOpacity, Dimensions, ScrollView, Modal, RefreshControl} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 
@@ -13,12 +13,22 @@ import { athletes } from './homeNav';
 import { getStatusAsync } from 'expo-background-fetch';
 import { async } from '@firebase/util';
 import { color } from 'react-native-elements/dist/helpers';
-//import { athletes } from './CoachScreens/CoachHomeNav';
+import {
+    LineChart,
+    BarChart,
+    PieChart,
+    ProgressChart,
+    ContributionGraph,
+    StackedBarChart
+} from "react-native-chart-kit";
 
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
+
+var graphLabels = []
+var graphData = []
 
 function Share({navigation}) {
     //console.log(thisUser)
@@ -48,9 +58,7 @@ function Share({navigation}) {
     const [modalVisible, setModalVisible] = useState(false);
     const [mAlert, showmAlert] = useState(false);
     const [clickedPerson, setClickedPerson] = React.useState('');
-
-    const icon = 'star-border'
-    const col = 'red'
+    const [clickedEmail, setClickedEmail] = React.useState('');
 
     const data = {acute:[], chronic :[]};
     //var data;
@@ -116,6 +124,24 @@ function Share({navigation}) {
         //console.log(people)
     }
 
+    const chartLabels = () => {
+        if ( global.data.date.length < 7){
+            const days = global.data.date
+            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            for (let i = 0; i < global.data.date.length; i++) {
+                days[i] = weekday[new Date(days[i]).getDay()]
+            }
+            return days
+        }else{
+            const days = global.data.date.slice(-7)
+            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            for (let i = 0; i < 7; i++) {
+                days[i] = weekday[new Date(days[i]).getDay()]
+            }
+            return days
+        }
+    }
+
     const statCol = (stat) =>{
         if (stat == 'Resting'){
             return 'orange'
@@ -173,6 +199,27 @@ function Share({navigation}) {
           }
     }
 
+    const getPlayerData = async(email) => {
+        const docRef = doc(db, "users", email, 'data', 'acwr');
+        const docSnap = await getDoc(docRef);
+        graphData = docSnap.data.values
+        graphLabels = docSnap.data.dates
+    }
+
+    const getLab = async(email) => {
+        const docRef = doc(db, "users", email, 'data', 'acwr');
+        const docSnap = await getDoc(docRef);
+        graphLabels = docSnap.data().dates
+        return docSnap.data().dates
+    }
+
+    const getDat = async(email) => {
+        const docRef = doc(db, "users", email, 'data', 'acwr');
+        const docSnap = await getDoc(docRef);
+        graphData = docSnap.data().values
+        return docSnap.data().values
+    }
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -206,7 +253,7 @@ function Share({navigation}) {
                         <TouchableOpacity style={styles.item} onPress={()=>
                              //HomeScreen(),
                              //navigation.navigate('name',{name:item.name, chatID: item.chatID})
-                             {setModalVisible(true), setClickedPerson(item.name)}  
+                             {setModalVisible(true), setClickedPerson(item.name), setClickedEmail(item.email), getLab(item.email), getDat(item.email)}
                              //HomeScreen()
                              //navigation.navigate('C')
                              }>
@@ -243,6 +290,47 @@ function Share({navigation}) {
                         <Text style={styles.modalText}>{clickedPerson}</Text>
                         <Text style={styles.modalText}>Projected</Text>
                         <Text style={styles.modalText}>Target</Text>
+                        <LineChart
+                        data={{
+                        //labels: global.data.date.slice(-7),
+                        //labels: chartLabels(),
+                        labels: graphLabels,
+                        //labels: item.labels,
+                        datasets: [
+                            {
+                            data: graphData
+                            //data: item.data
+                            //data: getDat(clickedEmail)
+                            }
+                        ]
+                        }}
+                        width={Dimensions.get("window").width - 40} // from react-native
+                        height={250}
+                        //yAxisLabel="$"
+                        //yAxisSuffix="k"
+                        yAxisInterval={1} // optional, defaults to 1
+                        chartConfig={{
+                        backgroundColor: "#fff",
+                        backgroundGradientFrom: "#fff",
+                        backgroundGradientTo: "#fff",
+                        decimalPlaces: 2, // optional, defaults to 2dp
+                        color: (opacity = 1) => `rgba(0, 69, 196, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(0, 39, 89, ${opacity})`,
+                        style: {
+                            borderRadius: 1
+                        },
+                        propsForDots: {
+                            r: "3",
+                            strokeWidth: "6",
+                            stroke: "#001f59"
+                        }
+                        }}
+                        bezier
+                        style={{
+                            marginVertical: 10,
+                            borderRadius: 10
+                        }}
+                        />
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
@@ -275,8 +363,8 @@ const styles = StyleSheet.create({
         //borderColor:'dodgerblue'
     },
     roundButton1: {
-        width: 50,
-        height: 50,
+        width: 55,
+        height: 55,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,

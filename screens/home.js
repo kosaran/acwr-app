@@ -104,6 +104,7 @@ function Home({navigation, route}) {
       //console.log(global.data)
   const [isRegistered, setIsRegistered] = useState(true);
   const [status, setStatus] = useState(null);
+  const [carInd, setCarInd] = useState(0);
 
   const getGoals = async() => {
     if (global.data.goals.length > 0 && goals.length < 3){
@@ -322,13 +323,14 @@ function Home({navigation, route}) {
                       itemWidth={ITEM_WIDTH}
                       inactiveSlideShift={0}
                       useScrollView={true}
+                      onSnapToItem={(index) => setCarInd(index) }
                     />   
                           
                 </View>
                 <View style={{flex: 20, marginTop: -40, marginBottom: 5,}}>
                 <Pagination
                   dotsLength={data.length}
-                  activeDotIndex={isCarousel.current}
+                  activeDotIndex={carInd}
                   carouselRef={isCarousel}
                   dotStyle={{
                     width: 10,

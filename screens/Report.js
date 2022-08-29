@@ -11,7 +11,7 @@ import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import SliderCustomLabel from '../components/SliderCustomLabel';
 import { Ionicons } from '@expo/vector-icons';
 import {db} from "./Firebase";
-import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"; 
+import {collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"; 
 import { thisUser } from './homeNav';
 
 
@@ -284,9 +284,13 @@ function report({navigation, route}) {
             global.data.desc.push(desc)
             global.data.com.push(comm)
             global.data.goals.push(goal)
-            setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+            updateDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
                 acwr: acwrNew, 
                 name: thisUser.name
+            })
+            updateDoc(doc(db, "users", email, 'data', 'acwr'), {
+                values: arrayUnion(acwrNew),
+                dates: arrayUnion(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
             })
         }
         else{
@@ -303,9 +307,13 @@ function report({navigation, route}) {
                 global.data.desc.push(desc)
                 global.data.com.push(comm)
                 global.data.goals.push(goal)
-                setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                updateDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
                     acwr: acwrNew, 
                     name: thisUser.name
+                })
+                updateDoc(doc(db, "users", thisUser.email.toLowerCase(), 'data', 'acwr'), {
+                    values: arrayUnion(acwrNew),
+                    dates: arrayUnion(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
                 })
             } else{
                 //global.data.date[global.data.date.indexOf(showDate())] = nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate()
@@ -325,9 +333,13 @@ function report({navigation, route}) {
                     global.data.chronic[i] = cur * (2/22) + (1 - 2/22) * global.data.chronic[i - 1]
                     global.data.acwr[i] = global.data.acute[i]/global.data.chronic[i]
                 }
-                setDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
+                updateDoc(doc(db, "teams", thisUser.team, 'athletes',  thisUser.email.toLowerCase()), {
                     acwr: acwrNew, 
                     name: thisUser.name
+                })
+                updateDoc(doc(db, "users", email, 'data', 'acwr'), {
+                    values: arrayUnion(acwrNew),
+                    dates: arrayUnion(nowDate.getFullYear()+'/'+(nowDate.getMonth()+1)+'/'+nowDate.getDate())
                 })
             }
         }

@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect} from 'react';
-import { StyleSheet, Button, Image, Pressable, Text, View, SafeAreaView, SectionList, TouchableOpacity, Dimensions, ScrollView, Modal, RefreshControl} from 'react-native';
+import { StyleSheet, Button, Image, Pressable, Text, View, SafeAreaView, SectionList,ActivityIndicator, TouchableOpacity, Dimensions, ScrollView, Modal, RefreshControl} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 
@@ -34,6 +34,7 @@ function Share({navigation}) {
     //console.log(thisUser)
 
     const [refreshing, setRefreshing] = React.useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const onRefresh = React.useCallback(() => {
       setRefreshing(true);
@@ -124,16 +125,16 @@ function Share({navigation}) {
         //console.log(people)
     }
 
-    const chartLabels = () => {
-        if ( global.data.date.length < 7){
-            const days = global.data.date
+    const chartLabels = (dates) => {
+        if (dates.length < 7){
+            const days = dates
             const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-            for (let i = 0; i < global.data.date.length; i++) {
+            for (let i = 0; i < dates.length; i++) {
                 days[i] = weekday[new Date(days[i]).getDay()]
             }
             return days
         }else{
-            const days = global.data.date.slice(-7)
+            const days = dates.slice(-7)
             const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
             for (let i = 0; i < 7; i++) {
                 days[i] = weekday[new Date(days[i]).getDay()]
@@ -209,7 +210,7 @@ function Share({navigation}) {
     const getLab = async(email) => {
         const docRef = doc(db, "users", email, 'data', 'acwr');
         const docSnap = await getDoc(docRef);
-        graphLabels = docSnap.data().dates
+        graphLabels = chartLabels(docSnap.data().dates)
         return docSnap.data().dates
     }
 
@@ -217,6 +218,7 @@ function Share({navigation}) {
         const docRef = doc(db, "users", email, 'data', 'acwr');
         const docSnap = await getDoc(docRef);
         graphData = docSnap.data().values
+        setIsLoading(false)
         return docSnap.data().values
     }
 
@@ -290,7 +292,9 @@ function Share({navigation}) {
                         <Text style={styles.modalText}>{clickedPerson}</Text>
                         <Text style={styles.modalText}>Projected</Text>
                         <Text style={styles.modalText}>Target</Text>
-                        <LineChart
+                        {!isLoading ? (
+                        <View>
+                            <LineChart
                         data={{
                         //labels: global.data.date.slice(-7),
                         //labels: chartLabels(),
@@ -331,9 +335,20 @@ function Share({navigation}) {
                             borderRadius: 10
                         }}
                         />
+                        </View>
+                        ) : (
+                        <ActivityIndicator size="large" animating={true} color = 'gray' style={{paddingBottom:10}}/>
+                        )}
+                        
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}
+                            onPress={() => {
+                                setModalVisible(!modalVisible)
+                                graphData = []
+                                graphLabels = []
+                                setIsLoading(true)
+                            }
+                            }
                         >
                             <Text style={styles.textStyle}>Close</Text>
                         </Pressable>
@@ -397,7 +412,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F194FF",
     },
     buttonClose: {
-        backgroundColor: "deeppink",
+        backgroundColor: "red",
         padding:5
     },
     textStyle: {
@@ -444,7 +459,7 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     statusText:{
-       fontSize:12,
+       fontSize:10,
        color:'white'
     },
     statusBox:{

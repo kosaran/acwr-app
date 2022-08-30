@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 //import * as Svg from 'react-native-svg';
 //import { Svg } from 'expo'
-import { StyleSheet, Pressable, Text, View, SafeAreaView, Platform} from 'react-native';
+import { StyleSheet, Pressable, Text, View, SafeAreaView, Platform, FlatList, ScrollView, TouchableOpacity} from 'react-native';
 //import Body from "react-native-body-highlighter"
 import { Dropdown } from 'react-native-element-dropdown';
 import RenderHTML from "react-native-render-html";
 import { MaterialIcons} from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import { useIsFocused } from '@react-navigation/native'
 
 
 const exercices = [
@@ -21,14 +22,14 @@ const exercices = [
 ]
 
 const data = [
-  { label: 'Hips', value: '1' },
-  { label: 'Hamstring', value: '2' },
-  { label: 'Quad', value: '3' },
-  { label: 'Glute', value: '4' },
-  { label: 'Ankle', value: '5' },
-  { label: 'Foot', value: '6' },
-  { label: 'Upper Body', value: '7' },
-  { label: 'Lower Body', value: '8' },
+  { label: 'Hips', value: 'Hips'},
+  { label: 'Hamstring', value: 'Hamstring' },
+  { label: 'Quad', value: 'Quad' },
+  { label: 'Glute', value: 'Glute' },
+  { label: 'Ankle', value: 'Ankle' },
+  { label: 'Foot', value: 'Foot' },
+  { label: 'Upper Body', value: 'Upper Body' },
+  { label: 'Lower Body', value: 'Lower Body' },
 ];
 
 const stressData = [
@@ -36,6 +37,7 @@ const stressData = [
   { label: 'Personal', value: '2' },
   { label: 'Financial', value: '3' },
 ];
+
 
 /*const html = `
 <main>
@@ -84,7 +86,14 @@ render(){
 const BodyPage = () => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  const [slide, onSlide] = React.useState(5);
+  const [stressValue, setStressValue] = useState(null);
+  const [isStressFocus, setStressIsFocus] = useState(false);
+  const [slide, onSlide] = React.useState(0);
+  const [stressSlide, onStressSlide] = React.useState(0);
+  const [injuries, setInjuries] = useState([]);
+  const [stresses, setStresses] = useState([]);
+  
+ 
 
   const renderLabel = (label) => {
     if (value || isFocus) {
@@ -99,37 +108,51 @@ const BodyPage = () => {
 
   return (
     <View style={styles.container}>
-      <View style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
-        {renderLabel('Select area')}
-        <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={data}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus ? 'Injury Report' : '...'}
-          searchPlaceholder="Search..."
-          value={value}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            setValue(item.value);
-            setIsFocus(false);
-          }}
-          renderLeftIcon={() => (
-            <MaterialIcons
-              style={styles.icon}
-              color={isFocus ? 'blue' : 'black'}
-              name="person"
-              size={20}
+      <ScrollView style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
+        <View style={[{flex:1, flexDirection:'row'}]}>
+          <View style={[{flex:1}]}>
+            {renderLabel('Select area')}
+            <Dropdown
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={data}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Injury Report' : '...'}
+              searchPlaceholder="Search..."
+              value={value}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setValue(item.value);
+                setIsFocus(false);
+              }}
+              renderLeftIcon={() => (
+                <MaterialIcons
+                  style={styles.icon}
+                  color={isFocus ? 'blue' : 'black'}
+                  name="person"
+                  size={20}
+                />
+              )}
             />
-          )}
-        />
+          </View>
+          <View style={[{flex:1}]}>
+            <TouchableOpacity onPress={
+            ()=> 
+            setInjuries(arr => [...arr, {part: value, sev: slide}])
+            } activeOpacity={0.7} style={styles.button} >
+  
+            <Text style={styles.buttonText}> Add Values To FlatList </Text>
+
+            </TouchableOpacity>
+          </View>
+        </View>
         <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {slide}</Text>
         <Slider
           style={{width: 300, alignSelf:'center'}}
@@ -143,11 +166,19 @@ const BodyPage = () => {
           tapToSeek
           //thumbTintColor = 'dodgerblue'
         />
-      </View>
-      <View style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
+        <FlatList
+          data={injuries}
+          width='100%'
+          //extraData={this.state.arrayHolder}
+          keyExtractor={(index) => index.toString()}
+          //ItemSeparatorComponent={this.FlatListItemSeparator}
+          renderItem={({ item }) => <Text style={styles.item}> {item.part} and {item.sev} </Text>}
+        />
+      </ScrollView>
+      <ScrollView style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
         {renderLabel('Select source')}
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          style={[styles.dropdown, isStressFocus && { borderColor: 'blue' }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -157,38 +188,38 @@ const BodyPage = () => {
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={!isFocus ? 'Stress Report' : '...'}
+          placeholder={!isStressFocus ? 'Stress Report' : '...'}
           searchPlaceholder="Search..."
-          value={value}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
+          value={stressValue}
+          onFocus={() => setStressIsFocus(true)}
+          onBlur={() => setStressIsFocus(false)}
           onChange={item => {
-            setValue(item.value);
-            setIsFocus(false);
+            setStressValue(item.value);
+            setStressIsFocus(false);
           }}
           renderLeftIcon={() => (
             <MaterialIcons
               style={styles.icon}
-              color={isFocus ? 'blue' : 'black'}
+              color={isStressFocus ? 'blue' : 'black'}
               name="person"
               size={20}
             />
           )}
         />
-        <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {slide}</Text>
+        <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {stressSlide}</Text>
         <Slider
           style={{width: 300, alignSelf:'center'}}
           minimumValue={0}
           maximumValue={10}
           step = {0.5}
-          value = {slide}
+          value = {stressSlide}
           minimumTrackTintColor="red"
           //maximumTrackTintColor="limegreen"
-          onValueChange={onSlide}
+          onValueChange={onStressSlide}
           tapToSeek
           //thumbTintColor = 'dodgerblue'
         />
-      </View>
+      </ScrollView>
     </View>
   );
 };

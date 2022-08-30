@@ -78,7 +78,7 @@ function Share({navigation}) {
                     }}
                 >
                 {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                    <Text>{s}</Text>
+                    <Text style={{fontSize:12}}>{s}</Text>
                 </TouchableOpacity>
         } else if (1.3 < s && s <= 1.5) {
             return <TouchableOpacity
@@ -88,7 +88,7 @@ function Share({navigation}) {
                     }}
                 >
                 {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                    <Text>{s}</Text>
+                    <Text style={{fontSize:12}}>{s}</Text>
                 </TouchableOpacity>
         } else {
           //return <Image style={[styles.av,{borderWidth:0}]} source={{uri: photo}}></Image>
@@ -99,7 +99,7 @@ function Share({navigation}) {
                     }}
                 >
                 {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                    <Text>{s}</Text>
+                    <Text style={{fontSize:12}}>{s}</Text>
                 </TouchableOpacity>
         }
     }

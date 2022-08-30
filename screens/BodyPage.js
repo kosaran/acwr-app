@@ -8,6 +8,10 @@ import RenderHTML from "react-native-render-html";
 import { MaterialIcons} from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { useIsFocused } from '@react-navigation/native'
+import { auth, db } from './Firebase';
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
+import { thisUser } from './homeNav';
+import { async } from '@firebase/util';
 
 
 const exercices = [
@@ -33,9 +37,9 @@ const data = [
 ];
 
 const stressData = [
-  { label: 'School', value: '1' },
-  { label: 'Personal', value: '2' },
-  { label: 'Financial', value: '3' },
+  { label: 'School', value: 'School' },
+  { label: 'Personal', value: 'Personal' },
+  { label: 'Financial', value: 'Financial' },
 ];
 
 
@@ -88,17 +92,27 @@ const BodyPage = () => {
   const [isFocus, setIsFocus] = useState(false);
   const [stressValue, setStressValue] = useState(null);
   const [isStressFocus, setStressIsFocus] = useState(false);
-  const [slide, onSlide] = React.useState(0);
-  const [stressSlide, onStressSlide] = React.useState(0);
+  const [slide, onSlide] = React.useState(0.5);
+  const [stressSlide, onStressSlide] = React.useState(0.5);
   const [injuries, setInjuries] = useState([]);
   const [stresses, setStresses] = useState([]);
   
+  const FlatListItemSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "100%",
+          backgroundColor: "#607D8B",
+        }}
+      />
+    );
+  }
  
-
-  const renderLabel = (label) => {
-    if (value || isFocus) {
+  const renderLabel = (label, foc) => {
+    if (value || foc) {
       return (
-        <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+        <Text style={[styles.label, foc && { color: 'blue' }]}>
           {label}
         </Text>
       );
@@ -106,12 +120,36 @@ const BodyPage = () => {
     return null;
   };
 
+  const updateInj = () => {
+    setInjuries(arr => [...arr, {part: value, sev: slide}]) 
+    console.log('timelist' + injuries.length)
+  }
+
+  const updateStr = () =>{
+    setStresses(arr => [...arr, {part: stressValue, sev: stressSlide}])
+    console.log('timelist' + injuries.length)
+  }
+
+  useEffect(() => {
+    // action on update of movies
+    const nowDate = new Date()
+    nowDate.setHours(0, 0, 0, 0)
+    setDoc(doc(db, "users", thisUser.email, 'injury', nowDate.toString()), {
+      data: injuries
+    })
+
+    setDoc(doc(db, "users", thisUser.email, 'stress', nowDate.toString()), {
+      data: stresses
+    })
+
+  }, [injuries, stresses]);
+
   return (
     <View style={styles.container}>
-      <ScrollView style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
+      <ScrollView style={[{paddingBottom: 16, flex:1}]}>
         <View style={[{flex:1, flexDirection:'row'}]}>
-          <View style={[{flex:1}]}>
-            {renderLabel('Select area')}
+          <View style={[{flex:1, paddingTop: 16, paddingBottom: 16}]}>
+            {renderLabel('Select area', isFocus)}
             <Dropdown
               style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
               placeholderStyle={styles.placeholderStyle}
@@ -142,21 +180,16 @@ const BodyPage = () => {
               )}
             />
           </View>
-          <View style={[{flex:1}]}>
-            <TouchableOpacity onPress={
-            ()=> 
-            setInjuries(arr => [...arr, {part: value, sev: slide}])
-            } activeOpacity={0.7} style={styles.button} >
-  
-            <Text style={styles.buttonText}> Add Values To FlatList </Text>
-
+          <View style={[{flex:1, paddingLeft:5, paddingTop: 16}]}>
+            <TouchableOpacity onPress={() => updateInj()} activeOpacity={0.7} style={[styles.saveButton,{backgroundColor: value == null ? 'grey' : 'dodgerblue'}]} disabled={value == null ? true : false}>
+              <Text style={{color:'white', alignSelf:'center'}}> SAVE </Text>
             </TouchableOpacity>
           </View>
         </View>
         <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {slide}</Text>
         <Slider
           style={{width: 300, alignSelf:'center'}}
-          minimumValue={0}
+          minimumValue={0.5}
           maximumValue={10}
           step = {0.5}
           value = {slide}
@@ -171,45 +204,54 @@ const BodyPage = () => {
           width='100%'
           //extraData={this.state.arrayHolder}
           keyExtractor={(index) => index.toString()}
-          //ItemSeparatorComponent={this.FlatListItemSeparator}
-          renderItem={({ item }) => <Text style={styles.item}> {item.part} and {item.sev} </Text>}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({ item }) => <Text style={styles.listItem}> {item.part} x {item.sev} </Text>}
         />
       </ScrollView>
-      <ScrollView style={[{paddingTop: 16, paddingBottom: 16, flex:1}]}>
-        {renderLabel('Select source')}
-        <Dropdown
-          style={[styles.dropdown, isStressFocus && { borderColor: 'blue' }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={stressData}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isStressFocus ? 'Stress Report' : '...'}
-          searchPlaceholder="Search..."
-          value={stressValue}
-          onFocus={() => setStressIsFocus(true)}
-          onBlur={() => setStressIsFocus(false)}
-          onChange={item => {
-            setStressValue(item.value);
-            setStressIsFocus(false);
-          }}
-          renderLeftIcon={() => (
-            <MaterialIcons
-              style={styles.icon}
-              color={isStressFocus ? 'blue' : 'black'}
-              name="person"
-              size={20}
+      <ScrollView style={[{flex:1}]}>
+        <View style={[{flex:1, flexDirection:'row'}]}>
+          <View style={[{flex:1, paddingTop: 16, paddingBottom: 16}]}>
+            {renderLabel('Select source', isStressFocus)}
+            <Dropdown
+              style={[styles.dropdown, isStressFocus && { borderColor: 'blue' }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={stressData}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isStressFocus ? 'Stress Report' : '...'}
+              searchPlaceholder="Search..."
+              value={stressValue}
+              onFocus={() => setStressIsFocus(true)}
+              onBlur={() => setStressIsFocus(false)}
+              onChange={item => {
+                setStressValue(item.value);
+                setStressIsFocus(false);
+              }}
+              renderLeftIcon={() => (
+                <MaterialIcons
+                  style={styles.icon}
+                  color={isStressFocus ? 'blue' : 'black'}
+                  name="person"
+                  size={20}
+                />
+              )}
             />
-          )}
-        />
+            </View>
+            <View style={[{flex:1, paddingLeft:5, paddingTop: 16}]}>
+              <TouchableOpacity onPress={()=>  updateStr()} activeOpacity={0.7} style={[styles.saveButton,{backgroundColor: stressValue == null ? 'grey' : 'dodgerblue'}]} disabled={stressValue == null ? true : false}>
+                <Text style={{color:'white', alignSelf:'center'}}> SAVE </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         <Text style={{alignSelf:'center', paddingTop:25, paddingBottom:10}}>Severity: {stressSlide}</Text>
         <Slider
           style={{width: 300, alignSelf:'center'}}
-          minimumValue={0}
+          minimumValue={0.5}
           maximumValue={10}
           step = {0.5}
           value = {stressSlide}
@@ -218,6 +260,14 @@ const BodyPage = () => {
           onValueChange={onStressSlide}
           tapToSeek
           //thumbTintColor = 'dodgerblue'
+        />
+        <FlatList
+          data={stresses}
+          width='100%'
+          //extraData={this.state.arrayHolder}
+          keyExtractor={(index) => index.toString()}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({ item }) => <Text style={styles.listItem}> {item.part} x {item.sev} </Text>}
         />
       </ScrollView>
     </View>
@@ -265,6 +315,16 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
+  saveButton: {
+    padding: 16,
+    borderRadius: 8,
+  },
+  listItem: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+    alignSelf: 'center'
+  }
 });
 
 

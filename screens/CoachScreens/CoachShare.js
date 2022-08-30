@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect} from 'react';
-import { StyleSheet, Button, Image, Pressable, Text, View, SafeAreaView, SectionList, TouchableOpacity, Navigator, ScrollView, Modal, RefreshControl} from 'react-native';
+import { StyleSheet, Button, Image, Pressable, Text, View, SafeAreaView, SectionList,ActivityIndicator, TouchableOpacity, Dimensions, ScrollView, Modal, RefreshControl} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 
@@ -9,21 +9,32 @@ import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getD
 import { auth, db } from '../Firebase';
 
 import { thisUser } from '../login';
-import { athletes } from './CoachHomeNav'
+import { athletes } from './CoachHomeNav';
 import { getStatusAsync } from 'expo-background-fetch';
 import { async } from '@firebase/util';
 import { color } from 'react-native-elements/dist/helpers';
-//import { athletes } from './CoachScreens/CoachHomeNav';
+import {
+    LineChart,
+    BarChart,
+    PieChart,
+    ProgressChart,
+    ContributionGraph,
+    StackedBarChart
+} from "react-native-chart-kit";
 
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-function Share({navigation}) {
+var graphLabels = []
+var graphData = []
+
+function CoachShare({navigation}) {
     //console.log(thisUser)
 
     const [refreshing, setRefreshing] = React.useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const onRefresh = React.useCallback(() => {
       setRefreshing(true);
@@ -48,9 +59,7 @@ function Share({navigation}) {
     const [modalVisible, setModalVisible] = useState(false);
     const [mAlert, showmAlert] = useState(false);
     const [clickedPerson, setClickedPerson] = React.useState('');
-
-    const icon = 'star-border'
-    const col = 'red'
+    const [clickedEmail, setClickedEmail] = React.useState('');
 
     const data = {acute:[], chronic :[]};
     //var data;
@@ -69,7 +78,7 @@ function Share({navigation}) {
                     }}
                 >
                 {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                    <Text>{s}</Text>
+                    <Text style={{fontSize:12}}>{s}</Text>
                 </TouchableOpacity>
         } else if (1.3 < s && s <= 1.5) {
             return <TouchableOpacity
@@ -79,7 +88,7 @@ function Share({navigation}) {
                     }}
                 >
                 {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                    <Text>{s}</Text>
+                    <Text style={{fontSize:12}}>{s}</Text>
                 </TouchableOpacity>
         } else {
           //return <Image style={[styles.av,{borderWidth:0}]} source={{uri: photo}}></Image>
@@ -90,7 +99,7 @@ function Share({navigation}) {
                     }}
                 >
                 {/*<MaterialIcons name='access-time' size={50} color='orange'></MaterialIcons>*/}
-                    <Text>{s}</Text>
+                    <Text style={{fontSize:12}}>{s}</Text>
                 </TouchableOpacity>
         }
     }
@@ -114,6 +123,24 @@ function Share({navigation}) {
         //console.log(athletes)
         //var [peo, setPeo] = useState(athletes)
         //console.log(people)
+    }
+
+    const chartLabels = (dates) => {
+        if (dates.length < 7){
+            const days = dates
+            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            for (let i = 0; i < dates.length; i++) {
+                days[i] = weekday[new Date(days[i]).getDay()]
+            }
+            return days
+        }else{
+            const days = dates.slice(-7)
+            const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            for (let i = 0; i < 7; i++) {
+                days[i] = weekday[new Date(days[i]).getDay()]
+            }
+            return days
+        }
     }
 
     const statCol = (stat) =>{
@@ -173,6 +200,28 @@ function Share({navigation}) {
           }
     }
 
+    const getPlayerData = async(email) => {
+        const docRef = doc(db, "users", email, 'data', 'acwr');
+        const docSnap = await getDoc(docRef);
+        graphData = docSnap.data.values
+        graphLabels = docSnap.data.dates
+    }
+
+    const getLab = async(email) => {
+        const docRef = doc(db, "users", email, 'data', 'acwr');
+        const docSnap = await getDoc(docRef);
+        graphLabels = chartLabels(docSnap.data().dates)
+        return docSnap.data().dates
+    }
+
+    const getDat = async(email) => {
+        const docRef = doc(db, "users", email, 'data', 'acwr');
+        const docSnap = await getDoc(docRef);
+        graphData = docSnap.data().values
+        setIsLoading(false)
+        return docSnap.data().values
+    }
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -206,7 +255,7 @@ function Share({navigation}) {
                         <TouchableOpacity style={styles.item} onPress={()=>
                              //HomeScreen(),
                              //navigation.navigate('name',{name:item.name, chatID: item.chatID})
-                             {setModalVisible(true), setClickedPerson(item.name)}  
+                             {setModalVisible(true), setClickedPerson(item.name), setClickedEmail(item.email), getLab(item.email), getDat(item.email)}
                              //HomeScreen()
                              //navigation.navigate('C')
                              }>
@@ -243,9 +292,63 @@ function Share({navigation}) {
                         <Text style={styles.modalText}>{clickedPerson}</Text>
                         <Text style={styles.modalText}>Projected</Text>
                         <Text style={styles.modalText}>Target</Text>
+                        {!isLoading ? (
+                        <View>
+                            <LineChart
+                        data={{
+                        //labels: global.data.date.slice(-7),
+                        //labels: chartLabels(),
+                        labels: graphLabels,
+                        //labels: item.labels,
+                        datasets: [
+                            {
+                            data: graphData
+                            //data: item.data
+                            //data: getDat(clickedEmail)
+                            }
+                        ]
+                        }}
+                        width={Dimensions.get("window").width - 40} // from react-native
+                        height={250}
+                        //yAxisLabel="$"
+                        //yAxisSuffix="k"
+                        yAxisInterval={1} // optional, defaults to 1
+                        chartConfig={{
+                        backgroundColor: "#fff",
+                        backgroundGradientFrom: "#fff",
+                        backgroundGradientTo: "#fff",
+                        decimalPlaces: 2, // optional, defaults to 2dp
+                        color: (opacity = 1) => `rgba(0, 69, 196, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(0, 39, 89, ${opacity})`,
+                        style: {
+                            borderRadius: 1
+                        },
+                        propsForDots: {
+                            r: "3",
+                            strokeWidth: "6",
+                            stroke: "#001f59"
+                        }
+                        }}
+                        bezier
+                        style={{
+                            marginVertical: 10,
+                            borderRadius: 10
+                        }}
+                        />
+                        </View>
+                        ) : (
+                        <ActivityIndicator size="large" animating={true} color = 'gray' style={{paddingBottom:10}}/>
+                        )}
+                        
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}
+                            onPress={() => {
+                                setModalVisible(!modalVisible)
+                                graphData = []
+                                graphLabels = []
+                                setIsLoading(true)
+                            }
+                            }
                         >
                             <Text style={styles.textStyle}>Close</Text>
                         </Pressable>
@@ -275,8 +378,8 @@ const styles = StyleSheet.create({
         //borderColor:'dodgerblue'
     },
     roundButton1: {
-        width: 50,
-        height: 50,
+        width: 55,
+        height: 55,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
@@ -309,7 +412,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F194FF",
     },
     buttonClose: {
-        backgroundColor: "deeppink",
+        backgroundColor: "red",
         padding:5
     },
     textStyle: {
@@ -356,7 +459,7 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     statusText:{
-       fontSize:12,
+       fontSize:10,
        color:'white'
     },
     statusBox:{
@@ -373,4 +476,4 @@ const styles = StyleSheet.create({
     
 });
 
-export default Share;
+export default CoachShare;

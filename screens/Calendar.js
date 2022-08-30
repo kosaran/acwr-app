@@ -1,16 +1,11 @@
 import React, { Component, useEffect, useState} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, Button} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, Button, ScrollView, FlatList} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
-/*import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { Paragraph } from 'react-native-paper';
-import { color } from 'react-native-elements/dist/helpers';
-import { athletes } from './homeNav';
-import { thisUser } from './login';
-import CustomButton from '../components/CustomButton';
-import { compareDocumentPosition } from 'domutils';*/
 import { Feather } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native'
+import {db} from "./Firebase";
+import {collection, addDoc, query, where, getDoc, deleteDoc, doc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"; 
+import { thisUser } from './homeNav';
 
 //console.log({year: new Date().getFullYear(), day: new Date().getDate()}.year)
 const nowDate = new Date(); 
@@ -29,7 +24,7 @@ const pickCol = (s) =>{
 }
 
 let customDatesStyles = [];
-
+let DATA = []
 
 /*while(day.add(1, 'day').isSame(today, 'month')) {
   customDatesStyles.push({
@@ -66,6 +61,12 @@ export default class Calendar extends Component {
       });
     }  
   }
+
+  async getInj(date){
+    const docSnap = await getDoc(doc(db, "users", thisUser.email, 'injury', date))
+    console.log(docSnap.data().data+'testingbitch')
+    DATA = docSnap.data().data
+  }
   
 
   onDateChange(date) {
@@ -88,8 +89,12 @@ export default class Calendar extends Component {
         containerStyle: [], // extra styling for day container
         allowDisabled: true, // allow custom style to apply to disabled dates
       });
-    }  
+    }
+
+    nowDate.setHours(0, 0, 0, 0)
+    this.getInj(nowDate.toString())
   }
+
 
   setModalVisible(bool){
     this.setState({
@@ -133,6 +138,11 @@ export default class Calendar extends Component {
     const { selectedStartDate, info, modalVisible} = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : '';
 
+    const Item = ({ title }) => (
+      <View style={styles.item}>
+        <Text style={styles.title}>{title}</Text>
+      </View>
+    );
     const EditButton = ({showButton}) => (
       /*<View style={styles.editButton}>
         {showButton && 
@@ -155,6 +165,10 @@ export default class Calendar extends Component {
       </View>
     )
     const displayButton = false
+
+    const renderItem = ({ item }) => (
+      <Item title={item.part} />
+    );
 
     return (
       <View style={styles.container}>
@@ -197,6 +211,11 @@ export default class Calendar extends Component {
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Description: {global.data.desc[global.data.date.indexOf(startDate)]}</Text>
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Comments: {global.data.com[global.data.date.indexOf(startDate)]}</Text>
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Goals: {global.data.goals[global.data.date.indexOf(startDate)]}</Text>
+                  <FlatList
+                  data={DATA}
+                  renderItem={renderItem}
+                  keyExtractor={item => item.part}
+                  />
                   <Button
                       style={[styles.buttonClose]}
                       onPress={() => this.setModalVisible(!modalVisible)}

@@ -87,7 +87,7 @@ render(){
           
 */
 
-const BodyPage = () => {
+const BodyPage = ({navigation, route}) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [stressValue, setStressValue] = useState(null);
@@ -131,17 +131,27 @@ const BodyPage = () => {
   }
 
   useEffect(() => {
-    // action on update of movies
-    const nowDate = new Date()
-    nowDate.setHours(0, 0, 0, 0)
-    setDoc(doc(db, "users", thisUser.email, 'injury', nowDate.toString()), {
-      data: injuries
-    })
+    if (route.params == null){
+      const nowDate = new Date()
+      nowDate.setHours(0, 0, 0, 0)
+      setDoc(doc(db, "users", thisUser.email, 'injury', nowDate.toString()), {
+        data: injuries
+      })
 
-    setDoc(doc(db, "users", thisUser.email, 'stress', nowDate.toString()), {
-      data: stresses
-    })
+      setDoc(doc(db, "users", thisUser.email, 'stress', nowDate.toString()), {
+        data: stresses
+      })
+    } else{
+      const nowDate  = route.params.date;
+      nowDate.setHours(0, 0, 0, 0)
+      setDoc(doc(db, "users", thisUser.email, 'injury', nowDate.toString()), {
+        data: injuries
+      })
 
+      setDoc(doc(db, "users", thisUser.email, 'stress', nowDate.toString()), {
+        data: stresses
+      })
+    }
   }, [injuries, stresses]);
 
   return (

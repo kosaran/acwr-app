@@ -63,8 +63,8 @@ export default class Calendar extends Component {
   }
 
   async getInj(date){
-    const docSnap = await getDoc(doc(db, "users", thisUser.email, 'injury', date))
-    console.log(docSnap.data().data+'testingbitch')
+    const docSnap = await getDoc(doc(db, "users", thisUser.email, 'injury', date.toString()))
+    console.log(docSnap.data().data)
     DATA = docSnap.data().data
   }
   
@@ -92,7 +92,8 @@ export default class Calendar extends Component {
     }
 
     nowDate.setHours(0, 0, 0, 0)
-    this.getInj(nowDate.toString())
+    console.log(nowDate+'trolldate')
+    this.getInj(nowDate)
   }
 
 
@@ -207,18 +208,20 @@ export default class Calendar extends Component {
           }}
         >
           <View style={styles.centeredView}>
-              <View style={styles.modalView}>
+              <View style={[styles.modalView]}>
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Description: {global.data.desc[global.data.date.indexOf(startDate)]}</Text>
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Comments: {global.data.com[global.data.date.indexOf(startDate)]}</Text>
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Goals: {global.data.goals[global.data.date.indexOf(startDate)]}</Text>
-                  <FlatList
-                  data={DATA}
-                  renderItem={renderItem}
-                  keyExtractor={item => item.part}
-                  />
+                  <View style={{height:50}}>
+                    <FlatList
+                          data={DATA}
+                          renderItem={renderItem}
+                          keyExtractor={item => item.part}
+                      />
+                </View>
                   <Button
                       style={[styles.buttonClose]}
-                      onPress={() => this.setModalVisible(!modalVisible)}
+                      onPress={() => {this.setModalVisible(!modalVisible), DATA = []}}
                       color = 'red'
                       title = 'Close'
                   />

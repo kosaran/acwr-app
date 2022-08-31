@@ -424,23 +424,24 @@ const settings = ({navigation}) => {
                 }}
             >
                 <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <RNDateTimePicker
-                            value={date}
-                            mode="time"
-                            onChange={onChange}
-                        />
-                        <Pressable
-                            style={({ pressed }) => [
-                                {
-                                  backgroundColor: pressed
-                                    ? 'red'
-                                    : 'grey'
-                                }, styles.buttonClose]}
-                            onPress={() => setTimeModalVisible(!timeModalVisible)}
-                        >
-                            <Text style={styles.textStyle}>Close</Text>
-                        </Pressable>
+                    <View style={styles.modalView}>                            
+                            <RNDateTimePicker
+                                style={{marginBottom: 10,}}
+                                value={date}
+                                mode="time"
+                                onChange={onChange}
+                            />
+                            <Pressable
+                                style={({ pressed }) => [
+                                    {
+                                    backgroundColor: pressed
+                                        ? 'red'
+                                        : 'grey'
+                                    }, styles.buttonClose, {flex:1}]}
+                                onPress={() => setTimeModalVisible(!timeModalVisible)}
+                            >
+                                <Text style={styles.textStyle}>Close</Text>
+                            </Pressable>
                     </View>
                 </View>
             </Modal>

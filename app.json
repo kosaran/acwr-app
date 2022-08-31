@@ -22,7 +22,13 @@
             "./local/assets/notification-sound-other.wav"
           ]
         }
-      ]
+      ],
+      "expo-build-properties",
+      {
+        "ios": {
+          "useFrameworks": "static"
+        }
+      }
     ],
     "updates": {
       "fallbackToCacheTimeout": 0

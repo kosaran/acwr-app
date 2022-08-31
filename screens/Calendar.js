@@ -220,7 +220,7 @@ export default class Calendar extends Component {
                     </Text>
                     <Text style={styles.modalheading}>Goals</Text>
                   <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>
-                    Goals: {global.data.goals[global.data.date.indexOf(startDate)]}
+                    {global.data.goals[global.data.date.indexOf(startDate)]}
                     </Text>
                   <View style={{height:50}}>
                   <Text style={styles.modalheading}>Injury Watch</Text>
@@ -239,7 +239,7 @@ export default class Calendar extends Component {
                       color = 'red'
                       title = 'Close'
                   />
-                  </View>
+                </View>
               </View>
           </View>
         </Modal>

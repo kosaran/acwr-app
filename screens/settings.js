@@ -9,10 +9,13 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import {db } from './Firebase';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
+import DateTimePicker from '@react-native-community/datetimepicker';
 //import { getAuth, signOut } from "firebase/auth";
 //import { auth } from './Firebase';
 //import { thisUser } from './login';
 import {thisUser} from './homeNav'
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+console.log(thisUser.notiTime.toDate().getMinutes()+'testingbigtime'+parseInt(thisUser.notiTime.toDate().getHours()))
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -31,8 +34,8 @@ async function schedulePushNotification() {
           },
           trigger: {
             //seconds: 60*1,
-            hour: 20, 
-            minute: 0, 
+            hour: parseInt(thisUser.notiTime.toDate().getHours()), 
+            minute: parseInt(thisUser.notiTime.toDate().getMinutes()), 
             repeats: true,
           },
         },
@@ -99,11 +102,13 @@ const settings = ({navigation}) => {
     //const [email, onChangeEmail] = React.useState(auth.currentUser.email);
     const [username, onChangeUsername] = React.useState(thisUser.name);
     const [email, onChangeEmail] = React.useState(thisUser.email);
+    //const [notiTime, onChangeNotiTime] = React.useState(new Date(0, 0, 0, 20, 0, 0, 0));
     //const [text, onChangeText] = React.useState("123-456-789");
     //const [status, onChangeStatus] = React.useState(thisUser.status);
     
     
     const [modalVisible, setModalVisible] = useState(false);
+    const [timeModalVisible, setTimeModalVisible] = useState(false);
     const [mAlert, showmAlert] = useState(false);
     const icon = 'star-border'
     const col = 'red'
@@ -210,6 +215,28 @@ const settings = ({navigation}) => {
         }
         return null;
       };
+    
+    const updateNoti = async(time) => {
+        await updateDoc(doc(db, "users", thisUser.email), {
+            notiTime: time
+        })
+        const docSnap = await getDoc(doc(db, "users", thisUser.email))
+        thisUser.email = email
+        thisUser.name = docSnap.data().name
+        thisUser.acwr = docSnap.data().acwr
+        thisUser.team = docSnap.data().team
+        thisUser.status = docSnap.data().status
+        thisUser.notiTime = docSnap.data().notiTime
+        console.log(thisUser.notiTime.toDate().getMinutes()+'gooobgalab')
+    }
+    
+    const [date, setDate] = useState(thisUser.notiTime.toDate());
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate;
+        console.log(currentDate+'gagaga'+thisUser.notiTime.toDate().getHours())
+        updateNoti(currentDate)
+        setDate(currentDate);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -331,7 +358,9 @@ const settings = ({navigation}) => {
                 </View>
                 <View style={[{flex:1, paddingTop: 50}]}>
                     <View style={[{alignItems:'center', flexDirection:'row', justifyContent:'center'}]}>
-                        <Text style={[{paddingRight: 20, fontWeight: '500', fontSize: 20}]}>Notifications</Text>
+                        <TouchableOpacity onPress = {() => setTimeModalVisible(!timeModalVisible)}>
+                            <Text style={[{paddingRight: 20, fontWeight: '500', fontSize: 20}]}>Notifications</Text>
+                        </TouchableOpacity>
                         <Switch
                             trackColor={{ false: "#767577", true: "limegreen" }}
                             thumbColor={isEnabled ? "white" : "#f4f3f4"}
@@ -379,6 +408,36 @@ const settings = ({navigation}) => {
                                     : 'grey'
                                 }, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
+                        >
+                            <Text style={styles.textStyle}>Close</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={timeModalVisible}
+                onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setTimeModalVisible(!timeModalVisible);
+                }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <RNDateTimePicker
+                            value={date}
+                            mode="time"
+                            onChange={onChange}
+                        />
+                        <Pressable
+                            style={({ pressed }) => [
+                                {
+                                  backgroundColor: pressed
+                                    ? 'red'
+                                    : 'grey'
+                                }, styles.buttonClose]}
+                            onPress={() => setTimeModalVisible(!timeModalVisible)}
                         >
                             <Text style={styles.textStyle}>Close</Text>
                         </Pressable>
@@ -516,11 +575,12 @@ const styles = StyleSheet.create({
         //borderColor: '#fff'
     },
     modalView: {
+        height:200,
         margin: 10,
         backgroundColor: "white",
         borderRadius: 20,
         padding: 50,
-        //alignItems: "center",
+        //alignSelf: "center",
         shadowColor: "#000",
         shadowOffset: {
           width: 0,

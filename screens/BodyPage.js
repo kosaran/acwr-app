@@ -12,6 +12,7 @@ import { auth, db } from './Firebase';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"; 
 import { thisUser } from './homeNav';
 import { async } from '@firebase/util';
+import InjuryReportComponent from '../components/InjuryReportComponent';
 
 
 const exercices = [
@@ -214,8 +215,8 @@ const BodyPage = ({navigation, route}) => {
           width='100%'
           //extraData={this.state.arrayHolder}
           keyExtractor={(index) => index.toString()}
-          ItemSeparatorComponent={FlatListItemSeparator}
-          renderItem={({ item }) => <Text style={styles.listItem}> {item.part} x {item.sev} </Text>}
+          // ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({ item }) => <InjuryReportComponent part={item.part} sev={item.sev} />}
         />
       </ScrollView>
       <ScrollView style={[{flex:1}]}>
@@ -276,8 +277,8 @@ const BodyPage = ({navigation, route}) => {
           width='100%'
           //extraData={this.state.arrayHolder}
           keyExtractor={(index) => index.toString()}
-          ItemSeparatorComponent={FlatListItemSeparator}
-          renderItem={({ item }) => <Text style={styles.listItem}> {item.part} x {item.sev} </Text>}
+          // ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({ item }) => <InjuryReportComponent part={item.part} sev={item.sev} />}
         />
       </ScrollView>
     </View>
@@ -333,7 +334,9 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 18,
     height: 44,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    backgroundColor: 'grey',
+    borderRadius: 10,
   }
 });
 

@@ -209,22 +209,37 @@ export default class Calendar extends Component {
         >
           <View style={styles.centeredView}>
               <View style={[styles.modalView]}>
-                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Description: {global.data.desc[global.data.date.indexOf(startDate)]}</Text>
-                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Comments: {global.data.com[global.data.date.indexOf(startDate)]}</Text>
-                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>Goals: {global.data.goals[global.data.date.indexOf(startDate)]}</Text>
+                <Text style={styles.modalTitle}>Qualitative Day Statistics</Text>
+              <Text style={styles.modalheading}>Description</Text>
+                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>
+                    {global.data.desc[global.data.date.indexOf(startDate)]}
+                    </Text>
+                    <Text style={styles.modalheading}>Comments</Text>
+                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>
+                    {global.data.com[global.data.date.indexOf(startDate)]}
+                    </Text>
+                    <Text style={styles.modalheading}>Goals</Text>
+                  <Text style={{paddingBottom:10, fontSize: 15, fontWeight:'300'}}>
+                    Goals: {global.data.goals[global.data.date.indexOf(startDate)]}
+                    </Text>
                   <View style={{height:50}}>
+                  <Text style={styles.modalheading}>Injury Watch</Text>
+                  <View style={styles.flatliststyle}>
                     <FlatList
                           data={DATA}
                           renderItem={renderItem}
                           keyExtractor={item => item.part}
                       />
+                      </View>
                 </View>
+                <View style={styles.buttoncontainer}>
                   <Button
                       style={[styles.buttonClose]}
                       onPress={() => {this.setModalVisible(!modalVisible), DATA = []}}
                       color = 'red'
                       title = 'Close'
                   />
+                  </View>
               </View>
           </View>
         </Modal>
@@ -242,9 +257,9 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 5,
-    backgroundColor: "white",
+    backgroundColor: "#f4f4f4",
     borderRadius: 20,
-    padding: 25,
+    padding: 20,
     //alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -256,13 +271,29 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonClose: {
-    //margin: 5,
-    //paddingTop: ,
+    flex: 1,
+    marginTop: 120,
+  },
+  buttoncontainer: {
+    marginTop: 35,
   },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    textAlign: 'center',
+    fontWeight: '800',
+    paddingBottom: 10,
+  },
+  modalheading: {
+    fontWeight: '700',
+    paddingVertical: 5,
+  },
+  flatliststyle: {
+    height: 100,
   },
   dateInfo: {
     backgroundColor: 'black',

@@ -113,7 +113,7 @@ function Home({navigation, route}) {
         while (tempGo == null){
           tempGo = global.data.goals[Math.floor(Math.random() * global.data.goals.length)]
         }
-        goals.push({key:global.data.date[Math.floor(Math.random() * global.data.goals.length)] + ': ' + tempGo})
+        goals.push({key:(global.data.date[Math.floor(Math.random() * global.data.goals.length)]), goaltext:tempGo})
       }
     }
   };
@@ -123,25 +123,10 @@ function Home({navigation, route}) {
   const isFocused = useIsFocused()
   useEffect(() => {
     global.data = global.data
-    //checkStatusAsync();
-    /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };*/
   }, [isFocused]);
 
   useEffect(() => {
-    //getGoals()
+    getGoals()
   }, [])
 
   /*const checkStatusAsync = async () => {
@@ -369,6 +354,7 @@ function Home({navigation, route}) {
                                 <View>
                                     <View style={styles.itemtitlebox}>
                                     <Text style={styles.itemtitle}>{item.key}</Text> 
+                                    <Text style={styles.itemgoal}>{item.goaltext}</Text> 
                                     </View>
                                 </View>
                             </View>
@@ -550,7 +536,19 @@ const styles = StyleSheet.create({
       fontSize: 15,
       fontWeight: "800",
       color: "#757575",
-      padding: 20,
+      padding: 10,
+      justifyContent: 'center',
+      backgroundColor: "#f0f0f0",
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+    itemgoal: {
+      fontSize: 15,
+      fontWeight: "800",
+      color: "#000",
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      backgroundColor: "#f0f0f0",
     },
     itemtitlebox: {
       borderBottomLeftRadius: 10,

@@ -15,7 +15,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 //import { thisUser } from './login';
 import {thisUser} from './homeNav'
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-console.log(thisUser.notiTime.toDate().getMinutes()+'testingbigtime'+parseInt(thisUser.notiTime.toDate().getHours()))
+//console.log(thisUser.notiTime.toDate().getMinutes()+'testingbigtime'+parseInt(thisUser.notiTime.toDate().getHours()))
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
